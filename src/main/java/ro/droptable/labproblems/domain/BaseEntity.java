@@ -1,7 +1,23 @@
 package ro.droptable.labproblems.domain;
 
 /**
- * Created by vlad on 04.03.2017.
+ * @author radu.
  */
-public class BaseEntity {
+public class BaseEntity<ID> {
+    private ID id;
+
+    public ID getId() {
+        return id;
+    }
+
+    public void setId(ID id) {
+        this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "BaseEntity{" +
+                "id=" + id +
+                '}';
+    }
 }
