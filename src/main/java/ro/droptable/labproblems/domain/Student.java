@@ -9,6 +9,7 @@ public class Student extends BaseEntity<Long> {
     private String serialNumber;
     private String name;
     private int group;
+    private static long currentId = 1;
 
     public Student() {
     }
@@ -17,6 +18,7 @@ public class Student extends BaseEntity<Long> {
         this.serialNumber = serialNumber;
         this.name = name;
         this.group = group;
+        this.setId(currentId++);
     }
 
     public String getSerialNumber() {
