@@ -28,10 +28,12 @@ public class InMemoryRepository<ID, T extends BaseEntity<ID>> implements Reposit
 //        return Optional.ofNullable(entities.get(id));
 
         try {
-            return Optional.of(entities.get(id));
+            Objects.requireNonNull(id);
         } catch (NullPointerException e) {
             throw new IllegalArgumentException("id must not be null");
         }
+
+        return Optional.ofNullable(entities.get(id));
     }
 
     @Override
@@ -52,11 +54,12 @@ public class InMemoryRepository<ID, T extends BaseEntity<ID>> implements Reposit
 
         try {
             Objects.requireNonNull(entity);
-            validator.validate(entity);
-            return Optional.of(entities.putIfAbsent(entity.getId(), entity));
         } catch (NullPointerException e) {
             throw new IllegalArgumentException("entity must not be null");
         }
+
+        validator.validate(entity);
+        return Optional.ofNullable(entities.putIfAbsent(entity.getId(), entity));
     }
 
     @Override
@@ -67,10 +70,12 @@ public class InMemoryRepository<ID, T extends BaseEntity<ID>> implements Reposit
 //        return Optional.ofNullable(entities.remove(id));
 
         try {
-            return Optional.of(entities.remove(id));
+            Objects.requireNonNull(id);
         } catch (NullPointerException e) {
             throw new IllegalArgumentException("id must not be null");
         }
+
+        return Optional.ofNullable(entities.remove(id));
     }
 
     @Override
@@ -83,10 +88,11 @@ public class InMemoryRepository<ID, T extends BaseEntity<ID>> implements Reposit
 
         try {
             Objects.requireNonNull(entity);
-            validator.validate(entity);
-            return Optional.of(entities.computeIfPresent(entity.getId(), (k, v) -> entity));
         } catch (NullPointerException e) {
             throw new IllegalArgumentException("entity must not be null");
         }
+
+        validator.validate(entity);
+        return Optional.ofNullable(entities.computeIfPresent(entity.getId(), (k, v) -> entity));
     }
 }
