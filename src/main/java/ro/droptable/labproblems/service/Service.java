@@ -10,21 +10,21 @@ import java.util.stream.StreamSupport;
 /**
  * Created by stefana on 3/5/2017.
  */
-abstract public class Service{
-    protected Repository<Long, BaseEntity<Long> > repository;
+abstract public class Service<T extends BaseEntity<Long>>{
+    protected Repository<Long, T > repository;
 
     public Service(){}
 
-    public Service(Repository<Long, BaseEntity<Long> > repository) {
+    public Service(Repository<Long, T > repository) {
         this.repository = repository;
     }
 
-    public void add(BaseEntity<Long>  entity) throws ValidatorException {
+    public void add(T  entity) throws ValidatorException {
         repository.save(entity);
     }
 
-    public Set<BaseEntity<Long> > getAll() {
-        Iterable<BaseEntity<Long> > entities = repository.findAll();
+    public Set<T > getAll() {
+        Iterable<T > entities = repository.findAll();
         return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toSet());
     }
 
