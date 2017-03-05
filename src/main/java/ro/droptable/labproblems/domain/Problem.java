@@ -6,6 +6,7 @@ package ro.droptable.labproblems.domain;
 public class Problem extends BaseEntity<Long> {
     private Long id;
     private String description;
+    private static long currentId = 1;
 
     public Problem() {
     }
@@ -13,6 +14,7 @@ public class Problem extends BaseEntity<Long> {
     public Problem(Long id, String description) {
         this.id = id;
         this.description = description;
+        this.setId(currentId++);
     }
 
     public Long getID() {

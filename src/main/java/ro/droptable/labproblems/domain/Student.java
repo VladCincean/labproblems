@@ -77,4 +77,10 @@ public class Student extends BaseEntity<Long> {
         return result;
     }
 
+    @Override
+    public String toString(){
+        return "Student{serianNumber=" + serialNumber + ", name="+ name + ", group=" + group +"}" + super.toString();
+    }
+
+
 }

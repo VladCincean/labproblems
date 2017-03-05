@@ -53,7 +53,7 @@ public class InMemoryRepository<ID, T extends BaseEntity<ID>> implements Reposit
         try {
             Objects.requireNonNull(entity);
             validator.validate(entity);
-            return Optional.of(entities.putIfAbsent(entity.getId(), entity));
+            return Optional.ofNullable(entities.putIfAbsent(entity.getId(), entity));
         } catch (NullPointerException e) {
             throw new IllegalArgumentException("entity must not be null");
         }

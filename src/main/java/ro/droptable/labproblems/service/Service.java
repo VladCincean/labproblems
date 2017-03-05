@@ -23,6 +23,13 @@ abstract public class Service<T extends BaseEntity<Long>>{
         repository.save(entity);
     }
 
+    public void delete(T entity) throws ValidatorException{
+        repository.delete(entity.getId());
+    }
+
+    public void update(T entity) throws ValidatorException {
+        repository.update(entity);
+    }
     public Set<T > getAll() {
         Iterable<T > entities = repository.findAll();
         return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toSet());

@@ -16,6 +16,15 @@ public class Main {
         StudentService s = new StudentService(r);
         Student st = new Student("1","alice", 222);
         s.add(st);
+        Student sb = new Student("1", "Bob", 222);
+        s.add(sb);
+        System.out.println(s.getAll());
+        s.delete(st);
+        s.delete(st);
+        System.out.println(s.getAll());
+        sb.setGroup(221);
+        System.out.println(s.getAll());
+        s.update(sb);
         System.out.println(s.getAll());
     }
 }
