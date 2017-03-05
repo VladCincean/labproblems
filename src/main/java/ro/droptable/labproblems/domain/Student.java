@@ -45,7 +45,6 @@ public class Student extends BaseEntity<Long> {
         this.group = group;
     }
 
-    // TODO: rewrite this without if-s
     @Override
     public boolean equals(Object o) {
         // Version 1
@@ -58,12 +57,8 @@ public class Student extends BaseEntity<Long> {
 //        if (!serialNumber.equals(student.serialNumber)) return false;
 //        return name.equals(student.name);
 
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-//        Student student = (Student) o;
-
-        return
+        return this == o || !(o == null || getClass() != o.getClass()) &&
+                Objects.equals(this.getId(), ((Student)o).getId()) &&
                 Objects.equals(this.group, ((Student)o).group) &&
                 Objects.equals(this.serialNumber, ((Student)o).serialNumber) &&
                 Objects.equals(this.name, ((Student)o).name);
@@ -78,9 +73,11 @@ public class Student extends BaseEntity<Long> {
     }
 
     @Override
-    public String toString(){
-        return "Student{serianNumber=" + serialNumber + ", name="+ name + ", group=" + group +"}" + super.toString();
+    public String toString() {
+        return "Student{" +
+                "serialNumber='" + serialNumber + '\'' +
+                ", name='" + name + '\'' +
+                ", group=" + group +
+                '}';
     }
-
-
 }
