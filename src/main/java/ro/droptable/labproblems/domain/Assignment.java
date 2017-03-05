@@ -48,7 +48,6 @@ public class Assignment extends BaseEntity<Long> {
     @Override
     public boolean equals(Object o) {
         return this == o || !(o == null || getClass() != o.getClass()) &&
-                Objects.equals(this.getId(), ((Assignment)o).getId()) &&
                 Objects.equals(this.studentId, ((Assignment)o).studentId) &&
                 Objects.equals(this.problemId, ((Assignment)o).problemId);
     }

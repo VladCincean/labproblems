@@ -58,7 +58,6 @@ public class Student extends BaseEntity<Long> {
 //        return name.equals(student.name);
 
         return this == o || !(o == null || getClass() != o.getClass()) &&
-                Objects.equals(this.getId(), ((Student)o).getId()) &&
                 Objects.equals(this.group, ((Student)o).group) &&
                 Objects.equals(this.serialNumber, ((Student)o).serialNumber) &&
                 Objects.equals(this.name, ((Student)o).name);
