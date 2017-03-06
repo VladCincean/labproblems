@@ -66,6 +66,6 @@ public class Assignment extends BaseEntity<Long> {
                 "studentId=" + studentId +
                 ", problemId=" + problemId +
                 ", grade=" + grade +
-                '}';
+                '}' + super.toString();
     }
 }

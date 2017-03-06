@@ -77,6 +77,6 @@ public class Student extends BaseEntity<Long> {
                 "serialNumber='" + serialNumber + '\'' +
                 ", name='" + name + '\'' +
                 ", group=" + group +
-                '}';
+                '}' + super.toString();
     }
 }
