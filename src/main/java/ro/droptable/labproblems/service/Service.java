@@ -10,7 +10,7 @@ import java.util.stream.StreamSupport;
 /**
  * Created by stefana on 3/5/2017.
  */
-abstract public class Service<T extends BaseEntity<Long>>{
+public abstract class Service<T extends BaseEntity<Long>>{
     protected Repository<Long, T > repository;
 
     public Service(){}
@@ -19,7 +19,7 @@ abstract public class Service<T extends BaseEntity<Long>>{
         this.repository = repository;
     }
 
-    public void add(T  entity) throws ValidatorException {
+    public void add(T entity) throws ValidatorException {
         repository.save(entity);
     }
 
