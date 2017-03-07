@@ -21,6 +21,12 @@ public class Student extends BaseEntity<Long> {
         this.setId(currentId++);
     }
 
+    @Override
+    public void setId(Long id) {
+        super.setId(id);
+        currentId = id > currentId ? id : currentId;
+    }
+
     public String getSerialNumber() {
         return serialNumber;
     }
