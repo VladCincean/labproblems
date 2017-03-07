@@ -20,14 +20,36 @@ public abstract class Service<T extends BaseEntity<Long>>{
         this.repository = repository;
     }
 
+    /**
+     * Removes the entity with the given id.
+     *
+     * @param id
+     *            must not be null.
+     * @return an {@code Optional} - null if there is no entity with the given id, otherwise the removed entity.
+     * @throws IllegalArgumentException
+     *             if the given id is null.
+     */
     public void delete(Long id) throws ValidatorException{
         repository.delete(id);
     }
 
+    /**
+     * Find the entity with the given {@code id}.
+     *
+     * @param id
+     *            must be not null.
+     * @return an {@code Optional} encapsulating the entity with the given id.
+     * @throws IllegalArgumentException
+     *             if the given id is null.
+     */
     public Optional<T> findOne(Long id){
         return repository.findOne(id);
     }
 
+    /**
+     *
+     * @return all entities.
+     */
     public Set<T > getAll() {
         Iterable<T > entities = repository.findAll();
         return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toSet());
