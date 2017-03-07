@@ -20,20 +20,6 @@ import ro.droptable.labproblems.ui.Console;
  */
 public class Main {
     public static void main(String[] args) {
-//        Repository<Long, Student> r = new InMemoryRepository<Long, Student>(new StudentValidator());
-//        StudentService s = new StudentService(r);
-//        Student st = new Student("1","alice", 222);
-//        s.add(st);
-//        Student sb = new Student("1", "Bob", 222);
-//        s.add(sb);
-//        System.out.println(s.getAll());
-//        s.delete(st);
-//        s.delete(st);
-//        System.out.println(s.getAll());
-//        sb.setGroup(221);
-//        System.out.println(s.getAll());
-//        s.update(sb);
-//        System.out.println(s.getAll());
 
         Repository<Long, Student> studentRepository = new InMemoryRepository<>(new StudentValidator());
         Repository<Long, Problem> problemRepository = new InMemoryRepository<>(new ProblemValidator());

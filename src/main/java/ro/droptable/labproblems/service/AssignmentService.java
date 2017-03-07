@@ -24,6 +24,17 @@ public class AssignmentService extends Service<Assignment> {
         this.problemService = problemService;
     }
 
+    /**
+     * Saves the given entity.
+     *
+     * @param studentId, problemId
+     *            must not be null.
+     * @return void
+     * @throws IllegalArgumentException
+     *             if the given entity is null.
+     * @throws ValidatorException
+     *             if the entity is not valid.
+     */
     public void add(long studentId, long problemId) {
         Class assignmentClass;
 
@@ -77,4 +88,7 @@ public class AssignmentService extends Service<Assignment> {
             e.printStackTrace(); // TODO: do something else
         }
     }
+
+
+
 }

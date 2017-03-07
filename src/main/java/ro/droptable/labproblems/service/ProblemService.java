@@ -17,6 +17,17 @@ public class ProblemService extends Service<Problem> {
         this.repository = repository;
     }
 
+    /**
+     * Saves the given entity.
+     *
+     * @param title, description
+     *            must not be null.
+     * @return void
+     * @throws IllegalArgumentException
+     *             if the given entity is null.
+     * @throws ValidatorException
+     *             if the entity is not valid.
+     */
     public void add(String title, String description) throws ValidatorException {
         Class problemClass;
 

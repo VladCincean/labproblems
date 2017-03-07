@@ -19,6 +19,17 @@ public class StudentService extends Service<Student> {
         this.repository = repository;
     }
 
+    /**
+     * Saves the given entity.
+     *
+     * @param serialNumber, name, group
+     *            must not be null.
+     * @return void
+     * @throws IllegalArgumentException
+     *             if the given entity is null.
+     * @throws ValidatorException
+     *             if the entity is not valid.
+     */
     public void add(String serialNumber, String name, int group) throws ValidatorException {
         Class studentClass;
 
@@ -62,9 +73,15 @@ public class StudentService extends Service<Student> {
     }
 
     public Set<Student> filterStudentsByName(String s) {
+        Iterable<Student> students = repository.findAll();
         Set<Student> filteredStudents= new HashSet<>();
-        filteredStudents.forEach(filteredStudents::add);
+        students.forEach(filteredStudents::add);
         filteredStudents.removeIf(student -> !student.getName().contains(s));
         return filteredStudents;
+    }
+
+    public void update(String serialNumber, String name, int group)
+    {
+        ///TODO implement this
     }
 }
