@@ -9,9 +9,11 @@ import java.util.stream.Collectors;
 
 /**
  * Created by vlad on 04.03.2017.
+ *
+ * Implementation of {@code Repository} for generic CRUD operations on a repository for a specific type
+ *      while maintaining 'in-memory' persistence
  */
 public class InMemoryRepository<ID, T extends BaseEntity<ID>> implements Repository<ID, T> {
-
     private Map<ID, T> entities;
     private Validator<T> validator;
 

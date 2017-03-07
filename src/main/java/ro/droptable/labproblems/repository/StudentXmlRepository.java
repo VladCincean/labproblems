@@ -11,8 +11,11 @@ import java.util.Optional;
 
 /**
  * Created by vlad on 07.03.2017.
+ *
+ * Extension of {@code InMemoryRepository} for CRUD operations on a repository for type {@code Student}
+ *      while maintaining XML persistence
  */
-public class StudentXmlRepository extends  InMemoryRepository<Long, Student> {
+public class StudentXmlRepository extends InMemoryRepository<Long, Student> {
     private String fileName;
 
     public StudentXmlRepository(Validator<Student> validator, String fileName) {

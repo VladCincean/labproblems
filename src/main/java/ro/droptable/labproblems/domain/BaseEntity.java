@@ -2,6 +2,8 @@ package ro.droptable.labproblems.domain;
 
 /**
  * @author radu.
+ *
+ * A generic class for representing a 'real-world' entity that can be identified by an object of type {@code ID}
  */
 public class BaseEntity<ID> {
     private ID id;

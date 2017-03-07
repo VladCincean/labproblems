@@ -11,6 +11,9 @@ import java.util.Optional;
 
 /**
  * Created by vlad on 07.03.2017.
+ *
+ * Extension of {@code InMemoryRepository} for CRUD operations on a repository for type {@code Problem}
+ *      while maintaining XML persistence
  */
 public class ProblemXmlRepository extends  InMemoryRepository<Long, Problem> {
     private String fileName;

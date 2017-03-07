@@ -9,6 +9,9 @@ import java.util.Optional;
 
 /**
  * Created by vlad on 07.03.2017.
+ *
+ * Implementation of {@code Repository} for CRUD operations on a repository for {@code Problem}
+ *      while maintaining database persistence
  */
 public class ProblemDbRepository implements Repository<Long, Problem> {
     private Validator<Problem> validator;

@@ -2,6 +2,8 @@ package ro.droptable.labproblems.domain.validators;
 
 /**
  * Created by vlad on 04.03.2017.
+ *
+ * Custom {@code Exception} class that matches all other exceptions defined in {@code labproblems}
  */
 public class LabProblemsException extends RuntimeException {
 

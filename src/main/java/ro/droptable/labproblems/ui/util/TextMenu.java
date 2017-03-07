@@ -9,6 +9,7 @@ import java.util.Map;
 /**
  * Created by vlad on 06.03.2017.
  */
+@Deprecated
 public class TextMenu {
     private Map<String, Command> commands;
 

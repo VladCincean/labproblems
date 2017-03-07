@@ -16,6 +16,9 @@ import java.util.Optional;
 
 /**
  * Created by vlad on 07.03.2017.
+ *
+ * Extension of {@code InMemoryRepository} for CRUD operations on a repository for type {@code Student}
+ *      while maintaining file persistence
  */
 public class StudentFileRepository extends InMemoryRepository<Long, Student> {
     private String fileName;
