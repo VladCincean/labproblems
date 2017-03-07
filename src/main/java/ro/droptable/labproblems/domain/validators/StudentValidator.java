@@ -18,11 +18,11 @@ public class StudentValidator implements Validator<Student> {
     @Override
     public void validate(Student entity) throws ValidatorException {
 
-        if (entity.getName() == null) {
-            errors.add("student name is null");
+        if (entity.getName().equals("")) {
+            errors.add("student name is empty");
         }
-        if (entity.getSerialNumber() == null) {
-            errors.add("student serial number is null");
+        if (entity.getSerialNumber().equals("")) {
+            errors.add("student serial number is empty");
         }
         int group = entity.getGroup();
         if (group % 10 == 0 || (group / 10) % 10 == 0 || group >= 1000 || group <= 110) {
@@ -30,7 +30,7 @@ public class StudentValidator implements Validator<Student> {
         }
 
         String error = errors.stream()
-                .reduce("", (acc, it) -> acc + "; " + it);
+                .reduce("\n", (acc, it) -> acc + it + "; ");
 //        if (error != null) {
         if (!errors.isEmpty()) {
             errors.clear();

@@ -1,7 +1,6 @@
 package ro.droptable.labproblems.domain.validators;
 
 import ro.droptable.labproblems.domain.Problem;
-import ro.droptable.labproblems.domain.Student;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +18,8 @@ public class ProblemValidator implements Validator<Problem> {
     @Override
     public void validate(Problem entity) throws ValidatorException {
 
-        if (entity.getDescription() == null) {
-            errors.add("problem description is null");
+        if (entity.getDescription().equals("")) {
+            errors.add("problem description is empty");
         }
 
         String error = errors.stream()
