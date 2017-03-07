@@ -12,6 +12,13 @@ import java.util.Scanner;
 
 /**
  * Created by vlad on 04.03.2017.
+ *
+ * Class for working with a {@code Console} user interface
+ * It allows:
+ *      - performing CRUD operations on {@code Student}s and {@code Problem}s
+ *      - assigning {@code Problem}s to {@code Student}s; assigning grades
+ *      - filtering data
+ *      - generating reports
  */
 public class Console {
     private StudentService studentService;

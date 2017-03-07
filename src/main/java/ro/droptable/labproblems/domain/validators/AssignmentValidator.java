@@ -4,6 +4,8 @@ import ro.droptable.labproblems.domain.Assignment;
 
 /**
  * Created by vlad on 05.03.2017.
+ *
+ * Implementation of {@code Validator} for validating {@code Assignment} instances
  */
 public class AssignmentValidator implements Validator<Assignment> {
 

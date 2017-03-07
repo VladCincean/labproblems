@@ -4,6 +4,8 @@ import java.util.Objects;
 
 /**
  * Created by vlad on 05.03.2017.
+ *
+ * Class that represents a 'real-world' {@code Assignment}
  */
 public class Assignment extends BaseEntity<Long> {
     private long studentId;

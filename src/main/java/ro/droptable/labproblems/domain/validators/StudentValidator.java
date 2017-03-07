@@ -7,6 +7,8 @@ import java.util.List;
 
 /**
  * Created by vlad on 04.03.2017.
+ *
+ * Implementation of {@code Validator} for validating {@code Student} instances
  */
 public class StudentValidator implements Validator<Student> {
     private List<String> errors;
