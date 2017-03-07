@@ -6,25 +6,31 @@ package ro.droptable.labproblems.domain;
  * Class that represents a 'real-world' {@code Problem}
  */
 public class Problem extends BaseEntity<Long> {
-    private Long id;
+    String title;
     private String description;
     private static long currentId = 1;
 
     public Problem() {
     }
 
-    public Problem(Long id, String description) {
-        this.id = id;
+    @Override
+    public void setId(Long id) {
+        super.setId(id);
+        currentId = id > currentId ? id : currentId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Problem(String title, String description) {
+        this.title = title;
         this.description = description;
         this.setId(currentId++);
-    }
-
-    public Long getID() {
-        return id;
-    }
-
-    public void setID(Long id) {
-        this.id = id;
     }
 
     public String getDescription() {
@@ -40,10 +46,10 @@ public class Problem extends BaseEntity<Long> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Problem student = (Problem) o;
+        Problem problem = (Problem) o;
 
-        if (id != student.id) return false;
-        if (!description.equals(student.description)) return false;
+        if (!title.equals(problem.title)) return false;
+        if (!description.equals(problem.description)) return false;
         return true;
 
     }
@@ -51,14 +57,14 @@ public class Problem extends BaseEntity<Long> {
     @Override
     public int hashCode() {
         int result = description.hashCode();
-        result = 31 * result + id.intValue();
+        result = 31 * result +  title.hashCode();
         return result;
     }
 
     @Override
     public String toString() {
         return "Problem{" +
-                "id='" + id + '\'' +
+                "title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 "} " + super.toString();
     }

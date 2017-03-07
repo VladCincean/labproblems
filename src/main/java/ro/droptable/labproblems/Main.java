@@ -41,7 +41,7 @@ public class Main {
 
         StudentService studentService = new StudentService(studentRepository);
         ProblemService problemService = new ProblemService(problemRepository);
-        AssignmentService assignmentService = new AssignmentService(assignmentRepository);
+        AssignmentService assignmentService = new AssignmentService(assignmentRepository, studentService, problemService);
 
         Console console = new Console(studentService, problemService, assignmentService);
         console.run();

@@ -10,10 +10,10 @@ import static org.junit.Assert.*;
 public class ProblemTest {
     @org.junit.Test
     public void equals() throws Exception {
-        Problem a = new Problem((long)1, "woot");
-        Problem b = new Problem((long)1, "woot");
-        Problem c = new Problem((long)2, "woot");
-        Problem d = new Problem((long)1, "wootwoot");
+        Problem a = new Problem("a", "woot");
+        Problem b = new Problem("a", "woot");
+        Problem c = new Problem("b", "woot");
+        Problem d = new Problem("a", "wootwoot");
 
         assertTrue(a.equals(b));
         assertFalse(a.equals(c));
