@@ -18,6 +18,10 @@ public class ProblemValidator implements Validator<Problem> {
     @Override
     public void validate(Problem entity) throws ValidatorException {
 
+        if (entity.getTitle().equals("")) {
+            errors.add("title is empty");
+        }
+
         if (entity.getDescription().equals("")) {
             errors.add("problem description is empty");
         }

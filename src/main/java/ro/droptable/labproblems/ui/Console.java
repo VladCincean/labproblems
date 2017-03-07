@@ -8,6 +8,7 @@ import ro.droptable.labproblems.service.StudentService;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 /**
@@ -41,10 +42,10 @@ public class Console {
         System.out.println("\nAvailable commands:\n" +
                 "1 - READ a Student\n" +
                 "2 - PRINT all Students\n" +
-//                "3 - READ a Problem\n" +
-//                "4 - PRINT all Problems\n" +
-//                "5 - ASSIGN a Problem to a Student\n" +
-//                "6 - PRINT all Assignments\n" +
+                "3 - READ a Problem\n" +
+                "4 - PRINT all Problems\n" +
+                "5 - ASSIGN a Problem to a Student\n" +
+                "6 - PRINT all Assignments\n" +
                 "0 - EXIT\n");
 
         System.out.print("Your option: ");
@@ -56,18 +57,18 @@ public class Console {
             case 2:
                 printAllStudents();
                 break;
-//            case 3:
-//                readProblem();
-//                break;
-//            case 4:
-//                printAllProblems();
-//                break;
-//            case 5:
-//                assignProblemToStudent();
-//                break;
-//            case 6:
-//                printAllAssignments();
-//                break;
+            case 3:
+                readProblem();
+                break;
+            case 4:
+                printAllProblems();
+                break;
+            case 5:
+                assignProblemToStudent();
+                break;
+            case 6:
+                printAllAssignments();
+                break;
             case 0:
                 System.out.println("Bye!");
                 System.exit(0);
@@ -114,11 +115,50 @@ public class Console {
     }
 
     private void readProblem() {
-        // TODO: implement this
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+
+        try {
+            System.out.print("title = ");
+            String title = bufferedReader.readLine().trim();
+
+            System.out.print("description = ");
+            String description = bufferedReader.readLine().trim();
+
+            try {
+                problemService.add(title, description);
+            } catch (ValidatorException e) {
+                System.out.println("Input Problem is invalid");
+                System.err.println(e.toString());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace(); // TODO: do something else
+        }
     }
 
     private void assignProblemToStudent() {
-        // TODO: implement this
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+
+        try {
+            System.out.print("studentId = ");
+            long studentId = Long.parseLong(bufferedReader.readLine().trim());
+
+            System.out.print("problemId = ");
+            long problemId = Long.parseLong(bufferedReader.readLine().trim());
+
+            try {
+                assignmentService.add(studentId, problemId);
+            } catch (ValidatorException e) {
+                System.out.println("Input Assignment is invalid");
+                System.err.println(e.toString());
+            } catch (NoSuchElementException e){
+                System.out.println("Input Assignment is invalid");
+                System.err.println(e.getMessage());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace(); // TODO: do something else
+        }
     }
 
     private void printAllStudents() {

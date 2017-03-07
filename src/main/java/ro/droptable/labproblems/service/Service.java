@@ -3,6 +3,7 @@ import ro.droptable.labproblems.repository.Repository;
 import ro.droptable.labproblems.domain.validators.ValidatorException;
 import ro.droptable.labproblems.domain.BaseEntity;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -19,17 +20,14 @@ public abstract class Service<T extends BaseEntity<Long>>{
         this.repository = repository;
     }
 
-    public void add(T entity) throws ValidatorException {
-        repository.save(entity);
+    public void delete(Long id) throws ValidatorException{
+        repository.delete(id);
     }
 
-    public void delete(T entity) throws ValidatorException{
-        repository.delete(entity.getId());
+    public Optional<T> findOne(Long id){
+        return repository.findOne(id);
     }
 
-    public void update(T entity) throws ValidatorException {
-        repository.update(entity);
-    }
     public Set<T > getAll() {
         Iterable<T > entities = repository.findAll();
         return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toSet());

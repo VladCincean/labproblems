@@ -31,12 +31,12 @@ public class InMemoryRepositoryTest {
 
     @After
     public void tearDown() throws Exception {
-
+        s = new InMemoryRepository<Long, Student>(new StudentValidator());
     }
 
     @Test
     public void findOne() throws Exception {
-        assertTrue(s.findOne((long)1).get().equals(sb));
+        assertTrue(s.findOne(sb.getId()).get().equals(sb));
     }
 
     @Test
@@ -46,13 +46,13 @@ public class InMemoryRepositoryTest {
 
     @Test
     public void save() throws Exception {
-        Student sp = new Student(null,null, 10);
+        Student sp = new Student("","", 10);
         try {
             s.save(sp);
             assertTrue(false);
         }catch (ValidatorException e)
         {
-            assertTrue(e.getMessage().equals("; student name is null; student serial number is null; student group is invalid"));
+            assertTrue(e.getMessage().equals("\nstudent name is empty; student serial number is empty; student group is invalid; "));
         }
     }
 
