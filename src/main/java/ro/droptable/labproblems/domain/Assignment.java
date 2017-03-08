@@ -23,6 +23,12 @@ public class Assignment extends BaseEntity<Long> {
         this.setId(currentId++);
     }
 
+    @Override
+    public void setId(Long id) {
+        super.setId(id);
+        currentId = id > currentId ? id : currentId;
+    }
+
     public long getStudentId() {
         return studentId;
     }

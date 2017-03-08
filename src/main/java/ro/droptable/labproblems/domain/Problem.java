@@ -1,12 +1,14 @@
 package ro.droptable.labproblems.domain;
 
+import java.util.Objects;
+
 /**
  * Created by stefana on 3/5/2017.
  *
  * Class that represents a 'real-world' {@code Problem}
  */
 public class Problem extends BaseEntity<Long> {
-    String title;
+    private String title;
     private String description;
     private static long currentId = 1;
 
@@ -43,15 +45,18 @@ public class Problem extends BaseEntity<Long> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//
+//        Problem problem = (Problem) o;
+//
+//        if (!title.equals(problem.title)) return false;
+//        if (!description.equals(problem.description)) return false;
+//        return true;
 
-        Problem problem = (Problem) o;
-
-        if (!title.equals(problem.title)) return false;
-        if (!description.equals(problem.description)) return false;
-        return true;
-
+        return this == o || !(o == null || getClass() != o.getClass()) &&
+                Objects.equals(this.title, ((Problem)o).getTitle()) &&
+                Objects.equals(this.description, ((Problem)o).getDescription());
     }
 
     @Override

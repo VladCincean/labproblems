@@ -1,6 +1,9 @@
-package ro.droptable.labproblems.domain;
+package labproblems.domain;
 
 import org.junit.Test;
+import ro.droptable.labproblems.domain.Assignment;
+import ro.droptable.labproblems.domain.Problem;
+import ro.droptable.labproblems.domain.Student;
 
 import static org.junit.Assert.*;
 

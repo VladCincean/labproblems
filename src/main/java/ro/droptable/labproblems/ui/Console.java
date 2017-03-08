@@ -111,11 +111,6 @@ public class Console {
                 System.out.println("Input Student is invalid");
                 System.err.println(e.toString());
             }
-
-//            // DEBUG; TODO: remove this
-//            System.out.println("serialNumber: " + serialNumber);
-//            System.out.println("name: " + name);
-//            System.out.println("group: " + group);
         } catch (IOException e) {
             e.printStackTrace(); // TODO: do something else
         }
@@ -147,9 +142,11 @@ public class Console {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 
         try {
+            printAllStudents();
             System.out.print("studentId = ");
             long studentId = Long.parseLong(bufferedReader.readLine().trim());
 
+            printAllProblems();
             System.out.print("problemId = ");
             long problemId = Long.parseLong(bufferedReader.readLine().trim());
 

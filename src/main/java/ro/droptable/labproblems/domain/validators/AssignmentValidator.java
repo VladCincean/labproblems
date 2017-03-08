@@ -2,6 +2,8 @@ package ro.droptable.labproblems.domain.validators;
 
 import ro.droptable.labproblems.domain.Assignment;
 
+import java.util.stream.Stream;
+
 /**
  * Created by vlad on 05.03.2017.
  *
@@ -14,7 +16,10 @@ public class AssignmentValidator implements Validator<Assignment> {
 
     @Override
     public void validate(Assignment entity) throws ValidatorException {
-        if (!(entity.getGrade() == 0.0 || (1.0 <= entity.getGrade() && entity.getGrade() <= 10.0)))
-            throw new ValidatorException("assignment grade must be 0 or between 1 and 10");
+        Stream.of(entity.getGrade())
+                .filter(g -> !(g == 0.0 || (1.0 <= g && g <= 10.0)))
+                .forEach(e -> {
+                    throw new ValidatorException("assignment grade must be 0 or between 1 and 10");
+                });
     }
 }

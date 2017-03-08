@@ -24,11 +24,13 @@ public class InMemoryRepository<ID, T extends BaseEntity<ID>> implements Reposit
 
     @Override
     public Optional<T> findOne(ID id) {
+        /** Version 1 */
 //        if (id == null) {
 //            throw new IllegalArgumentException("id must not be null");
 //        }
 //        return Optional.ofNullable(entities.get(id));
 
+        /** Version 2 */
         try {
             Objects.requireNonNull(id);
         } catch (NullPointerException e) {
@@ -36,24 +38,30 @@ public class InMemoryRepository<ID, T extends BaseEntity<ID>> implements Reposit
         }
 
         return Optional.ofNullable(entities.get(id));
+
+        /** Version 2.1 (experimental) */
+//        Optional<ID> opt = Optional.ofNullable(id);
+//        opt.orElseThrow(IllegalArgumentException::new);
+//        return Optional.ofNullable(entities.get(opt.get()));
     }
 
     @Override
     public Iterable<T> findAll() {
         return entities.entrySet().stream()
                 .map(Map.Entry::getValue)
-//                .map(entry -> entry.getValue()) // TODO: delete this line
                 .collect(Collectors.toSet());
     }
 
     @Override
     public Optional<T> save(T entity) throws ValidatorException {
+        /** Version 1 */
 //        if (entity == null) {
 //            throw new IllegalArgumentException("entity must not be null");
 //        }
 //        validator.validate(entity);
 //        return Optional.ofNullable(entities.putIfAbsent(entity.getId(), entity));
 
+        /** Version 2 */
         try {
             Objects.requireNonNull(entity);
         } catch (NullPointerException e) {
@@ -62,15 +70,23 @@ public class InMemoryRepository<ID, T extends BaseEntity<ID>> implements Reposit
 
         validator.validate(entity);
         return Optional.ofNullable(entities.putIfAbsent(entity.getId(), entity));
+
+        /** Version 2.1 (experimental) */
+//        Optional<T> opt = Optional.ofNullable(entity);
+//        opt.orElseThrow(IllegalArgumentException::new);
+//        opt.ifPresent(e -> validator.validate(e));
+//        return Optional.ofNullable(entities.putIfAbsent(entity.getId(), entity));
     }
 
     @Override
     public Optional<T> delete(ID id) {
+        /** Version 1 */
 //        if (id == null) {
 //            throw new IllegalArgumentException("id must not be null");
 //        }
 //        return Optional.ofNullable(entities.remove(id));
 
+        /** Version 2 */
         try {
             Objects.requireNonNull(id);
         } catch (NullPointerException e) {
@@ -78,16 +94,23 @@ public class InMemoryRepository<ID, T extends BaseEntity<ID>> implements Reposit
         }
 
         return Optional.ofNullable(entities.remove(id));
+
+        /** Version 2.1 (experimental) */
+//        Optional<ID> opt = Optional.ofNullable(id);
+//        opt.orElseThrow(IllegalArgumentException::new);
+//        return Optional.of(entities.remove(opt.get()));
     }
 
     @Override
     public Optional<T> update(T entity) throws ValidatorException {
+        /** Version 1 */
 //        if (entity == null ) {
 //            throw new IllegalArgumentException("entity must not be null");
 //        }
 //        validator.validate(entity);
 //        return Optional.ofNullable(entities.computeIfPresent(entity.getId(), (k, v) -> entity));
 
+        /** Version 2 */
         try {
             Objects.requireNonNull(entity);
         } catch (NullPointerException e) {
@@ -96,5 +119,11 @@ public class InMemoryRepository<ID, T extends BaseEntity<ID>> implements Reposit
 
         validator.validate(entity);
         return Optional.ofNullable(entities.computeIfPresent(entity.getId(), (k, v) -> entity));
+
+        /** Version 2.1 (experimental) */
+//        Optional<T> opt = Optional.ofNullable(entity);
+//        opt.orElseThrow(IllegalArgumentException::new);
+//        opt.ifPresent(e -> validator.validate(e));
+//        return Optional.ofNullable(entities.computeIfPresent(entity.getId(), (k, v) -> opt.get()));
     }
 }

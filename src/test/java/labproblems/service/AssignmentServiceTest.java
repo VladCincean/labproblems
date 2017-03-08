@@ -1,4 +1,4 @@
-package ro.droptable.labproblems.service;
+package labproblems.service;
 
 import org.junit.After;
 import org.junit.Before;
@@ -10,6 +10,9 @@ import ro.droptable.labproblems.domain.validators.AssignmentValidator;
 import ro.droptable.labproblems.domain.validators.ProblemValidator;
 import ro.droptable.labproblems.domain.validators.StudentValidator;
 import ro.droptable.labproblems.repository.InMemoryRepository;
+import ro.droptable.labproblems.service.AssignmentService;
+import ro.droptable.labproblems.service.ProblemService;
+import ro.droptable.labproblems.service.StudentService;
 
 import static org.junit.Assert.*;
 
@@ -17,13 +20,18 @@ import static org.junit.Assert.*;
  * Created by stefana on 3/7/2017.
  */
 public class AssignmentServiceTest {
-    InMemoryRepository<Long, Assignment> r = new InMemoryRepository<Long, Assignment>(new AssignmentValidator());
-    StudentService ss = new StudentService(new InMemoryRepository<Long, Student>(new StudentValidator()));
-    ProblemService ps = new ProblemService(new InMemoryRepository<Long, Problem>(new ProblemValidator()));
-    AssignmentService s = new AssignmentService(r, ss, ps);
+    InMemoryRepository<Long, Assignment> r;
+    StudentService ss;
+    ProblemService ps;
+    AssignmentService s;
 
     @Before
     public void setUp() throws Exception {
+        r = new InMemoryRepository<>(new AssignmentValidator());
+        ss = new StudentService(new InMemoryRepository<>(new StudentValidator()));
+        ps = new ProblemService(new InMemoryRepository<>(new ProblemValidator()));
+        s = new AssignmentService(r, ss, ps);
+
         ss.add("1","alice", 222);
         ss.add("2", "bob", 222);
         ps.add("bla", "blabla");

@@ -4,6 +4,7 @@ import ro.droptable.labproblems.domain.Problem;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Created by stefana on 3/5/2017.
@@ -19,22 +20,18 @@ public class ProblemValidator implements Validator<Problem> {
 
     @Override
     public void validate(Problem entity) throws ValidatorException {
+        Stream.of(entity.getTitle())
+                .filter(t -> t.equals(""))
+                .forEach(e -> errors.add("problem title is empty"));
+        Stream.of(entity.getDescription())
+                .filter(d -> d.equals(""))
+                .forEach(e -> errors.add("problem description is empty"));
 
-        if (entity.getTitle().equals("")) {
-            errors.add("title is empty");
-        }
-
-        if (entity.getDescription().equals("")) {
-            errors.add("problem description is empty");
-        }
-
-        String error = errors.stream()
-                .reduce("", (acc, it) -> acc + "; " + it);
-//        if (error != null) {
-        if (!errors.isEmpty()) {
-            errors.clear();
-            throw new ValidatorException(error);
-        }
+        errors.stream()
+                .reduce((acc, it) -> acc + "; " + it)
+                .ifPresent(opt -> {
+                    errors.clear();
+                    throw new ValidatorException(opt);
+                });
     }
 }
-
