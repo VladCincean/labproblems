@@ -22,9 +22,12 @@ public class StudentService extends Service<Student> {
     /**
      * Saves the given entity.
      *
-     * @param serialNumber, name, group
+     * @param serialNumber
      *            must not be null.
-     * @return void
+     * @param name
+     *            must not be null.
+     * @param group
+     *            must not be null.
      * @throws IllegalArgumentException
      *             if the given entity is null.
      * @throws ValidatorException

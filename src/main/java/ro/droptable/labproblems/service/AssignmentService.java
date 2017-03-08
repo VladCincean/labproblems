@@ -27,9 +27,10 @@ public class AssignmentService extends Service<Assignment> {
     /**
      * Saves the given entity.
      *
-     * @param studentId, problemId
+     * @param studentId
      *            must not be null.
-     * @return void
+     *@param problemId
+     *            must not be null.
      * @throws IllegalArgumentException
      *             if the given entity is null.
      * @throws ValidatorException

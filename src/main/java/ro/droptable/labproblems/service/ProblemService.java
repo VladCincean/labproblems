@@ -20,9 +20,10 @@ public class ProblemService extends Service<Problem> {
     /**
      * Saves the given entity.
      *
-     * @param title, description
+     * @param title
      *            must not be null.
-     * @return void
+     * @param description
+     *            must not be null.
      * @throws IllegalArgumentException
      *             if the given entity is null.
      * @throws ValidatorException

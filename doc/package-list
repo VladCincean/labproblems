@@ -1,0 +1,8 @@
+ro.droptable.labproblems
+ro.droptable.labproblems.domain
+ro.droptable.labproblems.domain.validators
+ro.droptable.labproblems.repository
+ro.droptable.labproblems.service
+ro.droptable.labproblems.ui
+ro.droptable.labproblems.ui.util
+ro.droptable.labproblems.util

@@ -25,7 +25,7 @@ public abstract class Service<T extends BaseEntity<Long>>{
      *
      * @param id
      *            must not be null.
-     * @return an {@code Optional} - null if there is no entity with the given id, otherwise the removed entity.
+     *
      * @throws IllegalArgumentException
      *             if the given id is null.
      */
