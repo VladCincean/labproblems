@@ -2,6 +2,8 @@ package ro.droptable.labproblems.domain;
 
 /**
  * Created by stefana on 3/5/2017.
+ *
+ * Class that represents a 'real-world' {@code Problem}
  */
 public class Problem extends BaseEntity<Long> {
     String title;

@@ -4,6 +4,8 @@ import java.util.Objects;
 
 /**
  * Created by vlad on 04.03.2017.
+ *
+ * Class that represents a 'real-world' {@code Student}
  */
 public class Student extends BaseEntity<Long> {
     private String serialNumber;
