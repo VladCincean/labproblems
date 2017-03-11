@@ -16,9 +16,9 @@ public class Assignment extends BaseEntity<Long> {
     public Assignment() {
     }
 
-    public Assignment(Student student, Problem problem) {
-        this.studentId = student.getId();
-        this.problemId = problem.getId();
+    public Assignment(long studentId, long problemId) {
+        this.studentId = studentId;
+        this.problemId = problemId;
         this.grade = 0;
         this.setId(currentId++);
     }

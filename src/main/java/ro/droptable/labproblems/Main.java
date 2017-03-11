@@ -9,10 +9,7 @@ import ro.droptable.labproblems.domain.validators.ProblemValidator;
 import ro.droptable.labproblems.domain.validators.StudentValidator;
 import ro.droptable.labproblems.repository.InMemoryRepository;
 import ro.droptable.labproblems.repository.Repository;
-import ro.droptable.labproblems.service.AssignmentService;
-import ro.droptable.labproblems.service.ProblemService;
-import ro.droptable.labproblems.service.Service;
-import ro.droptable.labproblems.service.StudentService;
+import ro.droptable.labproblems.service.*;
 import ro.droptable.labproblems.ui.Console;
 
 /**
@@ -27,9 +24,10 @@ public class Main {
 
         StudentService studentService = new StudentService(studentRepository);
         ProblemService problemService = new ProblemService(problemRepository);
-        AssignmentService assignmentService = new AssignmentService(assignmentRepository, studentService, problemService);
+        AssignmentService assignmentService = new AssignmentService(assignmentRepository);
+        GeneralService generalService = new GeneralService(studentService, problemService, assignmentService);
 
-        Console console = new Console(studentService, problemService, assignmentService);
+        Console console = new Console(generalService);
         console.run();
     }
 }

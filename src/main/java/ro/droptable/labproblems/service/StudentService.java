@@ -7,6 +7,8 @@ import ro.droptable.labproblems.repository.Repository;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -83,8 +85,51 @@ public class StudentService extends Service<Student> {
         return filteredStudents;
     }
 
-    public void update(String serialNumber, String name, int group)
+    public Optional<Student> getByAttributes(String serialNumber, String name, int group)
     {
-        ///TODO implement this
+        Student s = new Student(serialNumber, name, group);
+        return super.getByAttributes(s);
     }
+    public void update(long id, String serialNumber, String name, int group) throws NoSuchElementException, ValidatorException
+    {
+        Student oldStudent = findOne(id).get(); //throws NoSuchElementException if the old student does not exist
+        Class studentClass;
+
+        try {
+            studentClass = Class.forName("ro.droptable.labproblems.domain.Student");
+            Student studentInstance = (Student) studentClass.newInstance();
+
+            //create a new instance with the same id - do not modify current id
+            Field idField = studentClass.getSuperclass().getDeclaredField("id");
+            idField.setAccessible(true);
+            idField.set(studentInstance, id);
+            idField.setAccessible(false);
+
+            Field serialNumberField = studentClass.getDeclaredField("serialNumber");
+            serialNumberField.setAccessible(true);
+            serialNumberField.set(studentInstance, serialNumber);
+            serialNumberField.setAccessible(false);
+
+            Field nameField = studentClass.getDeclaredField("name");
+            nameField.setAccessible(true);
+            nameField.set(studentInstance, name);
+            nameField.setAccessible(false);
+
+            Field groupField = studentClass.getDeclaredField("group");
+            groupField.setAccessible(true);
+            groupField.set(studentInstance, group);
+            groupField.setAccessible(false);
+
+            this.repository.update(studentInstance);
+
+        } catch (ClassNotFoundException |
+                IllegalAccessException  |
+                InstantiationException  |
+                NoSuchFieldException e)
+        {
+            e.printStackTrace(); // TODO: do something else
+        }
+
+    }
+
 }

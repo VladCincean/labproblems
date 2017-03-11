@@ -55,4 +55,9 @@ public abstract class Service<T extends BaseEntity<Long>>{
         return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toSet());
     }
 
+    public Optional<T> getByAttributes(T comp) {
+        Iterable<T> entities = repository.findAll();
+        return StreamSupport.stream(entities.spliterator(), false).filter(e -> e.equals(comp)).findFirst();
+    }
+
 }

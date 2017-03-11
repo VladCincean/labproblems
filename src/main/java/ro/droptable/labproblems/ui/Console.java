@@ -2,6 +2,7 @@ package ro.droptable.labproblems.ui;
 
 import ro.droptable.labproblems.domain.validators.ValidatorException;
 import ro.droptable.labproblems.service.AssignmentService;
+import ro.droptable.labproblems.service.GeneralService;
 import ro.droptable.labproblems.service.ProblemService;
 import ro.droptable.labproblems.service.StudentService;
 
@@ -22,17 +23,9 @@ import java.util.Scanner;
  *      - generating reports
  */
 public class Console {
-    private StudentService studentService;
-    private ProblemService problemService;
-    private AssignmentService assignmentService;
-
-    public Console(StudentService studentService,
-                   ProblemService problemService,
-                   AssignmentService assignmentService
-    ) {
-        this.studentService = studentService;
-        this.problemService = problemService;
-        this.assignmentService = assignmentService;
+    private GeneralService generalService;
+    public Console(GeneralService generalService) {
+        this.generalService = generalService;
     }
 
     // TODO: implement the rest
@@ -106,7 +99,7 @@ public class Console {
             }
 
             try {
-                studentService.add(serialNumber, name, group);
+                generalService.addStudent(serialNumber, name, group);
             } catch (ValidatorException e) {
                 System.out.println("Input Student is invalid");
                 System.err.println(e.toString());
@@ -127,7 +120,7 @@ public class Console {
             String description = bufferedReader.readLine().trim();
 
             try {
-                problemService.add(title, description);
+                generalService.addProblem(title, description);
             } catch (ValidatorException e) {
                 System.out.println("Input Problem is invalid");
                 System.err.println(e.toString());
@@ -151,7 +144,7 @@ public class Console {
             long problemId = Long.parseLong(bufferedReader.readLine().trim());
 
             try {
-                assignmentService.add(studentId, problemId);
+                generalService.addAssignment(studentId, problemId);
             } catch (ValidatorException e) {
                 System.out.println("Input Assignment is invalid");
                 System.err.println(e.toString());
@@ -166,14 +159,14 @@ public class Console {
     }
 
     private void printAllStudents() {
-        studentService.getAll().forEach(System.out::println);
+        generalService.findAllStudents().forEach(System.out::println);
     }
 
     private void printAllProblems() {
-        problemService.getAll().forEach(System.out::println);
+        generalService.findAllProblems().forEach(System.out::println);
     }
 
     private void printAllAssignments() {
-        assignmentService.getAll().forEach(System.out::println);
+        generalService.findAllAssignments().forEach(System.out::println);
     }
 }

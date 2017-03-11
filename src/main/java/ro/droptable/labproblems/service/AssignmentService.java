@@ -7,21 +7,19 @@ import ro.droptable.labproblems.domain.validators.ValidatorException;
 import ro.droptable.labproblems.repository.Repository;
 
 import java.lang.reflect.Field;
+import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by stefana on 3/5/2017.
  */
 public class AssignmentService extends Service<Assignment> {
-    private StudentService studentService;
-    private ProblemService problemService;
     public AssignmentService(
-            Repository<Long, Assignment > repository,
-            StudentService studentService,
-            ProblemService problemService) {
+            Repository<Long, Assignment > repository) {
         this.repository = repository;
-        this.studentService = studentService;
-        this.problemService = problemService;
     }
 
     /**
@@ -67,19 +65,6 @@ public class AssignmentService extends Service<Assignment> {
             gradeField.set(assignmentInstance, 0);
             gradeField.setAccessible(false);
 
-            Student student = studentService.findOne(studentId).get();
-            try {
-                Objects.requireNonNull(student);
-            } catch (NullPointerException e) {
-                throw new ValidatorException("student not found");
-            }
-
-            Problem problem = problemService.findOne(problemId).get();
-            try {
-                Objects.requireNonNull(problem);
-            } catch (NullPointerException e) {
-                throw new ValidatorException("problem not found");
-            }
             repository.save(assignmentInstance);
 
         } catch (ClassNotFoundException |
@@ -90,6 +75,57 @@ public class AssignmentService extends Service<Assignment> {
         }
     }
 
+    public Optional<Assignment> getByAttributes(long studentId, long problemId)
+    {
+        Assignment a = new Assignment(studentId, problemId);
+        return super.getByAttributes(a);
+    }
 
+    public Set<Assignment> filterByStudent(long studentId)
+    {
+        return getAll().stream().filter(assignment -> assignment.getStudentId() == studentId).collect(Collectors.toSet());
+    }
 
+    public Set<Assignment> filterByProblem(long problemId)
+    {
+        return getAll().stream().filter(assignment -> assignment.getProblemId() == problemId).collect(Collectors.toSet());
+    }
+
+    void update(long id, long studentId, long problemId) throws NoSuchElementException, ValidatorException{
+        Assignment oldAssignment = this.repository.findOne(id).get();
+        Class assignmentClass;
+
+        try {
+            assignmentClass = Class.forName("ro.droptable.labproblems.domain.Assignment");
+            Assignment assignmentInstance = (Assignment) assignmentClass.newInstance();
+
+            Field idField = assignmentClass.getSuperclass().getDeclaredField("id");
+            idField.setAccessible(true);
+            idField.set(assignmentInstance, id);
+            idField.setAccessible(false);
+
+            Field studentIdField = assignmentClass.getDeclaredField("studentId");
+            studentIdField.setAccessible(true);
+            studentIdField.set(assignmentInstance, studentId);
+            studentIdField.setAccessible(false);
+
+            Field problemIdField = assignmentClass.getDeclaredField("problemId");
+            problemIdField.setAccessible(true);
+            problemIdField.set(assignmentInstance, problemId);
+            problemIdField.setAccessible(false);
+
+            Field gradeField = assignmentClass.getDeclaredField("grade");
+            gradeField.setAccessible(true);
+            gradeField.set(assignmentInstance, 0);
+            gradeField.setAccessible(false);
+
+            repository.update(assignmentInstance);
+
+        } catch (ClassNotFoundException |
+                IllegalAccessException |
+                InstantiationException |
+                NoSuchFieldException e) {
+            e.printStackTrace(); // TODO: do something else
+        }
+    }
 }

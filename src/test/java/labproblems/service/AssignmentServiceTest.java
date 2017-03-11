@@ -30,7 +30,7 @@ public class AssignmentServiceTest {
         r = new InMemoryRepository<>(new AssignmentValidator());
         ss = new StudentService(new InMemoryRepository<>(new StudentValidator()));
         ps = new ProblemService(new InMemoryRepository<>(new ProblemValidator()));
-        s = new AssignmentService(r, ss, ps);
+        s = new AssignmentService(r);
 
         ss.add("1","alice", 222);
         ss.add("2", "bob", 222);
@@ -46,7 +46,8 @@ public class AssignmentServiceTest {
 
     @Test
     public void add() throws Exception {
-
+        Student st = ss.getByAttributes("1", "alice", 222).get();
+        Problem pr = ps.getByAttributes("bla", "blabla").get();
     }
 
     @Test
