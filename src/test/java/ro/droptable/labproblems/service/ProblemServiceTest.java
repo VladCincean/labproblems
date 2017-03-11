@@ -1,10 +1,11 @@
-package labproblems.service;
+package ro.droptable.labproblems.service;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import ro.droptable.labproblems.domain.Problem;
 import ro.droptable.labproblems.domain.validators.ProblemValidator;
+import ro.droptable.labproblems.domain.validators.Validator;
 import ro.droptable.labproblems.domain.validators.ValidatorException;
 import ro.droptable.labproblems.repository.InMemoryRepository;
 import ro.droptable.labproblems.service.ProblemService;
@@ -46,12 +47,13 @@ public class ProblemServiceTest {
 
     @Test
     public void delete() throws Exception {
-
+        ps.delete(ps.getByAttributes("bla", "blabla").get().getId());
+        assert(ps.getAll().size() == 1);
     }
 
     @Test
     public void findOne() throws Exception {
-
+        assertTrue(ps.findOne(ps.getByAttributes("bla", "blabla").get().getId()).get().getDescription().equals("blabla"));
     }
 
     @Test
@@ -64,6 +66,18 @@ public class ProblemServiceTest {
                 .collect(Collectors.toList())
                 .size() == 1
         );
+    }
+
+    @Test
+    public void update() throws Exception {
+        long id = ps.getByAttributes("bla", "blabla").get().getId();
+        ps.update(id, "b", "b");
+        assertTrue(ps.findOne(id).get().getTitle().equals("b"));
+        try {
+            ps.update(id, "", "b");
+            assertTrue(false);
+        }catch(ValidatorException e){}
+        assertTrue(ps.findOne(id).get().getTitle().equals("b"));
     }
 
 }

@@ -118,6 +118,20 @@ public class GeneralService {
     }
     //update
     public void updateAssignment(long id, long studentId, long problemId) throws NoSuchElementException, ValidatorException {
+        Student student = studentService.findOne(studentId).get();
+        try {
+            Objects.requireNonNull(student);
+        } catch (NullPointerException e) {
+            throw new ValidatorException("student not found");
+        }
+
+        Problem problem = problemService.findOne(problemId).get();
+        try {
+            Objects.requireNonNull(problem);
+        } catch (NullPointerException e) {
+            throw new ValidatorException("problem not found");
+        }
+
         assignmentService.update(id, studentId, problemId);
     }
     //delete

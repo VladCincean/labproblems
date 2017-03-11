@@ -1,4 +1,4 @@
-package labproblems.service;
+package ro.droptable.labproblems.service;
 
 import org.junit.After;
 import org.junit.Before;
@@ -56,7 +56,14 @@ public class StudentServiceTest {
 
     @Test
     public void update() throws Exception {
-
+        long id = s.getByAttributes("1","alice", 222).get().getId();
+        s.update(id, "1","alice", 223);
+        assertTrue(s.findOne(id).get().getName().equals("alice"));
+        try {
+            s.update(id,"1","alice", 0);
+            assertTrue(false);
+        }catch(ValidatorException e){}
+        assertTrue(s.findOne(id).get().getGroup() == 223);
     }
 
     @Test

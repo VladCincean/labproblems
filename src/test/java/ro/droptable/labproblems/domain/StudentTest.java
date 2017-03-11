@@ -1,4 +1,4 @@
-package labproblems.domain;
+package ro.droptable.labproblems.domain;
 
 import ro.droptable.labproblems.domain.Problem;
 import ro.droptable.labproblems.domain.Student;

@@ -1,4 +1,4 @@
-package labproblems.domain;
+package ro.droptable.labproblems.domain;
 
 import org.junit.Test;
 import ro.droptable.labproblems.domain.Assignment;

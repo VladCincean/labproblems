@@ -1,4 +1,4 @@
-package labproblems.service;
+package ro.droptable.labproblems.service;
 
 import org.junit.After;
 import org.junit.Before;
@@ -24,6 +24,8 @@ public class AssignmentServiceTest {
     StudentService ss;
     ProblemService ps;
     AssignmentService s;
+    Student st;
+    Problem pr;
 
     @Before
     public void setUp() throws Exception {
@@ -36,6 +38,11 @@ public class AssignmentServiceTest {
         ss.add("2", "bob", 222);
         ps.add("bla", "blabla");
         ps.add("w", "hy");
+
+        st = ss.getByAttributes("1", "alice", 222).get();
+        pr = ps.getByAttributes("bla", "blabla").get();
+
+        s.add(st.getId(), pr.getId());
     }
 
 
@@ -46,23 +53,30 @@ public class AssignmentServiceTest {
 
     @Test
     public void add() throws Exception {
-        Student st = ss.getByAttributes("1", "alice", 222).get();
-        Problem pr = ps.getByAttributes("bla", "blabla").get();
+
+        s.add(st.getId(), pr.getId());
+        assertTrue(s.getAll().size() == 1);
     }
 
     @Test
     public void delete() throws Exception {
+        long id = s.getByAttributes(st.getId(), pr.getId()).get().getId();
+        s.delete(id);
+        s.delete(id);
+        assertTrue(s.getAll().size() == 0);
 
     }
 
     @Test
     public void findOne() throws Exception {
-
+        long id = s.getByAttributes(st.getId(), pr.getId()).get().getId();
+        Assignment a = s.findOne(id).get();
+        assertTrue(a.getProblemId() == pr.getId());
     }
 
     @Test
     public void getAll() throws Exception {
-
+        assertTrue(s.getAll().size() == 1);
     }
 
 }

@@ -1,4 +1,4 @@
-package labproblems.repository;
+package ro.droptable.labproblems.repository;
 
 import org.junit.After;
 import org.junit.Before;
