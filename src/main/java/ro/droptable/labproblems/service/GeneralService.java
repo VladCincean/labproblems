@@ -90,17 +90,19 @@ public class GeneralService {
     //CRUD for Assignment
     //create
     public void addAssignment(long studentId, long problemId) throws ValidatorException {
-        Student student = studentService.findOne(studentId).get();
+        Student student;
         try {
+            student = studentService.findOne(studentId).get();
             Objects.requireNonNull(student);
-        } catch (NullPointerException e) {
+        } catch (NullPointerException | NoSuchElementException e) {
             throw new ValidatorException("student not found");
         }
 
-        Problem problem = problemService.findOne(problemId).get();
+        Problem problem;
         try {
+            problem = problemService.findOne(problemId).get();
             Objects.requireNonNull(problem);
-        } catch (NullPointerException e) {
+        } catch (NullPointerException | NoSuchElementException e) {
             throw new ValidatorException("problem not found");
         }
 
@@ -118,17 +120,19 @@ public class GeneralService {
     }
     //update
     public void updateAssignment(long id, long studentId, long problemId) throws NoSuchElementException, ValidatorException {
-        Student student = studentService.findOne(studentId).get();
+        Student student;
         try {
+            student = studentService.findOne(studentId).get();
             Objects.requireNonNull(student);
-        } catch (NullPointerException e) {
+        } catch (NullPointerException | NoSuchElementException e) {
             throw new ValidatorException("student not found");
         }
 
-        Problem problem = problemService.findOne(problemId).get();
+        Problem problem;
         try {
+            problem = problemService.findOne(problemId).get();
             Objects.requireNonNull(problem);
-        } catch (NullPointerException e) {
+        } catch (NullPointerException | NoSuchElementException e) {
             throw new ValidatorException("problem not found");
         }
 
