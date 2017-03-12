@@ -3,10 +3,10 @@ package ro.droptable.labproblems.repository;
 import ro.droptable.labproblems.domain.Student;
 import ro.droptable.labproblems.domain.validators.Validator;
 import ro.droptable.labproblems.domain.validators.ValidatorException;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,8 +15,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * Created by vlad on 07.03.2017.
@@ -92,13 +91,33 @@ public class StudentFileRepository extends InMemoryRepository<Long, Student> {
            Long sId = s.getId();
 
            Path path = Paths.get(fileName);
-           StringBuilder stringBuilder = new StringBuilder("");
-
-           try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.WRITE)) {
+           Path tempPath = Paths.get(fileName + ".tmp");
+           try (BufferedWriter bufferedWriter = Files.newBufferedWriter(tempPath, StandardOpenOption.CREATE_NEW)) {
                Files.lines(path, StandardCharsets.UTF_8)
                        .filter(line -> !line.startsWith(sId.toString() + ","))
-                       .forEach(line -> stringBuilder.append(line + "\n"));
-               bufferedWriter.write(stringBuilder.toString());
+                       .map(line -> line + "\n")
+                       .flatMap(line -> {
+                           try {
+                               bufferedWriter.write(line);
+                           } catch (IOException e) {
+                               return Stream.of(e);
+                           }
+                           return null;
+                       })
+                       .reduce((acc, it) -> {
+                            acc.addSuppressed(it);
+                            return acc;
+                       })
+                       .ifPresent(e -> {
+                           throw new RuntimeException(e);
+                       });
+           } catch (IOException e) {
+               e.printStackTrace(); // TODO: do something else
+           }
+
+           try {
+               Files.deleteIfExists(path);
+               Files.move(tempPath, path);
            } catch (IOException e) {
                e.printStackTrace(); // TODO: do something else
            }
@@ -112,8 +131,23 @@ public class StudentFileRepository extends InMemoryRepository<Long, Student> {
 
     @Override
     public Optional<Student> update(Student entity) throws ValidatorException {
-        Optional<Student> student = super.update(entity);
+        Optional<Student> optional = super.update(entity);
 
-        throw new NotImplementedException();
+        optional.ifPresent(st -> {
+            Path path = Paths.get(fileName);
+            try {
+                PrintWriter printWriter = new PrintWriter(path.toFile());
+                printWriter.write("");
+                printWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace(); // TODO: ...
+            }
+            super.findAll().forEach(this::saveToFile);
+        });
+
+        if (optional.isPresent()) {
+            return optional;
+        }
+        return Optional.empty();
     }
 }
