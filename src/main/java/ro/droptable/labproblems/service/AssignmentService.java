@@ -91,7 +91,7 @@ public class AssignmentService extends Service<Assignment> {
         return getAll().stream().filter(assignment -> assignment.getProblemId() == problemId).collect(Collectors.toSet());
     }
 
-    void update(long id, long studentId, long problemId) throws NoSuchElementException, ValidatorException{
+    void update(long id, long studentId, long problemId, int grade) throws NoSuchElementException, ValidatorException{
         Assignment oldAssignment = this.repository.findOne(id).get();
         Class assignmentClass;
 
@@ -116,10 +116,10 @@ public class AssignmentService extends Service<Assignment> {
 
             Field gradeField = assignmentClass.getDeclaredField("grade");
             gradeField.setAccessible(true);
-            gradeField.set(assignmentInstance, 0);
+            gradeField.set(assignmentInstance, grade);
             gradeField.setAccessible(false);
 
-            repository.update(assignmentInstance);
+            this.repository.update(assignmentInstance);
 
         } catch (ClassNotFoundException |
                 IllegalAccessException |

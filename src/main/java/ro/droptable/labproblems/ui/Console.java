@@ -42,10 +42,17 @@ public class Console {
         System.out.println("\nAvailable commands:\n" +
                 "1 - READ a Student\n" +
                 "2 - PRINT all Students\n" +
-                "3 - READ a Problem\n" +
-                "4 - PRINT all Problems\n" +
-                "5 - ASSIGN a Problem to a Student\n" +
-                "6 - PRINT all Assignments\n" +
+                "3 - UPDATE Student\n" +
+                "4 - DELETE Student\n" +
+                "5 - READ a Problem\n" +
+                "6 - PRINT all Problems\n" +
+                "7 - UPDATE Problem\n" +
+                "8 - DELETE Problem\n" +
+                "9 - ASSIGN a Problem to a Student\n" +
+                "10 - PRINT all Assignments\n" +
+                "11 - UPDATE Assignment\n" +
+                "12 - DELETE Assignment\n" +
+                "13 - Filter Students by name\n" +
                 "0 - EXIT\n");
 
         System.out.print("Your option: ");
@@ -58,16 +65,37 @@ public class Console {
                 printAllStudents();
                 break;
             case 3:
-                readProblem();
+                updateStudent();
                 break;
             case 4:
-                printAllProblems();
+                deleteStudent();
                 break;
             case 5:
-                assignProblemToStudent();
+                readProblem();
                 break;
             case 6:
+                printAllProblems();
+                break;
+            case 7:
+                updateProblem();
+                break;
+            case 8:
+                deleteProblem();
+                break;
+            case 9:
+                assignProblemToStudent();
+                break;
+            case 10:
                 printAllAssignments();
+                break;
+            case 11:
+                updateAssignment();
+                break;
+            case 12:
+                deleteAssignment();
+                break;
+            case 13:
+                filterStudents();
                 break;
             case 0:
                 System.out.println("Bye!");
@@ -109,6 +137,55 @@ public class Console {
         }
     }
 
+    private void updateStudent() {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+
+        try {
+            System.out.println("id = ");
+            long id = Long.parseLong(bufferedReader.readLine().trim());
+            System.out.print("serial number = ");
+            String serialNumber = bufferedReader.readLine().trim();
+
+            System.out.print("name = ");
+            String name = bufferedReader.readLine().trim();
+
+            System.out.print("group = ");
+            int group;
+            try {
+                group = Integer.parseInt(bufferedReader.readLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. No valid integer given.");
+                return;
+            }
+
+            try {
+                generalService.updateStudent(id, serialNumber, name, group);
+            } catch (ValidatorException e) {
+                System.out.println("Input Student is invalid");
+                System.err.println(e.toString());
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // TODO: do something else
+        }
+    }
+
+    private void deleteStudent() {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+
+        try {
+            System.out.println("id = ");
+            long id = Long.parseLong(bufferedReader.readLine().trim());
+            try {
+                generalService.deleteStudent(id);
+            } catch (ValidatorException e) {
+                System.out.println("Input Student is invalid");
+                System.err.println(e.toString());
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // TODO: do something else
+        }
+    }
+
     private void readProblem() {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 
@@ -121,6 +198,50 @@ public class Console {
 
             try {
                 generalService.addProblem(title, description);
+            } catch (ValidatorException e) {
+                System.out.println("Input Problem is invalid");
+                System.err.println(e.toString());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace(); // TODO: do something else
+        }
+    }
+
+    private void updateProblem() {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+
+        try {
+            System.out.print("title = ");
+            String title = bufferedReader.readLine().trim();
+
+            System.out.print("description = ");
+            String description = bufferedReader.readLine().trim();
+
+            System.out.println("id = ");
+            long id = Long.parseLong(bufferedReader.readLine().trim());
+
+            try {
+                generalService.updateProblem(id, title, description);
+            } catch (ValidatorException e) {
+                System.out.println("Input Problem is invalid");
+                System.err.println(e.toString());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace(); // TODO: do something else
+        }
+    }
+
+    private void deleteProblem() {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+
+        try {
+            System.out.println("id = ");
+            long id = Long.parseLong(bufferedReader.readLine().trim());
+
+            try {
+                generalService.deleteProblem(id);
             } catch (ValidatorException e) {
                 System.out.println("Input Problem is invalid");
                 System.err.println(e.toString());
@@ -158,6 +279,72 @@ public class Console {
         }
     }
 
+    private void updateAssignment() {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+
+        try {
+            System.out.print("id = ");
+            long id = Long.parseLong(bufferedReader.readLine().trim());
+
+            printAllStudents();
+            System.out.print("studentId = ");
+            long studentId = Long.parseLong(bufferedReader.readLine().trim());
+
+            printAllProblems();
+            System.out.print("problemId = ");
+            long problemId = Long.parseLong(bufferedReader.readLine().trim());
+
+            System.out.print("grade = ");
+            int grade;
+            try {
+                grade = Integer.parseInt(bufferedReader.readLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. No valid integer given.");
+                return;
+            }
+
+            try {
+                generalService.updateAssignment(id, studentId, problemId, grade);
+            } catch (ValidatorException | NoSuchElementException e) {
+                System.out.println("Input Assignment is invalid");
+                System.err.println(e.toString());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace(); // TODO: do something else
+        }
+    }
+
+    private void deleteAssignment() {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+
+        try {
+            System.out.print("id = ");
+            long id = Long.parseLong(bufferedReader.readLine().trim());
+            try {
+                generalService.deleteAssignment(id);
+            } catch (ValidatorException e) {
+                System.out.println("Input Assignment is invalid");
+                System.err.println(e.toString());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace(); // TODO: do something else
+        }
+    }
+
+    private void filterStudents(){
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+
+        try {
+            System.out.print("string = ");
+            String cont = bufferedReader.readLine().trim();
+            System.out.println(generalService.filterStudentsByName(cont));
+
+        } catch (IOException e) {
+            e.printStackTrace(); // TODO: do something else
+        }
+    }
     private void printAllStudents() {
         generalService.findAllStudents().forEach(System.out::println);
     }

@@ -171,14 +171,14 @@ public class GeneralServiceTest {
         Student ns = new Student("1", "2", 333);
         Problem np = new Problem("1", "1");
         try{
-            g.updateAssignment(g.findOneAssignmentByAttributes(st.getId(), pr.getId()).get().getId(), ns.getId(), np.getId());
+            g.updateAssignment(g.findOneAssignmentByAttributes(st.getId(), pr.getId()).get().getId(), ns.getId(), np.getId(), 1);
             assertTrue(false);
         }catch(ValidatorException e){}
         g.addStudent(ns.getSerialNumber(), ns.getName(), ns.getGroup());
         g.addProblem(np.getTitle(), np.getDescription());
         g.updateAssignment(g.findOneAssignmentByAttributes(st.getId(), pr.getId()).get().getId(),
                 g.findOneStudentByAttributes(ns.getSerialNumber(), ns.getName(), ns.getGroup()).get().getId(),
-                g.findOneProblemByAttributes(np.getTitle(), np.getDescription()).get().getId());
+                g.findOneProblemByAttributes(np.getTitle(), np.getDescription()).get().getId(), 1);
         assertTrue(g.findAllAssignments().size() == 1);
     }
 
