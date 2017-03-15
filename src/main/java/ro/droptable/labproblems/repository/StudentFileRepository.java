@@ -8,10 +8,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -92,7 +89,7 @@ public class StudentFileRepository extends InMemoryRepository<Long, Student> {
 
            Path path = Paths.get(fileName);
            Path tempPath = Paths.get(fileName + ".tmp");
-           try (BufferedWriter bufferedWriter = Files.newBufferedWriter(tempPath, StandardOpenOption.CREATE_NEW)) {
+           try (BufferedWriter bufferedWriter = Files.newBufferedWriter(tempPath, StandardOpenOption.CREATE)) {
                Files.lines(path, StandardCharsets.UTF_8)
                        .filter(line -> !line.startsWith(sId.toString() + ","))
                        .map(line -> line + "\n")
@@ -117,7 +114,10 @@ public class StudentFileRepository extends InMemoryRepository<Long, Student> {
 
            try {
                Files.deleteIfExists(path);
-               Files.move(tempPath, path);
+               Files.move(tempPath, path, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+//               File tempFile = tempPath.toFile();
+//               File file = path.toFile();
+//               tempFile.renameTo(file);
            } catch (IOException e) {
                e.printStackTrace(); // TODO: do something else
            }
