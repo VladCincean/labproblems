@@ -15,6 +15,18 @@ public class Problem extends BaseEntity<Long> {
     public Problem() {
     }
 
+    public Problem(String title, String description) {
+        this.title = title;
+        this.description = description;
+        this.setId(currentId++);
+    }
+
+    public Problem(Long id, String title, String description) {
+        this.setId(id);
+        this.title = title;
+        this.description = description;
+    }
+
     @Override
     public void setId(Long id) {
         super.setId(id);
@@ -29,12 +41,6 @@ public class Problem extends BaseEntity<Long> {
         this.title = title;
     }
 
-    public Problem(String title, String description) {
-        this.title = title;
-        this.description = description;
-        this.setId(currentId++);
-    }
-
     public String getDescription() {
         return description;
     }
@@ -45,15 +51,6 @@ public class Problem extends BaseEntity<Long> {
 
     @Override
     public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (o == null || getClass() != o.getClass()) return false;
-//
-//        Problem problem = (Problem) o;
-//
-//        if (!title.equals(problem.title)) return false;
-//        if (!description.equals(problem.description)) return false;
-//        return true;
-
         return this == o || !(o == null || getClass() != o.getClass()) &&
                 Objects.equals(this.title, ((Problem)o).getTitle()) &&
                 Objects.equals(this.description, ((Problem)o).getDescription());

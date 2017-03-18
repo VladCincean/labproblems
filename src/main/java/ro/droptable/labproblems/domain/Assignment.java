@@ -23,6 +23,13 @@ public class Assignment extends BaseEntity<Long> {
         this.setId(currentId++);
     }
 
+    public Assignment(Long id, long studentId, long problemId) {
+        this.setId(id);
+        this.studentId = studentId;
+        this.problemId = problemId;
+        this.grade = 0;
+    }
+
     @Override
     public void setId(Long id) {
         super.setId(id);

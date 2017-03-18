@@ -23,6 +23,13 @@ public class Student extends BaseEntity<Long> {
         this.setId(currentId++);
     }
 
+    public Student(Long id, String serialNumber, String name, int group) {
+        this.setId(id);
+        this.serialNumber = serialNumber;
+        this.name = name;
+        this.group = group;
+    }
+
     @Override
     public void setId(Long id) {
         super.setId(id);
