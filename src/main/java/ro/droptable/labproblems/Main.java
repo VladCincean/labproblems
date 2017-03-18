@@ -56,7 +56,7 @@ public class Main {
                     System.out.println("Wrong command!");
                     break;
             }
-            if (1 <= opt && opt <= 2) { // TODO: change to 'opt <= 4' once the db is implemented
+            if (1 <= opt && opt <= 3) { // TODO: change to 'opt <= 4' once the db is implemented
                 break;
             }
         }
@@ -124,9 +124,9 @@ public class Main {
         String assignmentsFile = scanner.nextLine().trim();
         assignmentsFile = assignmentsFile.equals("") ? "assignments.xml" : assignmentsFile;
 
-        studentRepository = new StudentFileRepository(new StudentValidator(), path + studentsFile);
-        problemRepository = new ProblemFileRepository(new ProblemValidator(), path + problemsFile);
-        assignmentRepository = new AssignmentFileRepository(new AssignmentValidator(), path + assignmentsFile);
+        studentRepository = new StudentXmlRepository(new StudentValidator(), path + studentsFile);
+        problemRepository = new ProblemXmlRepository(new ProblemValidator(), path + problemsFile);
+        assignmentRepository = new AssignmentXmlRepository(new AssignmentValidator(), path + assignmentsFile);
 
         initServices();
     }

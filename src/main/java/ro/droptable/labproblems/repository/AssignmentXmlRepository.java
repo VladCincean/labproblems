@@ -1,50 +1,84 @@
 package ro.droptable.labproblems.repository;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 import ro.droptable.labproblems.domain.Assignment;
 import ro.droptable.labproblems.domain.validators.Validator;
 import ro.droptable.labproblems.domain.validators.ValidatorException;
-import ro.droptable.labproblems.util.XmlReader;
-import ro.droptable.labproblems.util.XmlWriter;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.List;
-import java.util.Optional;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 
 /**
  * Created by vlad on 07.03.2017.
  *
- * Extension of {@code InMemoryRepository} for CRUD operations on a repository for type {@code Assignment}
+ * Extension of {@code FileRepository} for CRUD operations on a repository for type {@code Assignment}
  *      while maintaining XML persistence
  */
-public class AssignmentXmlRepository extends  InMemoryRepository<Long, Assignment> {
-    private String fileName;
+public class AssignmentXmlRepository extends FileRepository<Long, Assignment> {
 
     public AssignmentXmlRepository(Validator<Assignment> validator, String fileName) {
-        super(validator);
-        this.fileName = fileName;
+        super(validator, fileName);
 
         loadData();
     }
 
-    private void loadData() {
-        List<Assignment> assignments = new XmlReader<Long, Assignment>(fileName).loadEntities();
-        // TODO: implement this using streams
-        for (Assignment assignment : assignments) {
-            try {
-                super.save(assignment);
-            } catch (ValidatorException e) {
-                e.printStackTrace(); // TODO: do something else
+    private Assignment getEntity(Element element) {
+        Long id = Long.valueOf(
+                element.getElementsByTagName("id").item(0).getTextContent().trim()
+        );
+        long studentId = Long.parseLong(
+                element.getElementsByTagName("studentId").item(0).getTextContent().trim()
+        );
+        long problemId = Long.parseLong(
+                element.getElementsByTagName("problemId").item(0).getTextContent().trim()
+        );
+        double grade = Double.parseDouble(
+                element.getElementsByTagName("grade").item(0).getTextContent().trim()
+        );
+
+        Assignment assignment = new Assignment(id, studentId, problemId);
+        assignment.setGrade(grade);
+        return assignment;
+    }
+
+    @Override
+    protected void loadData() {
+        try {
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            Document document = documentBuilder.parse(fileName);
+
+            Element root = document.getDocumentElement(); // assignments
+            NodeList nodeList = root.getElementsByTagName("assignment");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i); // assignment
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element)node;
+                    Assignment assignment = getEntity(element);
+
+                    try {
+                        super.saveInMemory(assignment);
+                    } catch (ValidatorException e) {
+                        e.printStackTrace(); // TODO: do something else
+                    }
+                }
             }
+        } catch (ParserConfigurationException
+                | SAXException
+                | IOException e) {
+            e.printStackTrace(); // TODO: ...
         }
     }
 
     @Override
-    public Optional<Assignment> save(Assignment entity) throws ValidatorException {
-        Optional<Assignment> optional = super.save(entity);
-        if (optional.isPresent()) {
-            return optional;
-        }
-
-        new XmlWriter<Long, Assignment>(fileName).save(entity);
-        return Optional.empty();
+    protected void saveToFile(Assignment entity) {
+        throw new NotImplementedException();
     }
 }
