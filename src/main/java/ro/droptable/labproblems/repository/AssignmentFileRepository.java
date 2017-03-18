@@ -3,7 +3,6 @@ package ro.droptable.labproblems.repository;
 import ro.droptable.labproblems.domain.Assignment;
 import ro.droptable.labproblems.domain.validators.Validator;
 import ro.droptable.labproblems.domain.validators.ValidatorException;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -14,25 +13,23 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Created by vlad on 07.03.2017.
  *
- * Extension of {@code InMemoryRepository} for CRUD operations on a repository for type {@code Assignment}
+ * Extension of {@code FileRepository} for CRUD operations on a repository for type {@code Assignment}
  *      while maintaining 'text file' persistence
  */
-public class AssignmentFileRepository extends InMemoryRepository<Long, Assignment>  {
-    private String fileName;
+public class AssignmentFileRepository extends FileRepository<Long, Assignment>  {
 
     public AssignmentFileRepository(Validator<Assignment> validator, String fileName) {
-        super(validator);
-        this.fileName = fileName;
+        super(validator, fileName);
 
         loadData();
     }
 
-    private void loadData() {
+    @Override
+    protected void loadData() {
         Path path = Paths.get(fileName);
 
         try {
@@ -43,13 +40,23 @@ public class AssignmentFileRepository extends InMemoryRepository<Long, Assignmen
                 long studentId = Long.parseLong(items.get(1));
                 long problemId = Long.parseLong(items.get(2));
                 double grade = Double.parseDouble(items.get(3));
+
+                Assignment assignment = new Assignment(studentId, problemId);
+                assignment.setGrade(grade);
+                assignment.setId(id);
+                try {
+                    super.saveInMemory(assignment);
+                } catch (ValidatorException e) {
+                    e.printStackTrace();
+                }
             });
         } catch (IOException e) {
             e.printStackTrace(); // TODO: do something else
         }
     }
 
-    private void saveToFile(Assignment entity) {
+    @Override
+    protected void saveToFile(Assignment entity) {
         Path path = Paths.get(fileName);
 
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
@@ -62,25 +69,5 @@ public class AssignmentFileRepository extends InMemoryRepository<Long, Assignmen
         } catch (IOException e) {
             e.printStackTrace(); // TODO: do something else
         }
-    }
-
-    @Override
-    public Optional<Assignment> save(Assignment entity) throws ValidatorException {
-        Optional<Assignment> optional = super.save(entity);
-        if (optional.isPresent()) {
-            return optional;
-        }
-        saveToFile(entity);
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<Assignment> delete(Long id) {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public Optional<Assignment> update(Assignment entity) {
-        throw new NotImplementedException();
     }
 }

@@ -53,6 +53,7 @@ public class StudentFileRepositoryTest {
         student1.setId(2L);
         assertNull(repository.save(student).orElse(null));
         assertTrue(repository.save(student1).get().equals(bob));
+        System.out.println(Files.lines(path).count());
         assertTrue(Files.lines(path).count() == 3);
         assertTrue(Files
                 .lines(path)

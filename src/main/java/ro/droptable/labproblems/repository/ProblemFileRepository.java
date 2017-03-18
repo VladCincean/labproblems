@@ -3,7 +3,6 @@ package ro.droptable.labproblems.repository;
 import ro.droptable.labproblems.domain.Problem;
 import ro.droptable.labproblems.domain.validators.Validator;
 import ro.droptable.labproblems.domain.validators.ValidatorException;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -14,25 +13,23 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Created by vlad on 07.03.2017.
  *
- * Extension of {@code InMemoryRepository} for CRUD operations on a repository for type {@code Problem}
+ * Extension of {@code FileRepository} for CRUD operations on a repository for type {@code Problem}
  *      while maintaining 'text file' persistence
  */
-public class ProblemFileRepository extends InMemoryRepository<Long, Problem>  {
-    private String fileName;
+public class ProblemFileRepository extends FileRepository<Long, Problem>  {
 
     public ProblemFileRepository(Validator<Problem> validator, String fileName) {
-        super(validator);
-        this.fileName = fileName;
+        super(validator, fileName);
 
         loadData();
     }
 
-    private void loadData() {
+    @Override
+    protected void loadData() {
         Path path = Paths.get(fileName);
 
         try {
@@ -47,7 +44,7 @@ public class ProblemFileRepository extends InMemoryRepository<Long, Problem>  {
                 problem.setId(id);
 
                 try {
-                    super.save(problem);
+                    super.saveInMemory(problem);
                 } catch (ValidatorException e) {
                     e.printStackTrace(); // TODO: do something else
                 }
@@ -57,7 +54,8 @@ public class ProblemFileRepository extends InMemoryRepository<Long, Problem>  {
         }
     }
 
-    private void saveToFile(Problem entity) {
+    @Override
+    protected void saveToFile(Problem entity) {
         Path path = Paths.get(fileName);
 
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
@@ -69,25 +67,5 @@ public class ProblemFileRepository extends InMemoryRepository<Long, Problem>  {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public Optional<Problem> save(Problem entity) throws ValidatorException {
-        Optional<Problem> optional = super.save(entity);
-        if (optional.isPresent()) {
-            return optional;
-        }
-        saveToFile(entity);
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<Problem> delete(Long id) {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public Optional<Problem> update(Problem entity) {
-        throw new NotImplementedException();
     }
 }

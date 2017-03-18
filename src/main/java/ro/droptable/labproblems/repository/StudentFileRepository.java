@@ -10,25 +10,23 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Created by vlad on 07.03.2017.
  *
- * Extension of {@code InMemoryRepository} for CRUD operations on a repository for type {@code Student}
+ * Extension of {@code FileRepository} for CRUD operations on a repository for type {@code Student}
  *      while maintaining file persistence
  */
-public class StudentFileRepository extends InMemoryRepository<Long, Student> {
-    private String fileName;
+public class StudentFileRepository extends FileRepository<Long, Student> {
 
     public StudentFileRepository(Validator<Student> validator, String fileName) {
-        super(validator);
-        this.fileName = fileName;
+        super(validator, fileName);
 
         loadData();
     }
 
-    private void loadData() {
+    @Override
+    protected void loadData() {
         Path path = Paths.get(fileName);
 
         try {
@@ -44,7 +42,7 @@ public class StudentFileRepository extends InMemoryRepository<Long, Student> {
                 student.setId(id);
 
                 try {
-                    super.save(student);
+                    super.saveInMemory(student);
                 } catch (ValidatorException e) {
                     e.printStackTrace(); // TODO: do something else
                 }
@@ -54,7 +52,8 @@ public class StudentFileRepository extends InMemoryRepository<Long, Student> {
         }
     }
 
-    private void saveToFile(Student entity) {
+    @Override
+    protected void saveToFile(Student entity) {
         Path path = Paths.get(fileName);
 
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
@@ -67,51 +66,5 @@ public class StudentFileRepository extends InMemoryRepository<Long, Student> {
         } catch (IOException e) {
             e.printStackTrace(); // TODO: do something else
         }
-    }
-
-    @Override
-    public Optional<Student> save(Student entity) throws ValidatorException {
-        Optional<Student> optional = super.save(entity);
-
-        optional.orElseGet(() -> {
-            this.saveToFile(entity);
-            return null;
-        });
-        return optional.isPresent() ? optional : Optional.empty();
-
-//        if (optional.isPresent()) {
-//            return optional;
-//        }
-//        saveToFile(entity);
-//        return Optional.empty();
-    }
-
-    @Override
-    public Optional<Student> delete(Long id) {
-        Optional<Student> optional = super.delete(id);
-        optional.ifPresent(s -> {
-            Path path = Paths.get(fileName);
-            try {
-                Files.write(path, "".getBytes());
-            } catch (IOException e) {
-                e.printStackTrace(); //...
-            }
-            super.findAll().forEach(this::saveToFile);
-        });
-        return optional.isPresent() ? optional : Optional.empty();
-    }
-
-    @Override
-    public Optional<Student> update(Student entity) throws ValidatorException {
-        Optional<Student> optional = super.update(entity);
-        optional.ifPresent(s -> {
-            try {
-                Files.write(Paths.get(fileName), "".getBytes());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            super.findAll().forEach(this::saveToFile);
-        });
-        return optional.isPresent() ? optional : Optional.empty();
     }
 }
