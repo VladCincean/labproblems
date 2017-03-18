@@ -29,8 +29,9 @@ public class StudentFileRepositoryTest {
 
     @Before
     public void setUp() throws Exception {
-        Files.deleteIfExists(path);
+//        Files.deleteIfExists(path);
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.CREATE)) {
+            Files.write(path, "".getBytes());
             bufferedWriter.write("1,1740,alice,222\n2,1765,bob,222\n");
         } catch (IOException e) {
             System.err.println("StudentFileRepository::setUp() failed: " + e.getMessage());
@@ -80,7 +81,6 @@ public class StudentFileRepositoryTest {
         assertTrue(repository.update(alice2).get().equals(alice2));
         assertTrue(repository.findOne(1L).get().equals(alice2));
         assertFalse(repository.findOne(1L).get().equals(alice));
-//        System.out.print(Files.lines(path).reduce("", (acc, it) -> acc + it + "\n"));
         assertTrue(Files
                 .lines(path)
                 .reduce("", (acc, it) -> acc + it + "\n")
@@ -101,5 +101,4 @@ public class StudentFileRepositoryTest {
                 .collect(Collectors.toSet())
                 .size() == 2);
     }
-
 }
