@@ -18,34 +18,38 @@ import java.io.IOException;
 /**
  * Created by vlad on 04.03.2017.
  */
-class XmlHelper {
+public class XmlHelper {
 
-    static Document loadDocument(String fileName) {
-        File inputFile = new File(fileName);
-        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder docBuilder = null;
+    public static Document loadDocument(String fileName) {
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+
+        DocumentBuilder documentBuilder = null;
         try {
-            docBuilder = docFactory.newDocumentBuilder();
+            documentBuilder = documentBuilderFactory.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
-            e.printStackTrace(); //TODO: remove printStackTrace...
+            e.printStackTrace(); // TODO: ...
         }
-        Document doc = null;
+
+        Document document = null;
         try {
-            doc = docBuilder != null ? docBuilder.parse(inputFile) : null;
+            document = documentBuilder != null ? documentBuilder.parse(fileName) : null;
         } catch (SAXException | IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // TODO: ...
         }
-        return doc;
+
+        return document;
     }
 
-    static void saveDocument(String fileName, Document document) {
+    public static void saveDocument(String fileName, Document document) {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
+
         Transformer transformer = null;
         try {
             transformer = transformerFactory.newTransformer();
         } catch (TransformerConfigurationException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // TODO: ...
         }
+
         DOMSource source = new DOMSource(document);
         StreamResult result = new StreamResult(new File(fileName));
         try {
@@ -53,7 +57,7 @@ class XmlHelper {
                 transformer.transform(source, result);
             }
         } catch (TransformerException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // TODO: ...
         }
     }
 }
