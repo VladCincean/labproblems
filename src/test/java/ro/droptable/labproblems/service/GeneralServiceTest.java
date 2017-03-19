@@ -19,6 +19,7 @@ import static org.junit.Assert.*;
  * Created by stefana on 3/12/2017.
  */
 public class GeneralServiceTest {
+
     GeneralService g;
     Student st;
     Problem pr;
@@ -40,6 +41,31 @@ public class GeneralServiceTest {
 
         g.addAssignment(st.getId(), pr.getId());
 
+    }
+
+    @Test
+    public void reportStudentAverage() throws Exception {
+        Student s2 = g.findOneStudentByAttributes("2", "bob", 222).get();
+        Problem p2 = g.findOneProblemByAttributes("w", "hy").get();
+        g.addAssignment(st.getId(), p2.getId());
+        g.updateAssignment(g.findOneAssignmentByAttributes(st.getId(), p2.getId()).get().getId(), st.getId(), p2.getId(), 10);
+
+        g.addAssignment(s2.getId(), p2.getId());
+        g.updateAssignment(g.findOneAssignmentByAttributes(s2.getId(), p2.getId()).get().getId(), s2.getId(), p2.getId(), 5);
+
+        g.addAssignment(s2.getId(), pr.getId());
+        g.updateAssignment(g.findOneAssignmentByAttributes(s2.getId(), pr.getId()).get().getId(), s2.getId(), pr.getId(), 7);
+
+        assertTrue(g.reportStudentAverage().get(st) == 5);
+        assertTrue(g.reportStudentAverage().get(s2) == 6);
+    }
+
+    @Test
+    public void filterLargestGroup() throws Exception {
+        g.addStudent("3", "abc", 223);
+        g.addStudent("4", "a", 223);
+        g.addStudent("5", "b", 222);
+        assertTrue(g.filterLargestGroup() == 222);
     }
 
     @Test
@@ -90,6 +116,18 @@ public class GeneralServiceTest {
     public void filterStudentsByName() throws Exception {
         assertTrue(g.filterStudentsByName("al").size() == 1);
         assertTrue(g.filterStudentsByName("x").size() == 0);
+    }
+
+    @Test
+    public void filterProblemsByName() throws Exception {
+        assertTrue(g.filterProblemsByName("b").size() == 1);
+        assertTrue(g.filterProblemsByName("x").size() == 0);
+    }
+
+    @Test
+    public void filterAssignmentsByGrade() throws Exception {
+        assertTrue(g.filterAssignmentsByGrade(0).size() == 1);
+        assertTrue(g.filterAssignmentsByGrade(2).size() == 0);
     }
 
     @Test

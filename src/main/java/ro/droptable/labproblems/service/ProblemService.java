@@ -6,8 +6,10 @@ import ro.droptable.labproblems.domain.validators.ValidatorException;
 import ro.droptable.labproblems.repository.Repository;
 
 import java.lang.reflect.Field;
+import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -110,5 +112,13 @@ public class ProblemService extends Service<Problem> {
             e.printStackTrace(); // TODO: do something else
         }
 
+    }
+
+    public Set<Problem> filterProblemsByName(String s) {
+        Iterable<Problem> problems = repository.findAll();
+        Set<Problem> filteredProblems = new HashSet<>();
+        problems.forEach(filteredProblems::add);
+        filteredProblems.removeIf(pr -> !pr.getTitle().contains(s));
+        return filteredProblems;
     }
 }

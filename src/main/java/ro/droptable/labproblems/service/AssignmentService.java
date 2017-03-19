@@ -7,10 +7,7 @@ import ro.droptable.labproblems.domain.validators.ValidatorException;
 import ro.droptable.labproblems.repository.Repository;
 
 import java.lang.reflect.Field;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -127,5 +124,13 @@ public class AssignmentService extends Service<Assignment> {
                 NoSuchFieldException e) {
             e.printStackTrace(); // TODO: do something else
         }
+    }
+
+    public Set<Assignment> filterAssignmentsByGrade(int g) {
+        Iterable<Assignment> assignments = repository.findAll();
+        Set<Assignment> filteredAssignments= new HashSet<>();
+        assignments.forEach(filteredAssignments::add);
+        filteredAssignments.removeIf(assignment -> assignment.getGrade() != g);
+        return filteredAssignments;
     }
 }
