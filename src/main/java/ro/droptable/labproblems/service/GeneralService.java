@@ -5,10 +5,7 @@ import ro.droptable.labproblems.domain.Problem;
 import ro.droptable.labproblems.domain.Student;
 import ro.droptable.labproblems.domain.validators.ValidatorException;
 
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.StreamSupport;
 
 /**
@@ -194,6 +191,9 @@ public class GeneralService {
         i.forEach(assignment -> assignmentService.delete(assignment.getId()));
     }
 
+    public Set<Problem> filterProblemsByName(String s) {
+        return problemService.filterProblemsByName(s);
+    }
     //CRUD for Assignment
     /**
      * Saves the given entity.
@@ -295,5 +295,23 @@ public class GeneralService {
      */
     public void deleteAssignment(long id){
         assignmentService.delete(id);
+    }
+
+    public Set<Assignment> filterAssignmentsByGrade(int g) {
+        return assignmentService.filterAssignmentsByGrade(g);
+    }
+    public Map<Student, Double> reportStudentAverage(){
+        HashMap<Student, Double> mp = new HashMap<>();
+        HashMap<Student, Double> nop = new HashMap<>();
+        Iterable<Student> students = studentService.getAll();
+        students.forEach(s -> {mp.put(s, 0.0); nop.put(s, 0.0);});
+        Iterable<Assignment> assignments = assignmentService.getAll();
+        assignments.forEach(assignment -> {
+            mp.put(findOneStudentById(assignment.getStudentId()).get(), mp.get(findOneStudentById(assignment.getStudentId()).get()) + assignment.getGrade());
+            nop.put(findOneStudentById(assignment.getStudentId()).get(), nop.get(findOneStudentById(assignment.getStudentId()).get()) + 1.0);
+        });
+
+        students.forEach(s -> mp.put(s, mp.get(s)/nop.get(s)));
+        return mp;
     }
 }
