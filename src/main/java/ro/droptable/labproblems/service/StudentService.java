@@ -6,10 +6,7 @@ import ro.droptable.labproblems.domain.validators.ValidatorException;
 import ro.droptable.labproblems.repository.Repository;
 
 import java.lang.reflect.Field;
-import java.util.HashSet;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -132,4 +129,16 @@ public class StudentService extends Service<Student> {
 
     }
 
+    private int getGroupSize(int group){
+        Iterable<Student> students = repository.findAll();
+        return (int)StreamSupport.stream(students.spliterator(), false).filter(s->s.getGroup() == group).count();
+    }
+
+    public int filterLargestGroup(){
+        Iterable<Student> students = repository.findAll();
+        Optional<Integer> mxGroup = StreamSupport.stream(students.spliterator(), false).
+                map(s -> getGroupSize(s.getGroup())).max(Comparator.naturalOrder());
+        return StreamSupport.stream(students.spliterator(), false).
+                filter(s -> getGroupSize(s.getGroup()) == mxGroup.get()).findFirst().get().getGroup();
+    }
 }
