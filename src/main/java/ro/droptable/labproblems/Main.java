@@ -9,7 +9,6 @@ import ro.droptable.labproblems.domain.validators.StudentValidator;
 import ro.droptable.labproblems.repository.*;
 import ro.droptable.labproblems.service.*;
 import ro.droptable.labproblems.ui.Console;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Scanner;
 
@@ -48,7 +47,7 @@ public class Main {
                     initXml();
                     break;
                 case 4:
-//                    initDb();
+                    initDb();
                     break;
                 case 0:
                     System.exit(0);
@@ -56,7 +55,7 @@ public class Main {
                     System.out.println("Wrong command!");
                     break;
             }
-            if (1 <= opt && opt <= 3) { // TODO: change to 'opt <= 4' once the db is implemented
+            if (1 <= opt && opt <= 4) {
                 break;
             }
         }
@@ -131,14 +130,20 @@ public class Main {
         initServices();
     }
 
-    private static void initDb(String url, String username, String password) {
-        throw new NotImplementedException();
+    private static void initDb() {
+        String url = "jdbc:postgresql://localhost:5432/labproblems";
+//        String username = System.getProperty("username");
+//        String password = System.getProperty("password");
 
-//        studentRepository = new StudentDbRepository(new StudentValidator(), url, username, password);
-//        problemRepository = new ProblemDbRepository(new ProblemValidator(), url, username, password);
-//        assignmentRepository = new AssignmentDbRepository(new AssignmentValidator(), url, username, password);
-//
-//        initServices();
+        // TODO: figure out how to make System.getProperty("...") work
+        String username = "postgres";
+        String password = "admin";
+
+        studentRepository = new StudentDbRepository(new StudentValidator(), url, username, password);
+        problemRepository = new ProblemDbRepository(new ProblemValidator(), url, username, password);
+        assignmentRepository = new AssignmentDbRepository(new AssignmentValidator(), url, username, password);
+
+        initServices();
     }
 
     private static void initServices() {

@@ -1,10 +1,13 @@
 package ro.droptable.labproblems.repository;
 
 import ro.droptable.labproblems.domain.Assignment;
+import ro.droptable.labproblems.domain.validators.LabProblemsException;
 import ro.droptable.labproblems.domain.validators.Validator;
 import ro.droptable.labproblems.domain.validators.ValidatorException;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -31,26 +34,135 @@ public class AssignmentDbRepository implements Repository<Long, Assignment> {
 
     @Override
     public Optional<Assignment> findOne(Long id) {
-        throw new NotImplementedException();
+        if (id == null) {
+            throw new IllegalArgumentException("id must not be null");
+        }
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement("SELECT * FROM assignments WHERE id=?"))
+        {
+            statement.setLong(1, id);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    Long assignmentId = resultSet.getLong("id");
+                    Long studentId = resultSet.getLong("student_id");
+                    Long problemId = resultSet.getLong("problem_id");
+                    Double grade = resultSet.getDouble("grade");
+
+                    Assignment assignment = new Assignment(assignmentId, studentId, problemId);
+                    assignment.setGrade(grade);
+
+                    return Optional.of(assignment);
+                }
+            }
+        } catch (SQLException e) {
+            throw new LabProblemsException(e);
+        }
+        return Optional.empty();
     }
 
     @Override
     public Iterable<Assignment> findAll() {
-        throw new NotImplementedException();
+        List<Assignment> assignments = new ArrayList<>();
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement("SELECT * FROM assignments"))
+        {
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Long assignmentId = resultSet.getLong("id");
+                    Long studentId = resultSet.getLong("student_id");
+                    Long problemId = resultSet.getLong("problem_id");
+                    Double grade = resultSet.getDouble("grade");
+
+                    Assignment assignment = new Assignment(assignmentId, studentId, problemId);
+                    assignment.setGrade(grade);
+
+                    assignments.add(assignment);
+                }
+            }
+        } catch (SQLException e) {
+            throw new LabProblemsException(e);
+        }
+
+        return assignments;
     }
 
     @Override
     public Optional<Assignment> save(Assignment entity) throws ValidatorException {
-        throw new NotImplementedException();
+        if (entity == null) {
+            throw new IllegalArgumentException("entity must not be null");
+        }
+
+        validator.validate(entity);
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement(
+                     "INSERT INTO assignments (id, student_id, problem_id, grade) VALUES (?,?,?,?)"
+             ))
+        {
+            statement.setLong(1, entity.getId());
+            statement.setLong(2, entity.getStudentId());
+            statement.setLong(3, entity.getProblemId());
+            statement.setDouble(4, entity.getGrade());
+
+            statement.executeUpdate();
+
+            return Optional.empty();
+        } catch (SQLException e) {
+            e.printStackTrace(); // TODO: ... (log exception)
+            return Optional.of(entity);
+        }
     }
 
     @Override
     public Optional<Assignment> delete(Long id) {
-        throw new NotImplementedException();
+        if (id == null) {
+            throw new IllegalArgumentException("id must not be null");
+        }
+
+        Optional<Assignment> assignment = findOne(id); // .?
+        if (!assignment.isPresent()) {
+            return Optional.empty();
+        }
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement("DELETE FROM assignments WHERE id=?"))
+        {
+            statement.setLong(1, id);
+
+            statement.executeUpdate();
+
+            return assignment;
+        } catch (SQLException e) {
+            throw new LabProblemsException(e);
+        }
     }
 
     @Override
     public Optional<Assignment> update(Assignment entity) throws ValidatorException {
-        throw new NotImplementedException();
+        if (entity == null) {
+            throw new IllegalArgumentException("entity must not be null");
+        }
+
+        validator.validate(entity);
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement(
+                     "UPDATE assignments SET student_id=?, problem_id=?, grade=? WHERE id=?"
+             ))
+        {
+            statement.setLong(1, entity.getStudentId());
+            statement.setLong(2, entity.getProblemId());
+            statement.setDouble(3, entity.getGrade());
+            statement.setLong(4, entity.getId());
+
+            statement.executeUpdate();
+
+            return Optional.empty();
+        } catch (SQLException e) {
+            e.printStackTrace(); // TODO: ... (log exception)
+            return Optional.of(entity);
+        }
     }
 }

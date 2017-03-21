@@ -1,10 +1,13 @@
 package ro.droptable.labproblems.repository;
 
 import ro.droptable.labproblems.domain.Problem;
+import ro.droptable.labproblems.domain.validators.LabProblemsException;
 import ro.droptable.labproblems.domain.validators.Validator;
 import ro.droptable.labproblems.domain.validators.ValidatorException;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -31,26 +34,124 @@ public class ProblemDbRepository implements Repository<Long, Problem> {
 
     @Override
     public Optional<Problem> findOne(Long id) {
-        throw new NotImplementedException();
+        if (id == null) {
+            throw new IllegalArgumentException("id must not be null");
+        }
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement("SELECT * FROM problems WHERE id=?"))
+        {
+            statement.setLong(1, id);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    Long problemId = resultSet.getLong("id");
+                    String title = resultSet.getString("title");
+                    String description = resultSet.getString("description");
+
+                    return Optional.of(new Problem(problemId, title, description));
+                }
+            }
+        } catch (SQLException e) {
+            throw new LabProblemsException(e);
+        }
+        return Optional.empty();
     }
 
     @Override
     public Iterable<Problem> findAll() {
-        throw new NotImplementedException();
+        List<Problem> problems = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement("SELECT * FROM problems"))
+        {
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Long problemId = resultSet.getLong("id");
+                    String title = resultSet.getString("title");
+                    String description = resultSet.getString("description");
+
+                    problems.add(new Problem(problemId, title, description));
+                }
+            }
+        } catch (SQLException e) {
+            throw new LabProblemsException(e);
+        }
+
+        return problems;
     }
 
     @Override
     public Optional<Problem> save(Problem entity) throws ValidatorException {
-        throw new NotImplementedException();
+        if (entity == null) {
+            throw new IllegalArgumentException("entity must not be null");
+        }
+
+        validator.validate(entity);
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement(
+                     "INSERT INTO problems (id, title, description) VALUES (?,?,?)"
+             ))
+        {
+            statement.setLong(1, entity.getId());
+            statement.setString(2, entity.getTitle());
+            statement.setString(3, entity.getDescription());
+
+            statement.executeUpdate();
+
+            return Optional.empty();
+        } catch (SQLException e) {
+            e.printStackTrace(); // TODO: ...
+            return Optional.of(entity);
+        }
     }
 
     @Override
     public Optional<Problem> delete(Long id) {
-        throw new NotImplementedException();
+        if (id == null) {
+            throw new IllegalArgumentException("id must not be null");
+        }
+
+        Optional<Problem> problem = findOne(id); // .?
+        if (!problem.isPresent()) {
+            return Optional.empty();
+        }
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement("DELETE FROM problems WHERE id=?"))
+        {
+            statement.setLong(1, id);
+
+            statement.executeUpdate();
+
+            return problem;
+        } catch (SQLException e) {
+            throw new LabProblemsException(e);
+        }
     }
 
     @Override
     public Optional<Problem> update(Problem entity) throws ValidatorException {
-        throw new NotImplementedException();
+        if (entity == null) {
+            throw new IllegalArgumentException("entity must not be null");
+        }
+
+        validator.validate(entity);
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement(
+                     "UPDATE problems SET title=?, description=? WHERE id=?"
+             ))
+        {
+            statement.setString(1, entity.getTitle());
+            statement.setString(2, entity.getDescription());
+            statement.setLong(3, entity.getId());
+
+            statement.executeUpdate();
+
+            return Optional.empty();
+        } catch (SQLException e) {
+            e.printStackTrace(); // TODO: ...
+            return Optional.of(entity);
+        }
     }
 }
