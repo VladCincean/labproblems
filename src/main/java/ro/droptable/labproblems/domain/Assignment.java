@@ -33,7 +33,7 @@ public class Assignment extends BaseEntity<Long> {
     @Override
     public void setId(Long id) {
         super.setId(id);
-        currentId = id > currentId ? id : currentId;
+        currentId = id > currentId ? id + 1: currentId;
     }
 
     public long getStudentId() {
