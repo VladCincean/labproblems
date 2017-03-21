@@ -42,8 +42,11 @@ public class Console {
             "12 - UPDATE an Assignment\n" +
             "---------- Filter --------\n" +
             "13 - Filter Students by name\n" +
+            "14 - Filter Problems by title\n" +
+            "15 - Filter Assignments by grade\n" +
+            "16 - Filter largest group\n" +
             "--------- Reports --------\n" +
-            "TBD\n" +
+            "17 - Report Student average grade\n" +
             "--------------------------\n" +
             "0 - EXIT\n";
 
@@ -103,6 +106,18 @@ public class Console {
                 break;
             case 13:
                 filterStudents();
+                break;
+            case 14:
+                filterProblems();
+                break;
+            case 15:
+                filterAssignments();
+                break;
+            case 16:
+                filterLargestGroup();
+                break;
+            case 17:
+                reportStudentAverageGrade();
                 break;
             case 0:
                 System.out.println("Bye!");
@@ -351,6 +366,40 @@ public class Console {
         } catch (IOException e) {
             e.printStackTrace(); // TODO: do something else
         }
+    }
+
+    private void filterProblems(){
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+
+        try {
+            System.out.print("string = ");
+            String cont = bufferedReader.readLine().trim();
+            System.out.println(generalService.filterProblemsByName(cont));
+
+        } catch (IOException e) {
+            e.printStackTrace(); // TODO: do something else
+        }
+    }
+
+    private void filterAssignments(){
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        System.out.print("grade = ");
+        int grade;
+        try {
+            grade = Integer.parseInt(bufferedReader.readLine().trim());
+        } catch (NumberFormatException | IOException e) {
+            System.out.println("Invalid input. No valid integer given.");
+            return;
+        }
+        System.out.println(generalService.filterAssignmentsByGrade(grade));
+    }
+
+    private void filterLargestGroup(){
+        System.out.println(generalService.filterLargestGroup());
+    }
+
+    private void reportStudentAverageGrade(){
+        System.out.println(generalService.reportStudentAverage());
     }
     private void printAllStudents() {
         generalService.findAllStudents().forEach(System.out::println);
