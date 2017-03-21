@@ -1,1 +1,15 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><students><student><id>5</id><serialNumber>1</serialNumber><name>alice</name><group>111</group></student></students>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<students>
+  <student>
+    <id>145</id>
+    <serialNumber>1</serialNumber>
+    <name>alice</name>
+    <group>111</group>
+  </student>
+<student>
+    <id>146</id>
+    <serialNumber>1765</serialNumber>
+    <name>bob</name>
+    <group>222</group>
+  </student>
+</students>
