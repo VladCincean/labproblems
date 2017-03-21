@@ -24,11 +24,32 @@ import java.util.Scanner;
  */
 public class Console {
     private GeneralService generalService;
+    private final String menu = "\nAvailable commands:\n" +
+            "------ Student CRUD ------\n" +
+            "1 - READ a Student\n" +
+            "2 - PRINT ALL Students\n" +
+            "3 - DELETE a Student\n" +
+            "4 - UPDATE a Student\n" +
+            "------ Problem CRUD ------\n" +
+            "5 - READ a Problem\n" +
+            "6 - PRINT ALL Problems\n" +
+            "7 - DELETE a Problem\n" +
+            "8 - UPDATE a Problem\n" +
+            "----- Assignment CRUD ----\n" +
+            "9 - Assign a Problem to a Student\n" +
+            "10 - PRINT ALL Assignments\n" +
+            "11 - DELETE an Assignment\n" +
+            "12 - UPDATE an Assignment\n" +
+            "---------- Filter --------\n" +
+            "13 - Filter Students by name\n" +
+            "--------- Reports --------\n" +
+            "TBD\n" +
+            "--------------------------\n" +
+            "0 - EXIT\n";
+
     public Console(GeneralService generalService) {
         this.generalService = generalService;
     }
-
-    // TODO: implement the rest
 
     public void run() {
         while (true) {
@@ -39,21 +60,7 @@ public class Console {
     private void mainMenu() {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("\nAvailable commands:\n" +
-                "1 - READ a Student\n" +
-                "2 - PRINT all Students\n" +
-                "3 - UPDATE Student\n" +
-                "4 - DELETE Student\n" +
-                "5 - READ a Problem\n" +
-                "6 - PRINT all Problems\n" +
-                "7 - UPDATE Problem\n" +
-                "8 - DELETE Problem\n" +
-                "9 - ASSIGN a Problem to a Student\n" +
-                "10 - PRINT all Assignments\n" +
-                "11 - UPDATE Assignment\n" +
-                "12 - DELETE Assignment\n" +
-                "13 - Filter Students by name\n" +
-                "0 - EXIT\n");
+        System.out.println(menu);
 
         System.out.print("Your option: ");
         int option = scanner.nextInt();
@@ -65,10 +72,10 @@ public class Console {
                 printAllStudents();
                 break;
             case 3:
-                updateStudent();
+                deleteStudent();
                 break;
             case 4:
-                deleteStudent();
+                updateStudent();
                 break;
             case 5:
                 readProblem();
@@ -77,10 +84,10 @@ public class Console {
                 printAllProblems();
                 break;
             case 7:
-                updateProblem();
+                deleteProblem();
                 break;
             case 8:
-                deleteProblem();
+                updateProblem();
                 break;
             case 9:
                 assignProblemToStudent();
@@ -89,10 +96,10 @@ public class Console {
                 printAllAssignments();
                 break;
             case 11:
-                updateAssignment();
+                deleteAssignment();
                 break;
             case 12:
-                deleteAssignment();
+                updateAssignment();
                 break;
             case 13:
                 filterStudents();
