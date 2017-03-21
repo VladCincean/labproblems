@@ -10,6 +10,7 @@ import ro.droptable.labproblems.domain.validators.ValidatorException;
 import ro.droptable.labproblems.util.XmlHelper;
 
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 /**
  * Created by vlad on 07.03.2017.
@@ -55,19 +56,33 @@ public class AssignmentXmlRepository extends InMemoryRepository<Long, Assignment
 
         Element root = document.getDocumentElement(); // assignments
         NodeList nodeList = root.getElementsByTagName("assignment");
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            Node node = nodeList.item(i); // assignment
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
-                Element element = (Element)node;
-                Assignment assignment = getEntity(element);
+//        for (int i = 0; i < nodeList.getLength(); i++) {
+//            Node node = nodeList.item(i); // assignment
+//            if (node.getNodeType() == Node.ELEMENT_NODE) {
+//                Element element = (Element)node;
+//                Assignment assignment = getEntity(element);
+//
+//                try {
+//                    super.save(assignment); // save in memory
+//                } catch (ValidatorException e) {
+//                    e.printStackTrace(); // TODO: do something else
+//                }
+//            }
+//        }
 
-                try {
-                    super.save(assignment); // save in memory
-                } catch (ValidatorException e) {
-                    e.printStackTrace(); // TODO: do something else
-                }
-            }
-        }
+        IntStream.range(0, nodeList.getLength())
+                .mapToObj(nodeList::item)
+                .filter(node -> node.getNodeType() == Node.ELEMENT_NODE)
+                .map(node -> (Element)node)
+                .forEach(element -> {
+                    Assignment assignment = getEntity(element);
+
+                    try {
+                        super.save(assignment); // save in memory
+                    } catch (ValidatorException e) {
+                        e.printStackTrace(); // TODO: ...
+                    }
+                });
     }
 
     protected void saveToFile(Assignment entity) {
@@ -125,16 +140,27 @@ public class AssignmentXmlRepository extends InMemoryRepository<Long, Assignment
             }
 
             NodeList nodeList = document.getElementsByTagName("assignment");
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element)node;
+//            for (int i = 0; i < nodeList.getLength(); i++) {
+//                Node node = nodeList.item(i);
+//                if (node.getNodeType() == Node.ELEMENT_NODE) {
+//                    Element element = (Element)node;
+//
+//                    if (element.getElementsByTagName("id").item(0).getTextContent().equals(id.toString())) {
+//                        element.getParentNode().removeChild(element);
+//                    }
+//                }
+//            }
 
-                    if (element.getElementsByTagName("id").item(0).getTextContent().equals(id.toString())) {
-                        element.getParentNode().removeChild(element);
-                    }
-                }
-            }
+            IntStream.range(0, nodeList.getLength())
+                    .mapToObj(nodeList::item)
+                    .filter(node -> node.getNodeType() == Node.ELEMENT_NODE)
+                    .map(node -> (Element)node)
+                    .filter(element -> element
+                            .getElementsByTagName("id")
+                            .item(0)
+                            .getTextContent()
+                            .equals(id.toString()))
+                    .forEach(element -> element.getParentNode().removeChild(element));
 
             XmlHelper.saveDocument(fileName, document);
         });
@@ -153,22 +179,40 @@ public class AssignmentXmlRepository extends InMemoryRepository<Long, Assignment
             }
 
             NodeList nodeList = document.getElementsByTagName("assignment");
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element)node;
+//            for (int i = 0; i < nodeList.getLength(); i++) {
+//                Node node = nodeList.item(i);
+//                if (node.getNodeType() == Node.ELEMENT_NODE) {
+//                    Element element = (Element)node;
+//
+//                    if (element.getElementsByTagName("id").item(0)
+//                            .getTextContent().equals(entity.getId().toString())) {
+//                        element.getElementsByTagName("studentID").item(0)
+//                                .setTextContent(Long.toString(entity.getStudentId()));
+//                        element.getElementsByTagName("problemId").item(0)
+//                                .setTextContent(Long.toString(entity.getProblemId()));
+//                        element.getElementsByTagName("grade").item(0)
+//                                .setTextContent(Double.toString(entity.getGrade()));
+//                    }
+//                }
+//            }
 
-                    if (element.getElementsByTagName("id").item(0)
-                            .getTextContent().equals(entity.getId().toString())) {
-                        element.getElementsByTagName("studentID").item(0)
+            IntStream.range(0, nodeList.getLength())
+                    .mapToObj(nodeList::item)
+                    .filter(node -> node.getNodeType() == Node.ELEMENT_NODE)
+                    .map(node -> (Element)node)
+                    .filter(element -> element
+                            .getElementsByTagName("id")
+                            .item(0)
+                            .getTextContent()
+                            .equals(entity.getId().toString()))
+                    .forEach(element -> {
+                        element.getElementsByTagName("studentId").item(0)
                                 .setTextContent(Long.toString(entity.getStudentId()));
                         element.getElementsByTagName("problemId").item(0)
                                 .setTextContent(Long.toString(entity.getProblemId()));
                         element.getElementsByTagName("grade").item(0)
                                 .setTextContent(Double.toString(entity.getGrade()));
-                    }
-                }
-            }
+                    });
 
             XmlHelper.saveDocument(fileName, document);
         });

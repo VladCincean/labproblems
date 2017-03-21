@@ -10,6 +10,7 @@ import ro.droptable.labproblems.domain.validators.ValidatorException;
 import ro.droptable.labproblems.util.XmlHelper;
 
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 /**
  * Created by vlad on 07.03.2017.
@@ -46,19 +47,33 @@ public class ProblemXmlRepository extends InMemoryRepository<Long, Problem> {
 
         Element root = document.getDocumentElement(); // problems
         NodeList nodeList = root.getElementsByTagName("problem");
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            Node node = nodeList.item(i); // problem
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
-                Element element = (Element)node;
-                Problem problem = getEntity(element);
+//        for (int i = 0; i < nodeList.getLength(); i++) {
+//            Node node = nodeList.item(i); // problem
+//            if (node.getNodeType() == Node.ELEMENT_NODE) {
+//                Element element = (Element)node;
+//                Problem problem = getEntity(element);
+//
+//                try {
+//                    super.save(problem); // save in memory
+//                } catch (ValidatorException e) {
+//                    e.printStackTrace(); // TODO: do something else
+//                }
+//            }
+//        }
 
-                try {
-                    super.save(problem); // save in memory
-                } catch (ValidatorException e) {
-                    e.printStackTrace(); // TODO: do something else
-                }
-            }
-        }
+        IntStream.range(0, nodeList.getLength())
+                .mapToObj(nodeList::item)
+                .filter(node -> node.getNodeType() == Node.ELEMENT_NODE)
+                .map(node -> (Element)node)
+                .forEach(element -> {
+                    Problem problem = getEntity(element);
+
+                    try {
+                        super.save(problem); // save in memory
+                    } catch (ValidatorException e) {
+                        e.printStackTrace(); // TODO: ...
+                    }
+                });
     }
 
     private void saveToFile(Problem entity) {
@@ -114,16 +129,27 @@ public class ProblemXmlRepository extends InMemoryRepository<Long, Problem> {
             }
 
             NodeList nodeList = document.getElementsByTagName("problem");
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element)node;
+//            for (int i = 0; i < nodeList.getLength(); i++) {
+//                Node node = nodeList.item(i);
+//                if (node.getNodeType() == Node.ELEMENT_NODE) {
+//                    Element element = (Element)node;
+//
+//                    if (element.getElementsByTagName("id").item(0).getTextContent().equals(id.toString())) {
+//                        element.getParentNode().removeChild(element);
+//                    }
+//                }
+//            }
 
-                    if (element.getElementsByTagName("id").item(0).getTextContent().equals(id.toString())) {
-                        element.getParentNode().removeChild(element);
-                    }
-                }
-            }
+            IntStream.range(0, nodeList.getLength())
+                    .mapToObj(nodeList::item)
+                    .filter(node -> node.getNodeType() == Node.ELEMENT_NODE)
+                    .map(node -> (Element)node)
+                    .filter(element -> element
+                            .getElementsByTagName("id")
+                            .item(0)
+                            .getTextContent()
+                            .equals(id.toString()))
+                    .forEach(element -> element.getParentNode().removeChild(element));
 
             XmlHelper.saveDocument(fileName, document);
         });
@@ -142,20 +168,36 @@ public class ProblemXmlRepository extends InMemoryRepository<Long, Problem> {
             }
 
             NodeList nodeList = document.getElementsByTagName("student");
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element)node;
+//            for (int i = 0; i < nodeList.getLength(); i++) {
+//                Node node = nodeList.item(i);
+//                if (node.getNodeType() == Node.ELEMENT_NODE) {
+//                    Element element = (Element)node;
+//
+//                    if (element.getElementsByTagName("id").item(0)
+//                            .getTextContent().equals(entity.getId().toString())) {
+//                        element.getElementsByTagName("title").item(0)
+//                                .setTextContent(entity.getTitle());
+//                        element.getElementsByTagName("description").item(0)
+//                                .setTextContent(entity.getDescription());
+//                    }
+//                }
+//            }
 
-                    if (element.getElementsByTagName("id").item(0)
-                            .getTextContent().equals(entity.getId().toString())) {
+            IntStream.range(0, nodeList.getLength())
+                    .mapToObj(nodeList::item)
+                    .filter(node -> node.getNodeType() == Node.ELEMENT_NODE)
+                    .map(node -> (Element)node)
+                    .filter(element -> element
+                            .getElementsByTagName("id")
+                            .item(0)
+                            .getTextContent()
+                            .equals(entity.getId().toString()))
+                    .forEach(element -> {
                         element.getElementsByTagName("title").item(0)
                                 .setTextContent(entity.getTitle());
                         element.getElementsByTagName("description").item(0)
                                 .setTextContent(entity.getDescription());
-                    }
-                }
-            }
+                    });
 
             XmlHelper.saveDocument(fileName, document);
         });
