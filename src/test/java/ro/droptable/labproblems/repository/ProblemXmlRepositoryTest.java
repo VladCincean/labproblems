@@ -59,8 +59,8 @@ public class ProblemXmlRepositoryTest {
         Problem notp1 = new Problem("not p1", p1.getDescription());
         notp1.setId(p1.getId());
         pr.update(notp1);
-        String line6 = Files.readAllLines(path).get(5);
-        assertTrue(line6.equals("    <title>p1</title>"));
+        String line5 = Files.readAllLines(path).get(4);
+        assertTrue(line5.equals("    <title>not p1</title>"));
     }
 
     @Test
