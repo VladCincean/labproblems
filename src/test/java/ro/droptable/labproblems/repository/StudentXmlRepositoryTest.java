@@ -21,11 +21,12 @@ public class StudentXmlRepositoryTest {
     String fileName = "src/test/resources/students.xml";
     private final Path path = Paths.get(fileName);
     StudentXmlRepository sr;
+
     @Before
     public void setUp() throws Exception {
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.CREATE)) {
             Files.write(path, "".getBytes());
-            bufferedWriter.write(" ");
+            bufferedWriter.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?><students></students>");
         } catch (IOException e) {
             System.err.println("StudentFileRepository::setUp() failed: " + e.getMessage());
         }
