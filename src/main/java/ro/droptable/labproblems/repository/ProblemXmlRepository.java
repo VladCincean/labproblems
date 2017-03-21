@@ -93,9 +93,7 @@ public class ProblemXmlRepository extends InMemoryRepository<Long, Problem> {
         title.appendChild(document.createTextNode(entity.getTitle()));
 
         Element description = document.createElement("description");
-        description.appendChild(
-                document.createTextNode("\n" + entity.getDescription() + "\n")
-        );
+        description.appendChild(document.createTextNode(entity.getDescription()));
 
         element.appendChild(id);
         element.appendChild(title);
@@ -167,7 +165,7 @@ public class ProblemXmlRepository extends InMemoryRepository<Long, Problem> {
                 return;
             }
 
-            NodeList nodeList = document.getElementsByTagName("student");
+            NodeList nodeList = document.getElementsByTagName("problem");
 //            for (int i = 0; i < nodeList.getLength(); i++) {
 //                Node node = nodeList.item(i);
 //                if (node.getNodeType() == Node.ELEMENT_NODE) {

@@ -43,8 +43,8 @@ public class ProblemXmlRepositoryTest {
     @Test
     public void save() throws Exception {
         pr.save(p2);
-        String line14 = Files.readAllLines(path).get(13);
-        assertTrue(line14.equals("do sth else"));
+        String line14 = Files.readAllLines(path).get(10);
+        assertTrue(line14.equals("    <description>do sth else</description>"));
     }
 
     @Test
