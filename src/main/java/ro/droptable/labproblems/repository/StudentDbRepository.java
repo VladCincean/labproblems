@@ -5,10 +5,13 @@ import ro.droptable.labproblems.domain.validators.LabProblemsException;
 import ro.droptable.labproblems.domain.validators.Validator;
 import ro.droptable.labproblems.domain.validators.ValidatorException;
 
+import java.lang.reflect.Field;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 
 /**
  * Created by vlad on 07.03.2017.
@@ -30,6 +33,27 @@ public class StudentDbRepository implements Repository<Long, Student> {
         this.url = url;
         this.username = username;
         this.password = password;
+
+        StreamSupport.stream(findAll().spliterator(), false)
+                .map(s -> s.getId())
+                .max(Comparator.naturalOrder())
+                .ifPresent(o -> {
+                    Class studentClass;
+                    try {
+                        studentClass = Class.forName("ro.droptable.labproblems.domain.Student");
+                        Student studentInstance = (Student) studentClass.newInstance();
+
+                        Field currentIdField = studentClass.getDeclaredField("currentId");
+                        currentIdField.setAccessible(true);
+                        currentIdField.set(studentInstance, o + 1);
+                        currentIdField.setAccessible(false);
+                    } catch (ClassNotFoundException
+                            | NoSuchFieldException
+                            | IllegalAccessException
+                            | InstantiationException e) {
+                        //...
+                    }
+                });
     }
 
     @Override
