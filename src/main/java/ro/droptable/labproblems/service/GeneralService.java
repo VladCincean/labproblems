@@ -95,9 +95,9 @@ public class GeneralService {
      * @param id
      */
     public void deleteStudent(long id){
-        studentService.delete(id);
         Set<Assignment> i = assignmentService.filterByStudent(id);
         i.forEach(assignment -> assignmentService.delete(assignment.getId()));
+        studentService.delete(id);
     }
 
     /**
@@ -186,9 +186,9 @@ public class GeneralService {
      * @param id
      */
     public void deleteProblem(long id){
-        problemService.delete(id);
         Set<Assignment> i = assignmentService.filterByProblem(id);
         i.forEach(assignment -> assignmentService.delete(assignment.getId()));
+        problemService.delete(id);
     }
 
     public Set<Problem> filterProblemsByName(String s) {
