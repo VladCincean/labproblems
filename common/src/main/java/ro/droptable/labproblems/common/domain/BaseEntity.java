@@ -1,11 +1,10 @@
-package ro.droptable.labproblems.domain;
+package ro.droptable.labproblems.common.domain;
 
 /**
  * @author radu.
  *
  * A generic class for representing a 'real-world' entity that can be identified by an object of type {@code ID}
  */
-@Deprecated
 public class BaseEntity<ID> {
     private ID id;
 

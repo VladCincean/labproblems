@@ -1,6 +1,6 @@
-package ro.droptable.labproblems.domain.validators;
+package ro.droptable.labproblems.common.domain.validators;
 
-import ro.droptable.labproblems.domain.Problem;
+import ro.droptable.labproblems.common.domain.Problem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,6 @@ import java.util.stream.Stream;
  *
  * Implementation of {@code Validator} for validating {@code Problem} instances
  */
-@Deprecated
 public class ProblemValidator implements Validator<Problem> {
     private List<String> errors;
 

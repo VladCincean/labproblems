@@ -1,4 +1,4 @@
-package ro.droptable.labproblems.domain;
+package ro.droptable.labproblems.common.domain;
 
 import java.util.Objects;
 
@@ -7,7 +7,6 @@ import java.util.Objects;
  *
  * Class that represents a 'real-world' {@code Problem}
  */
-@Deprecated
 public class Problem extends BaseEntity<Long> {
     private String title;
     private String description;

@@ -1,11 +1,10 @@
-package ro.droptable.labproblems.domain.validators;
+package ro.droptable.labproblems.common.domain.validators;
 
 /**
  * @author vlad
  *
  * Interface for a generic {@code Validator} that validates a specific tyle
  */
-@Deprecated
 public interface Validator<T> {
     /**
      * Validates a {@code T} instance object

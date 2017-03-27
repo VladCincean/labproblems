@@ -1,4 +1,4 @@
-package ro.droptable.labproblems.domain;
+package ro.droptable.labproblems.common.domain;
 
 import java.util.Objects;
 
@@ -7,7 +7,6 @@ import java.util.Objects;
  *
  * Class that represents a 'real-world' {@code Student}
  */
-@Deprecated
 public class Student extends BaseEntity<Long> {
     private String serialNumber;
     private String name;
@@ -63,16 +62,6 @@ public class Student extends BaseEntity<Long> {
 
     @Override
     public boolean equals(Object o) {
-        // Version 1
-//        if (this == o) return true;
-//        if (o == null || getClass() != o.getClass()) return false;
-//
-//        Student student = (Student) o;
-//
-//        if (group != student.group) return false;
-//        if (!serialNumber.equals(student.serialNumber)) return false;
-//        return name.equals(student.name);
-
         return this == o || !(o == null || getClass() != o.getClass()) &&
                 Objects.equals(this.group, ((Student)o).group) &&
                 Objects.equals(this.serialNumber, ((Student)o).serialNumber) &&

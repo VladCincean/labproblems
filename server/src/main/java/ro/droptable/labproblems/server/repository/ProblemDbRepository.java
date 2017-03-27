@@ -1,9 +1,9 @@
-package ro.droptable.labproblems.repository;
+package ro.droptable.labproblems.server.repository;
 
-import ro.droptable.labproblems.domain.Problem;
-import ro.droptable.labproblems.domain.validators.LabProblemsException;
-import ro.droptable.labproblems.domain.validators.Validator;
-import ro.droptable.labproblems.domain.validators.ValidatorException;
+import ro.droptable.labproblems.common.domain.Problem;
+import ro.droptable.labproblems.common.domain.validators.LabProblemsException;
+import ro.droptable.labproblems.common.domain.validators.Validator;
+import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 
 import java.lang.reflect.Field;
 import java.sql.*;
@@ -19,7 +19,6 @@ import java.util.stream.StreamSupport;
  * Implementation of {@code Repository} for CRUD operations on a repository for {@code Problem}
  *      while maintaining database persistence
  */
-@Deprecated
 public class ProblemDbRepository implements Repository<Long, Problem> {
     private Validator<Problem> validator;
     private String url;

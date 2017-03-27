@@ -1,9 +1,9 @@
-package ro.droptable.labproblems.domain.validators;
+package ro.droptable.labproblems.common.domain.validators;
 
 /**
  * @author radu.
  */
-@Deprecated
+
 public class ValidatorException extends LabProblemsException {
     public ValidatorException(String message) {
         super(message);

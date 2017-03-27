@@ -1,6 +1,6 @@
-package ro.droptable.labproblems.domain.validators;
+package ro.droptable.labproblems.common.domain.validators;
 
-import ro.droptable.labproblems.domain.Assignment;
+import ro.droptable.labproblems.common.domain.Assignment;
 
 import java.util.stream.Stream;
 
@@ -9,7 +9,6 @@ import java.util.stream.Stream;
  *
  * Implementation of {@code Validator} for validating {@code Assignment} instances
  */
-@Deprecated
 public class AssignmentValidator implements Validator<Assignment> {
 
     public AssignmentValidator() {

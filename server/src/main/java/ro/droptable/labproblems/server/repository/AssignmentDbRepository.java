@@ -1,9 +1,9 @@
-package ro.droptable.labproblems.repository;
+package ro.droptable.labproblems.server.repository;
 
-import ro.droptable.labproblems.domain.Student;
-import ro.droptable.labproblems.domain.validators.LabProblemsException;
-import ro.droptable.labproblems.domain.validators.Validator;
-import ro.droptable.labproblems.domain.validators.ValidatorException;
+import ro.droptable.labproblems.common.domain.Assignment;
+import ro.droptable.labproblems.common.domain.validators.LabProblemsException;
+import ro.droptable.labproblems.common.domain.validators.Validator;
+import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 
 import java.lang.reflect.Field;
 import java.sql.*;
@@ -16,20 +16,19 @@ import java.util.stream.StreamSupport;
 /**
  * Created by vlad on 07.03.2017.
  *
- * Implementation of {@code Repository} for CRUD operations on a repository for {@code Student}
+ * Implementation of {@code Repository} for CRUD operations on a repository for {@code Assignment}
  *      while maintaining database persistence
  */
-@Deprecated
-public class StudentDbRepository implements Repository<Long, Student> {
-    private Validator<Student> validator;
+public class AssignmentDbRepository implements Repository<Long, Assignment> {
+    private Validator<Assignment> validator;
     private String url;
     private String username;
     private String password;
 
-    public StudentDbRepository(Validator<Student> validator,
-                               String url,
-                               String username,
-                               String password) {
+    public AssignmentDbRepository(Validator<Assignment> validator,
+                                  String url,
+                                  String username,
+                                  String password) {
         this.validator = validator;
         this.url = url;
         this.username = username;
@@ -39,14 +38,14 @@ public class StudentDbRepository implements Repository<Long, Student> {
                 .map(s -> s.getId())
                 .max(Comparator.naturalOrder())
                 .ifPresent(o -> {
-                    Class studentClass;
+                    Class assignmentClass;
                     try {
-                        studentClass = Class.forName("ro.droptable.labproblems.domain.Student");
-                        Student studentInstance = (Student) studentClass.newInstance();
+                        assignmentClass = Class.forName("ro.droptable.labproblems.domain.Assignment");
+                        Assignment assignmentInstance = (Assignment) assignmentClass.newInstance();
 
-                        Field currentIdField = studentClass.getDeclaredField("currentId");
+                        Field currentIdField = assignmentClass.getDeclaredField("currentId");
                         currentIdField.setAccessible(true);
-                        currentIdField.set(studentInstance, o + 1);
+                        currentIdField.set(assignmentInstance, o + 1);
                         currentIdField.setAccessible(false);
                     } catch (ClassNotFoundException
                             | NoSuchFieldException
@@ -58,23 +57,26 @@ public class StudentDbRepository implements Repository<Long, Student> {
     }
 
     @Override
-    public Optional<Student> findOne(Long id) {
+    public Optional<Assignment> findOne(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("id must not be null");
         }
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement("SELECT * FROM students WHERE id=?"))
+             PreparedStatement statement = connection.prepareStatement("SELECT * FROM assignments WHERE id=?"))
         {
             statement.setLong(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    Long studentId = resultSet.getLong("id");
-                    String serialNumber = resultSet.getString("serial_number");
-                    String name = resultSet.getString("name");
-                    int group = resultSet.getInt("group");
+                    Long assignmentId = resultSet.getLong("id");
+                    Long studentId = resultSet.getLong("student_id");
+                    Long problemId = resultSet.getLong("problem_id");
+                    Double grade = resultSet.getDouble("grade");
 
-                    return Optional.of(new Student(studentId, serialNumber, name, group));
+                    Assignment assignment = new Assignment(assignmentId, studentId, problemId);
+                    assignment.setGrade(grade);
+
+                    return Optional.of(assignment);
                 }
             }
         } catch (SQLException e) {
@@ -84,30 +86,34 @@ public class StudentDbRepository implements Repository<Long, Student> {
     }
 
     @Override
-    public Iterable<Student> findAll() {
-        List<Student> students = new ArrayList<>();
+    public Iterable<Assignment> findAll() {
+        List<Assignment> assignments = new ArrayList<>();
+
         try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement("SELECT * FROM students"))
+             PreparedStatement statement = connection.prepareStatement("SELECT * FROM assignments"))
         {
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    Long studentId = resultSet.getLong("id");
-                    String serialNumber = resultSet.getString("serial_number");
-                    String name = resultSet.getString("name");
-                    int group = resultSet.getInt("group");
+                    Long assignmentId = resultSet.getLong("id");
+                    Long studentId = resultSet.getLong("student_id");
+                    Long problemId = resultSet.getLong("problem_id");
+                    Double grade = resultSet.getDouble("grade");
 
-                    students.add(new Student(studentId, serialNumber, name, group));
+                    Assignment assignment = new Assignment(assignmentId, studentId, problemId);
+                    assignment.setGrade(grade);
+
+                    assignments.add(assignment);
                 }
             }
         } catch (SQLException e) {
             throw new LabProblemsException(e);
         }
 
-        return students;
+        return assignments;
     }
 
     @Override
-    public Optional<Student> save(Student entity) throws ValidatorException {
+    public Optional<Assignment> save(Assignment entity) throws ValidatorException {
         if (entity == null) {
             throw new IllegalArgumentException("entity must not be null");
         }
@@ -116,13 +122,13 @@ public class StudentDbRepository implements Repository<Long, Student> {
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement statement = connection.prepareStatement(
-                     "INSERT INTO students (id, serial_number, name, \"group\") VALUES (?,?,?,?)"
+                     "INSERT INTO assignments (id, student_id, problem_id, grade) VALUES (?,?,?,?)"
              ))
         {
             statement.setLong(1, entity.getId());
-            statement.setString(2, entity.getSerialNumber());
-            statement.setString(3, entity.getName());
-            statement.setInt(4, entity.getGroup());
+            statement.setLong(2, entity.getStudentId());
+            statement.setLong(3, entity.getProblemId());
+            statement.setDouble(4, entity.getGrade());
 
             statement.executeUpdate();
 
@@ -134,31 +140,31 @@ public class StudentDbRepository implements Repository<Long, Student> {
     }
 
     @Override
-    public Optional<Student> delete(Long id) {
+    public Optional<Assignment> delete(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("id must not be null");
         }
 
-        Optional<Student> student = findOne(id); // .?
-        if (!student.isPresent()) {
+        Optional<Assignment> assignment = findOne(id); // .?
+        if (!assignment.isPresent()) {
             return Optional.empty();
         }
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement("DELETE FROM students WHERE id=?"))
+             PreparedStatement statement = connection.prepareStatement("DELETE FROM assignments WHERE id=?"))
         {
             statement.setLong(1, id);
 
             statement.executeUpdate();
 
-            return student;
+            return assignment;
         } catch (SQLException e) {
             throw new LabProblemsException(e);
         }
     }
 
     @Override
-    public Optional<Student> update(Student entity) throws ValidatorException {
+    public Optional<Assignment> update(Assignment entity) throws ValidatorException {
         if (entity == null) {
             throw new IllegalArgumentException("entity must not be null");
         }
@@ -167,12 +173,12 @@ public class StudentDbRepository implements Repository<Long, Student> {
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement statement = connection.prepareStatement(
-                     "UPDATE students SET serial_number=?, name=?, group=? WHERE id=?"
+                     "UPDATE assignments SET student_id=?, problem_id=?, grade=? WHERE id=?"
              ))
         {
-            statement.setString(1, entity.getSerialNumber());
-            statement.setString(2, entity.getName());
-            statement.setInt(3, entity.getGroup());
+            statement.setLong(1, entity.getStudentId());
+            statement.setLong(2, entity.getProblemId());
+            statement.setDouble(3, entity.getGrade());
             statement.setLong(4, entity.getId());
 
             statement.executeUpdate();
