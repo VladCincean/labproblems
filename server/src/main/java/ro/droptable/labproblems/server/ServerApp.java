@@ -133,6 +133,16 @@ public class ServerApp {
             }
             return new Message(Message.ERROR, "");
         });
+
+        tcpServer.addHandler(StudentService.FILTER_LARGEST_GROUP, (request) -> {
+            Future<String> result = studentService.filterLargestGroup();
+            try {
+                return new Message(Message.OK, result.get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            return new Message(Message.ERROR, "");
+        });
     }
 
     private static void addProblemTcpServerHandlers(ProblemService problemService, TcpServer tcpServer) {
