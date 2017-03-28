@@ -5,12 +5,10 @@ import ro.droptable.labproblems.common.domain.Student;
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 import ro.droptable.labproblems.server.repository.Repository;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
@@ -110,6 +108,22 @@ public class StudentServiceImpl implements StudentService {
                     .filter(s -> s.getName().contains(string))
                     .map(Student::toCsv)
                     .reduce("", (acc, it) -> acc + it + "\n");
+        });
+    }
+
+    private int getGroupSize(int group){
+        Iterable<Student> students = studentRepository.findAll();
+        return (int)StreamSupport.stream(students.spliterator(), false).filter(s->s.getGroup() == group).count();
+    }
+
+    public Future<String> filterLargestGroup(){
+        return executorService.submit(() -> {
+            Iterable<Student> students = studentRepository.findAll();
+            Optional<Integer> mxGroup = StreamSupport.stream(students.spliterator(), false).
+                    map(s -> getGroupSize(s.getGroup())).max(Comparator.naturalOrder());
+            Integer res = StreamSupport.stream(students.spliterator(), false).
+                    filter(s -> getGroupSize(s.getGroup()) == mxGroup.get()).findFirst().get().getGroup();
+            return res.toString();
         });
     }
 }

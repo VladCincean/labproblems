@@ -73,4 +73,13 @@ public class StudentServiceClient implements StudentService {
             return response.body();
         });
     }
+
+    @Override
+    public Future<String> filterLargestGroup() throws ValidatorException {
+        return executorService.submit(() -> {
+            Message request = new Message(StudentService.FILTER_LARGEST_GROUP, "");
+            Message response = tcpClient.sendAndREceive(request);
+            return response.body();
+        });
+    }
 }

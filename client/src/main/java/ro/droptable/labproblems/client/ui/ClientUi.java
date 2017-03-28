@@ -1,5 +1,7 @@
 package ro.droptable.labproblems.client.ui;
 
+import ro.droptable.labproblems.common.AssignmentService;
+import ro.droptable.labproblems.common.ProblemService;
 import ro.droptable.labproblems.common.StudentService;
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -7,6 +9,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -23,34 +26,38 @@ import java.util.concurrent.Future;
  */
 public class ClientUi {
     private StudentService studentService;
+    private ProblemService problemService;
+    private AssignmentService assignmentService;
     private final String menu = "\nAvailable commands:\n" +
             "------ Student CRUD ------\n" +
             "1 - READ a Student\n" +
             "2 - PRINT ALL Students\n" +
             "3 - DELETE a Student\n" +
             "4 - UPDATE a Student\n" +
-//            "------ Problem CRUD ------\n" +
-//            "5 - READ a Problem\n" +
-//            "6 - PRINT ALL Problems\n" +
-//            "7 - DELETE a Problem\n" +
-//            "8 - UPDATE a Problem\n" +
-//            "----- Assignment CRUD ----\n" +
-//            "9 - Assign a Problem to a Student\n" +
-//            "10 - PRINT ALL Assignments\n" +
-//            "11 - DELETE an Assignment\n" +
-//            "12 - UPDATE an Assignment\n" +
-//            "---------- Filter --------\n" +
-//            "13 - Filter Students by name\n" +
-//            "14 - Filter Problems by title\n" +
-//            "15 - Filter Assignments by grade\n" +
-//            "16 - Filter largest group\n" +
-//            "--------- Reports --------\n" +
+            "------ Problem CRUD ------\n" +
+            "5 - READ a Problem\n" +
+            "6 - PRINT ALL Problems\n" +
+            "7 - DELETE a Problem\n" +
+            "8 - UPDATE a Problem\n" +
+            "----- Assignment CRUD ----\n" +
+            "9 - Assign a Problem to a Student\n" +
+            "10 - PRINT ALL Assignments\n" +
+            "11 - DELETE an Assignment\n" +
+            "12 - UPDATE an Assignment\n" +
+            "---------- Filter --------\n" +
+            "13 - Filter Students by name\n" +
+            "14 - Filter Problems by title\n" +
+            "15 - Filter Assignments by grade\n" +
+            "16 - Filter largest group\n" +
+            "--------- Reports --------\n" +
 //            "17 - Report Student average grade\n" +
             "--------------------------\n" +
             "0 - EXIT\n";
 
-    public ClientUi(StudentService studentService) {
+    public ClientUi(StudentService studentService, ProblemService problemService, AssignmentService assignmentService) {
         this.studentService = studentService;
+        this.problemService = problemService;
+        this.assignmentService = assignmentService;
     }
 
     public void run() {
@@ -79,42 +86,42 @@ public class ClientUi {
             case 4:
                 updateStudent();
                 break;
-//            case 5:
-//                readProblem();
-//                break;
-//            case 6:
-//                printAllProblems();
-//                break;
-//            case 7:
-//                deleteProblem();
-//                break;
-//            case 8:
-//                updateProblem();
-//                break;
-//            case 9:
-//                assignProblemToStudent();
-//                break;
-//            case 10:
-//                printAllAssignments();
-//                break;
-//            case 11:
-//                deleteAssignment();
-//                break;
-//            case 12:
-//                updateAssignment();
-//                break;
-//            case 13:
-//                filterStudents();
-//                break;
-//            case 14:
-//                filterProblems();
-//                break;
-//            case 15:
-//                filterAssignments();
-//                break;
-//            case 16:
-//                filterLargestGroup();
-//                break;
+              case 5:
+                  readProblem();
+                  break;
+              case 6:
+                  printAllProblems();
+                  break;
+              case 7:
+                  deleteProblem();
+                  break;
+              case 8:
+                  updateProblem();
+                  break;
+              case 9:
+                  assignProblemToStudent();
+                  break;
+              case 10:
+                  printAllAssignments();
+                  break;
+              case 11:
+                  deleteAssignment();
+                  break;
+              case 12:
+                  updateAssignment();
+                  break;
+              case 13:
+                  filterStudents();
+                  break;
+              case 14:
+                  filterProblems();
+                  break;
+              case 15:
+                  filterAssignments();
+                  break;
+              case 16:
+                  filterLargestGroup();
+                  break;
 //            case 17:
 //                reportStudentAverageGrade();
 //                break;
@@ -248,4 +255,243 @@ public class ClientUi {
             e.printStackTrace(); // TODO: do something else
         }
     }
+
+    private void readProblem() {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+
+        try {
+            System.out.println("id = ");
+            Long id = null;
+            try {
+                id = Long.valueOf(bufferedReader.readLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. No valid id (Long) given.");
+                return;
+            }
+            
+            System.out.print("title = ");
+            String title = bufferedReader.readLine().trim();
+
+            System.out.print("description = ");
+            String description = bufferedReader.readLine().trim();
+
+            try {
+                problemService.addProblem(id.toString()+ title+","+description);
+            } catch (ValidatorException e) {
+                System.out.println("Input Problem is invalid");
+                System.err.println(e.toString());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace(); // TODO: do something else
+        }
+    }
+
+    private void updateProblem() {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+
+        try {
+            System.out.print("title = ");
+            String title = bufferedReader.readLine().trim();
+
+            System.out.print("description = ");
+            String description = bufferedReader.readLine().trim();
+
+            System.out.println("id = ");
+            Long id = Long.parseLong(bufferedReader.readLine().trim());
+
+            try {
+                problemService.updateProblem(title+","+description+","+id.toString());
+            } catch (ValidatorException e) {
+                System.out.println("Input Problem is invalid");
+                System.err.println(e.toString());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace(); // TODO: do something else
+        }
+    }
+    
+    private void printAllProblems() {
+        // maybe TODO: refa intr-un mod mai elegant
+        Future<String> problems = problemService.findAllProblems("");
+        try {
+            System.out.println(problems.get()); // TODO: non-blocking
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+    private void deleteProblem() {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+
+        try {
+            System.out.println("id = ");
+            Long id = Long.parseLong(bufferedReader.readLine().trim());
+
+            try {
+                problemService.deleteProblem(id.toString());
+            } catch (ValidatorException e) {
+                System.out.println("Input Problem is invalid");
+                System.err.println(e.toString());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace(); // TODO: do something else
+        }
+    }
+
+    private void assignProblemToStudent() {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+
+        try {
+            System.out.print("id = ");
+            Long id = Long.parseLong(bufferedReader.readLine().trim());
+
+            printAllStudents();
+            System.out.print("studentId = ");
+            Long studentId = Long.parseLong(bufferedReader.readLine().trim());
+
+            printAllProblems();
+            System.out.print("problemId = ");
+            Long problemId = Long.parseLong(bufferedReader.readLine().trim());
+
+            try {
+                assignmentService.addAssignment(id.toString()+","+studentId.toString()+","+problemId.toString());
+            } catch (ValidatorException e) {
+                System.out.println("Input Assignment is invalid");
+                System.err.println(e.toString());
+            } catch (NoSuchElementException e){
+                System.out.println("Input Assignment is invalid");
+                System.err.println(e.getMessage());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace(); // TODO: do something else
+        }
+    }
+
+    private void updateAssignment() {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+
+        try {
+            System.out.print("id = ");
+            long id = Long.parseLong(bufferedReader.readLine().trim());
+
+            printAllStudents();
+            System.out.print("studentId = ");
+            long assignmentId = Long.parseLong(bufferedReader.readLine().trim());
+
+            printAllProblems();
+            System.out.print("problemId = ");
+            long problemId = Long.parseLong(bufferedReader.readLine().trim());
+
+            System.out.print("grade = ");
+            Double grade;
+            try {
+                grade = Double.valueOf(bufferedReader.readLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. No valid integer given.");
+                return;
+            }
+
+            try {
+                assignmentService.updateAssignment(id +","+ assignmentId+","+problemId+","+grade);
+            } catch (ValidatorException | NoSuchElementException e) {
+                System.out.println("Input Assignment is invalid");
+                System.err.println(e.toString());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace(); // TODO: do something else
+        }
+    }
+
+    private void deleteAssignment() {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+
+        try {
+            System.out.print("id = ");
+            Long id = Long.parseLong(bufferedReader.readLine().trim());
+            try {
+                assignmentService.deleteAssignment(id.toString());
+            } catch (ValidatorException e) {
+                System.out.println("Input Assignment is invalid");
+                System.err.println(e.toString());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace(); // TODO: do something else
+        }
+    }
+
+    private void printAllAssignments() {
+        // maybe TODO: refa intr-un mod mai elegant
+        Future<String> assignments = assignmentService.findAllAssignments("");
+        try {
+            System.out.println(assignments.get()); // TODO: non-blocking
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void filterStudents(){
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+
+        try {
+            System.out.print("string = ");
+            String cont = bufferedReader.readLine().trim();
+            System.out.println(studentService.filterStudentsByName(cont).get());
+
+        } catch (IOException e) {
+            e.printStackTrace(); // TODO: do something else
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void filterProblems(){
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+
+        try {
+            System.out.print("string = ");
+            String cont = bufferedReader.readLine().trim();
+            System.out.println(problemService.filterProblemsByTitle(cont).get());
+
+        } catch (IOException e) {
+            e.printStackTrace(); // TODO: do something else
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void filterAssignments(){
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        System.out.print("grade = ");
+        Double grade;
+        try {
+            grade = Double.valueOf(bufferedReader.readLine().trim());
+        } catch (NumberFormatException | IOException e) {
+            System.out.println("Invalid input. No valid integer given.");
+            return;
+        }
+        System.out.println(assignmentService.filterAssignmentsByGrade(grade.toString()));
+    }
+
+    private void filterLargestGroup(){
+        try {
+            System.out.println(studentService.filterLargestGroup().get());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //private void reportStudentAverageGrade(){
+    //    System.out.println(generalService.reportStudentAverage());
+    //}
 }

@@ -166,7 +166,7 @@ public class StudentDbRepository implements Repository<Long, Student> {
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement statement = connection.prepareStatement(
-                     "UPDATE students SET serial_number=?, name=?, group=? WHERE id=?"
+                     "UPDATE students SET serial_number=?, name=?, \"group\"=? WHERE id=?"
              ))
         {
             statement.setString(1, entity.getSerialNumber());

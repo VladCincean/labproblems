@@ -1,11 +1,21 @@
 package ro.droptable.labproblems.server;
 
+import ro.droptable.labproblems.common.AssignmentService;
 import ro.droptable.labproblems.common.Message;
+import ro.droptable.labproblems.common.ProblemService;
 import ro.droptable.labproblems.common.StudentService;
+import ro.droptable.labproblems.common.domain.Assignment;
+import ro.droptable.labproblems.common.domain.Problem;
 import ro.droptable.labproblems.common.domain.Student;
+import ro.droptable.labproblems.common.domain.validators.AssignmentValidator;
+import ro.droptable.labproblems.common.domain.validators.ProblemValidator;
 import ro.droptable.labproblems.common.domain.validators.StudentValidator;
+import ro.droptable.labproblems.server.repository.AssignmentDbRepository;
+import ro.droptable.labproblems.server.repository.ProblemDbRepository;
 import ro.droptable.labproblems.server.repository.Repository;
 import ro.droptable.labproblems.server.repository.StudentDbRepository;
+import ro.droptable.labproblems.server.service.AssignmentServiceImpl;
+import ro.droptable.labproblems.server.service.ProblemServiceImpl;
 import ro.droptable.labproblems.server.service.StudentServiceImpl;
 import ro.droptable.labproblems.server.tcp.TcpServer;
 
@@ -35,14 +45,35 @@ public class ServerApp {
         );
 
         StudentService studentService = new StudentServiceImpl(executorService, studentRepository);
+
+        Repository<Long, Problem> problemRepository = new ProblemDbRepository(
+                new ProblemValidator(),
+                url,
+                username,
+                password
+        );
+
+        ProblemService problemService = new ProblemServiceImpl(executorService, problemRepository);
+
+        Repository<Long, Assignment> assignmentRepository = new AssignmentDbRepository(
+                new AssignmentValidator(),
+                url,
+                username,
+                password
+        );
+
+        AssignmentService assignmentService = new AssignmentServiceImpl(executorService, assignmentRepository);
+        
         TcpServer tcpServer = new TcpServer(executorService, StudentService.SERVICE_HOST, StudentService.SERVICE_PORT);
 
-        addTcpServerHandlers(studentService, tcpServer);
+        addStudentTcpServerHandlers(studentService, tcpServer);
+        addProblemTcpServerHandlers(problemService, tcpServer);
+        addAssignmentTcpServerHandlers(assignmentService, tcpServer);
 
         tcpServer.startServer();
     }
 
-    private static void addTcpServerHandlers(StudentService studentService, TcpServer tcpServer) {
+    private static void addStudentTcpServerHandlers(StudentService studentService, TcpServer tcpServer) {
         tcpServer.addHandler(StudentService.ADD_STUDENT, (request) -> {
             Future<String> result = studentService.addStudent(request.body());
             try {
@@ -104,4 +135,127 @@ public class ServerApp {
         });
     }
 
+    private static void addProblemTcpServerHandlers(ProblemService problemService, TcpServer tcpServer) {
+        tcpServer.addHandler(ProblemService.ADD_PROBLEM, (request) -> {
+            Future<String> result = problemService.addProblem(request.body());
+            try {
+                return new Message(Message.OK, result.get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            return new Message(Message.ERROR, "");
+        });
+
+        tcpServer.addHandler(ProblemService.DELETE_PROBLEM, (request) -> {
+            Future<String> result = problemService.deleteProblem(request.body());
+            try {
+                return new Message(Message.OK, result.get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            return new Message(Message.ERROR, "");
+        });
+
+        tcpServer.addHandler(ProblemService.UPDATE_PROBLEM, (request) -> {
+            Future<String> result = problemService.updateProblem(request.body());
+            try {
+                return new Message(Message.OK, result.get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            return new Message(Message.ERROR, "");
+        });
+
+        tcpServer.addHandler(ProblemService.FIND_ONE_PROBLEM, (request) -> {
+            Future<String> result = problemService.findOneProblem(request.body());
+            try {
+                return new Message(Message.OK, result.get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            return new Message(Message.ERROR, "");
+        });
+
+        tcpServer.addHandler(ProblemService.FIND_ALL_PROBLEMS, (request) -> {
+            Future<String> result = problemService.findAllProblems(request.body());
+            try {
+                return new Message(Message.OK, result.get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            return new Message(Message.ERROR, "");
+        });
+
+        tcpServer.addHandler(ProblemService.FILTER_PROBLEMS_BY_TITLE, (request) -> {
+            Future<String> result = problemService.filterProblemsByTitle(request.body());
+            try {
+                return new Message(Message.OK, result.get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            return new Message(Message.ERROR, "");
+        });
+    }
+
+    private static void addAssignmentTcpServerHandlers(AssignmentService assignmentService, TcpServer tcpServer) {
+        tcpServer.addHandler(AssignmentService.ADD_ASSIGNMENT, (request) -> {
+            Future<String> result = assignmentService.addAssignment(request.body());
+            try {
+                return new Message(Message.OK, result.get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            return new Message(Message.ERROR, "");
+        });
+
+        tcpServer.addHandler(AssignmentService.DELETE_ASSIGNMENT, (request) -> {
+            Future<String> result = assignmentService.deleteAssignment(request.body());
+            try {
+                return new Message(Message.OK, result.get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            return new Message(Message.ERROR, "");
+        });
+
+        tcpServer.addHandler(AssignmentService.UPDATE_ASSIGNMENT, (request) -> {
+            Future<String> result = assignmentService.updateAssignment(request.body());
+            try {
+                return new Message(Message.OK, result.get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            return new Message(Message.ERROR, "");
+        });
+
+        tcpServer.addHandler(AssignmentService.FIND_ONE_ASSIGNMENT, (request) -> {
+            Future<String> result = assignmentService.findOneAssignment(request.body());
+            try {
+                return new Message(Message.OK, result.get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            return new Message(Message.ERROR, "");
+        });
+
+        tcpServer.addHandler(AssignmentService.FIND_ALL_ASSIGNMENTS, (request) -> {
+            Future<String> result = assignmentService.findAllAssignments(request.body());
+            try {
+                return new Message(Message.OK, result.get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            return new Message(Message.ERROR, "");
+        });
+
+        tcpServer.addHandler(AssignmentService.FILTER_ASSIGNMENTS_BY_GRADE, (request) -> {
+            Future<String> result = assignmentService.filterAssignmentsByGrade(request.body());
+            try {
+                return new Message(Message.OK, result.get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            return new Message(Message.ERROR, "");
+        });
+    }
 }

@@ -17,6 +17,7 @@ public interface StudentService {
     String FIND_ONE_STUDENT = "findOneStudent";
     String FIND_ALL_STUDENTS = "findAllStudents";
     String FILTER_STUDENTS_BY_NAME = "filterStudentsByName";
+    String FILTER_LARGEST_GROUP = "filterLargestGroup";
 
     Future<String> addStudent(String string) throws ValidatorException;
 
@@ -29,4 +30,6 @@ public interface StudentService {
     Future<String> findAllStudents(String string);
 
     Future<String> filterStudentsByName(String string);
+
+    Future<String> filterLargestGroup();
 }
