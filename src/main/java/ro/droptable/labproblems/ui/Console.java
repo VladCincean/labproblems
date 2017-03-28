@@ -401,6 +401,7 @@ public class Console {
     private void reportStudentAverageGrade(){
         System.out.println(generalService.reportStudentAverage());
     }
+
     private void printAllStudents() {
         generalService.findAllStudents().forEach(System.out::println);
     }

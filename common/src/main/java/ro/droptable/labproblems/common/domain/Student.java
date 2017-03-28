@@ -84,4 +84,8 @@ public class Student extends BaseEntity<Long> {
                 ", group=" + group +
                 '}' + super.toString();
     }
+
+    public String toCsv() {
+        return getId() + "," + serialNumber + "," + name + "," + group;
+    }
 }

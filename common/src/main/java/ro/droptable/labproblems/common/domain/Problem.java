@@ -70,4 +70,8 @@ public class Problem extends BaseEntity<Long> {
                 ", description='" + description + '\'' +
                 "} " + super.toString();
     }
+
+    public String toCsv() {
+        return getId() + "," + title + "," + description;
+    }
 }

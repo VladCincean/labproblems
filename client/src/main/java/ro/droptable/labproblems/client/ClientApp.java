@@ -1,5 +1,10 @@
 package ro.droptable.labproblems.client;
 
+import ro.droptable.labproblems.client.service.StudentServiceClient;
+import ro.droptable.labproblems.client.tcp.TcpClient;
+import ro.droptable.labproblems.client.ui.ClientUi;
+import ro.droptable.labproblems.common.StudentService;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -11,7 +16,10 @@ public class ClientApp {
         ExecutorService executorService = Executors.newFixedThreadPool(
                 Runtime.getRuntime().availableProcessors()
         );
-        // TODO: the rest
+        TcpClient tcpClient = new TcpClient(StudentService.SERVICE_HOST, StudentService.SERVICE_PORT);
+        StudentService studentService = new StudentServiceClient(executorService, tcpClient);
+        ClientUi clientUi = new ClientUi(studentService);
+        clientUi.run();
         executorService.shutdownNow();
     }
 }

@@ -83,4 +83,8 @@ public class Assignment extends BaseEntity<Long> {
                 ", grade=" + grade +
                 '}' + super.toString();
     }
+
+    public String toCsv() {
+        return getId() + "," + studentId + "," + problemId + "," + grade;
+    }
 }
