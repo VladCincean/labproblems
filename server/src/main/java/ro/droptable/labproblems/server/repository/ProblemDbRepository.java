@@ -141,11 +141,18 @@ public class ProblemDbRepository implements Repository<Long, Problem> {
         }
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement("DELETE FROM problems WHERE id=?"))
+             PreparedStatement deleteProblemStatement = connection.prepareStatement(
+                     "DELETE FROM problems WHERE id=?"
+             );
+             PreparedStatement deleteAssignmentsStatement = connection.prepareStatement(
+                     "DELETE FROM assignments WHERE problem_id=?"
+             ))
         {
-            statement.setLong(1, id);
+            deleteProblemStatement.setLong(1, id);
+            deleteAssignmentsStatement.setLong(1, id);
 
-            statement.executeUpdate();
+            deleteAssignmentsStatement.executeUpdate();
+            deleteProblemStatement.executeUpdate();
 
             return problem;
         } catch (SQLException e) {
@@ -153,6 +160,7 @@ public class ProblemDbRepository implements Repository<Long, Problem> {
         }
     }
 
+    @SuppressWarnings("Duplicates")
     @Override
     public Optional<Problem> update(Problem entity) throws ValidatorException {
         if (entity == null) {

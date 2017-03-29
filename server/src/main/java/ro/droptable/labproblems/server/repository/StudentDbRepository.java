@@ -130,6 +130,7 @@ public class StudentDbRepository implements Repository<Long, Student> {
         }
     }
 
+    @SuppressWarnings("Duplicates")
     @Override
     public Optional<Student> delete(Long id) {
         if (id == null) {
@@ -142,11 +143,18 @@ public class StudentDbRepository implements Repository<Long, Student> {
         }
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement("DELETE FROM students WHERE id=?"))
+             PreparedStatement deleteStudentStatement = connection.prepareStatement(
+                     "DELETE FROM students WHERE id=?"
+             );
+             PreparedStatement deleteAssignmentsStatement = connection.prepareStatement(
+                     "DELETE FROM assignments where student_id=?"
+             ))
         {
-            statement.setLong(1, id);
+            deleteStudentStatement.setLong(1, id);
+            deleteAssignmentsStatement.setLong(1, id);
 
-            statement.executeUpdate();
+            deleteAssignmentsStatement.executeUpdate();
+            deleteStudentStatement.executeUpdate();
 
             return student;
         } catch (SQLException e) {
