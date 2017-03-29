@@ -5,8 +5,8 @@ import ro.droptable.labproblems.common.Message;
 import ro.droptable.labproblems.common.StudentService;
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 /**
  * Created by vlad on 28.03.2017.
@@ -21,74 +21,74 @@ public class StudentServiceClient implements StudentService {
     }
 
     @Override
-    public Future<String> addStudent(String string) throws ValidatorException {
-        return executorService.submit(() -> {
+    public CompletableFuture<String> addStudent(String string) throws ValidatorException {
+        return CompletableFuture.supplyAsync(() -> {
             Message request = new Message(StudentService.ADD_STUDENT, string);
-            Message response = tcpClient.sendAndREceive(request);
+            Message response = tcpClient.sendAndReceive(request);
             return response.body();
-        });
+        }, executorService);
     }
 
     @Override
-    public Future<String> deleteStudent(String string) throws ValidatorException {
-        return executorService.submit(() -> {
+    public CompletableFuture<String> deleteStudent(String string) throws ValidatorException {
+        return CompletableFuture.supplyAsync(() -> {
             Message request = new Message(StudentService.DELETE_STUDENT, string);
-            Message response = tcpClient.sendAndREceive(request);
+            Message response = tcpClient.sendAndReceive(request);
             return response.body();
-        });
+        }, executorService);
     }
 
     @Override
-    public Future<String> updateStudent(String string) throws ValidatorException {
-        return executorService.submit(() -> {
+    public CompletableFuture<String> updateStudent(String string) throws ValidatorException {
+        return CompletableFuture.supplyAsync(() -> {
             Message request = new Message(StudentService.UPDATE_STUDENT, string);
-            Message response = tcpClient.sendAndREceive(request);
+            Message response = tcpClient.sendAndReceive(request);
             return response.body();
-        });
+        }, executorService);
     }
 
     @Override
-    public Future<String> findOneStudent(String string) throws ValidatorException {
-        return executorService.submit(() -> {
+    public CompletableFuture<String> findOneStudent(String string) throws ValidatorException {
+        return CompletableFuture.supplyAsync(() -> {
             Message request = new Message(StudentService.FIND_ONE_STUDENT, string);
-            Message response = tcpClient.sendAndREceive(request);
+            Message response = tcpClient.sendAndReceive(request);
             return response.body();
-        });
+        }, executorService);
     }
 
     @Override
-    public Future<String> findAllStudents(String string) throws ValidatorException {
-        return executorService.submit(() -> {
+    public CompletableFuture<String> findAllStudents(String string) throws ValidatorException {
+        return CompletableFuture.supplyAsync(() -> {
             Message request = new Message(StudentService.FIND_ALL_STUDENTS, string);
-            Message response = tcpClient.sendAndREceive(request);
+            Message response = tcpClient.sendAndReceive(request);
             return response.body();
-        });
+        }, executorService);
     }
 
     @Override
-    public Future<String> filterStudentsByName(String string) throws ValidatorException {
-        return executorService.submit(() -> {
+    public CompletableFuture<String> filterStudentsByName(String string) throws ValidatorException {
+        return CompletableFuture.supplyAsync(() -> {
             Message request = new Message(StudentService.FILTER_STUDENTS_BY_NAME, string);
-            Message response = tcpClient.sendAndREceive(request);
+            Message response = tcpClient.sendAndReceive(request);
             return response.body();
-        });
+        }, executorService);
     }
 
     @Override
-    public Future<String> filterLargestGroup() throws ValidatorException {
-        return executorService.submit(() -> {
+    public CompletableFuture<String> filterLargestGroup() throws ValidatorException {
+        return CompletableFuture.supplyAsync(() -> {
             Message request = new Message(StudentService.FILTER_LARGEST_GROUP, "");
-            Message response = tcpClient.sendAndREceive(request);
+            Message response = tcpClient.sendAndReceive(request);
             return response.body();
-        });
+        }, executorService);
     }
 
     @Override
-    public Future<String> reportStudentAverage() throws ValidatorException {
-        return executorService.submit(() -> {
+    public CompletableFuture<String> reportStudentAverage() throws ValidatorException {
+        return CompletableFuture.supplyAsync(() -> {
             Message request = new Message(StudentService.REPORT_STUDENT_AVERAGE, "");
-            Message response = tcpClient.sendAndREceive(request);
+            Message response = tcpClient.sendAndReceive(request);
             return response.body();
-        });
+        }, executorService);
     }
 }

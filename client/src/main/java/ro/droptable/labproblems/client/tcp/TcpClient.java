@@ -25,7 +25,7 @@ public class TcpClient {
      *            must not be null - request containing a method and its parameter (csv)
      * @return a {@code Message} - "OK" if the operation was successful, "ERROR" and the error message otherwise
      */
-    public Message sendAndREceive(Message request) {
+    public Message sendAndReceive(Message request) {
         OutputStream outputStream = null;
         System.out.println("Connecting to service...");
         try (Socket socket = new Socket(serviceHost, servicePort)) {

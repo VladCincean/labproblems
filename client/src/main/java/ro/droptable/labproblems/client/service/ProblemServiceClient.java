@@ -5,6 +5,7 @@ import ro.droptable.labproblems.common.Message;
 import ro.droptable.labproblems.common.ProblemService;
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -21,56 +22,56 @@ public class ProblemServiceClient implements ProblemService {
     }
 
     @Override
-    public Future<String> addProblem(String string) throws ValidatorException {
-        return executorService.submit(() -> {
+    public CompletableFuture<String> addProblem(String string) throws ValidatorException {
+        return CompletableFuture.supplyAsync(() -> {
             Message request = new Message(ProblemService.ADD_PROBLEM, string);
-            Message response = tcpClient.sendAndREceive(request);
+            Message response = tcpClient.sendAndReceive(request);
             return response.body();
-        });
+        }, executorService);
     }
 
     @Override
-    public Future<String> deleteProblem(String string) throws ValidatorException {
-        return executorService.submit(() -> {
+    public CompletableFuture<String> deleteProblem(String string) throws ValidatorException {
+        return CompletableFuture.supplyAsync(() -> {
             Message request = new Message(ProblemService.DELETE_PROBLEM, string);
-            Message response = tcpClient.sendAndREceive(request);
+            Message response = tcpClient.sendAndReceive(request);
             return response.body();
-        });
+        }, executorService);
     }
 
     @Override
-    public Future<String> updateProblem(String string) throws ValidatorException {
-        return executorService.submit(() -> {
+    public CompletableFuture<String> updateProblem(String string) throws ValidatorException {
+        return CompletableFuture.supplyAsync(() -> {
             Message request = new Message(ProblemService.UPDATE_PROBLEM, string);
-            Message response = tcpClient.sendAndREceive(request);
+            Message response = tcpClient.sendAndReceive(request);
             return response.body();
-        });
+        }, executorService);
     }
 
     @Override
-    public Future<String> findOneProblem(String string) throws ValidatorException {
-        return executorService.submit(() -> {
+    public CompletableFuture<String> findOneProblem(String string) throws ValidatorException {
+        return CompletableFuture.supplyAsync(() -> {
             Message request = new Message(ProblemService.FIND_ONE_PROBLEM, string);
-            Message response = tcpClient.sendAndREceive(request);
+            Message response = tcpClient.sendAndReceive(request);
             return response.body();
-        });
+        }, executorService);
     }
 
     @Override
-    public Future<String> findAllProblems(String string) throws ValidatorException {
-        return executorService.submit(() -> {
+    public CompletableFuture<String> findAllProblems(String string) throws ValidatorException {
+        return CompletableFuture.supplyAsync(() -> {
             Message request = new Message(ProblemService.FIND_ALL_PROBLEMS, string);
-            Message response = tcpClient.sendAndREceive(request);
+            Message response = tcpClient.sendAndReceive(request);
             return response.body();
-        });
+        }, executorService);
     }
 
     @Override
-    public Future<String> filterProblemsByTitle(String string) throws ValidatorException {
-        return executorService.submit(() -> {
+    public CompletableFuture<String> filterProblemsByTitle(String string) throws ValidatorException {
+        return CompletableFuture.supplyAsync(() -> {
             Message request = new Message(ProblemService.FILTER_PROBLEMS_BY_TITLE, string);
-            Message response = tcpClient.sendAndREceive(request);
+            Message response = tcpClient.sendAndReceive(request);
             return response.body();
-        });
+        }, executorService);
     }
 }

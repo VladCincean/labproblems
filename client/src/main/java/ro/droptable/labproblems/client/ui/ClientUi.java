@@ -1,8 +1,8 @@
 package ro.droptable.labproblems.client.ui;
 
-import ro.droptable.labproblems.common.AssignmentService;
-import ro.droptable.labproblems.common.ProblemService;
-import ro.droptable.labproblems.common.StudentService;
+import ro.droptable.labproblems.client.service.AssignmentServiceClient;
+import ro.droptable.labproblems.client.service.ProblemServiceClient;
+import ro.droptable.labproblems.client.service.StudentServiceClient;
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 
 import java.io.BufferedReader;
@@ -10,8 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Created by vlad on 27.03.2017.
@@ -24,9 +23,9 @@ import java.util.concurrent.Future;
  *      - generating reports
  */
 public class ClientUi {
-    private StudentService studentService;
-    private ProblemService problemService;
-    private AssignmentService assignmentService;
+    private StudentServiceClient studentService;
+    private ProblemServiceClient problemService;
+    private AssignmentServiceClient assignmentService;
     private final String menu = "\nAvailable commands:\n" +
             "------ Student CRUD ------\n" +
             "1 - READ a Student\n" +
@@ -53,7 +52,11 @@ public class ClientUi {
             "--------------------------\n" +
             "0 - EXIT\n";
 
-    public ClientUi(StudentService studentService, ProblemService problemService, AssignmentService assignmentService) {
+    public ClientUi(
+            StudentServiceClient studentService,
+            ProblemServiceClient problemService,
+            AssignmentServiceClient assignmentService
+    ) {
         this.studentService = studentService;
         this.problemService = problemService;
         this.assignmentService = assignmentService;
@@ -138,7 +141,7 @@ public class ClientUi {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 
         try {
-            System.out.println("id  = ");
+            System.out.print("id  = ");
             Long id = null;
             try {
                 id = Long.valueOf(bufferedReader.readLine().trim());
@@ -179,19 +182,22 @@ public class ClientUi {
 
     private void printAllStudents() {
         // maybe TODO: refa intr-un mod mai elegant
-        Future<String> students = studentService.findAllStudents("");
-        try {
-            System.out.println(students.get()); // TODO: non-blocking
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+        CompletableFuture<String> students = studentService.findAllStudents("");
+
+        students.thenAccept(System.out::println);
+
+//        try {
+//            System.out.println(students.get()); // TODO: non-blocking
+//        } catch (InterruptedException | ExecutionException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private void deleteStudent() {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 
         try {
-            System.out.println("id = ");
+            System.out.print("id = ");
             Long id = null;
             try {
                 id = Long.valueOf(bufferedReader.readLine().trim());
@@ -215,7 +221,7 @@ public class ClientUi {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 
         try {
-            System.out.println("id = ");
+            System.out.print("id = ");
             Long id = null;
             try {
                 id = Long.valueOf(bufferedReader.readLine().trim());
@@ -259,7 +265,7 @@ public class ClientUi {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 
         try {
-            System.out.println("id = ");
+            System.out.print("id = ");
             Long id = null;
             try {
                 id = Long.valueOf(bufferedReader.readLine().trim());
@@ -296,7 +302,7 @@ public class ClientUi {
             System.out.print("description = ");
             String description = bufferedReader.readLine().trim();
 
-            System.out.println("id = ");
+            System.out.print("id = ");
             Long id = Long.parseLong(bufferedReader.readLine().trim());
 
             try {
@@ -312,19 +318,20 @@ public class ClientUi {
     }
     
     private void printAllProblems() {
-        // maybe TODO: refa intr-un mod mai elegant
-        Future<String> problems = problemService.findAllProblems("");
-        try {
-            System.out.println(problems.get()); // TODO: non-blocking
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+        CompletableFuture<String> problems = problemService.findAllProblems("");
+        problems.thenAccept(System.out::println);
+
+//        try {
+//            System.out.println(problems.get()); // TODO: non-blocking
+//        } catch (InterruptedException | ExecutionException e) {
+//            e.printStackTrace();
+//        }
     }
     private void deleteProblem() {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 
         try {
-            System.out.println("id = ");
+            System.out.print("id = ");
             Long id = Long.parseLong(bufferedReader.readLine().trim());
 
             try {
@@ -424,13 +431,14 @@ public class ClientUi {
     }
 
     private void printAllAssignments() {
-        // maybe TODO: refa intr-un mod mai elegant
-        Future<String> assignments = assignmentService.findAllAssignments("");
-        try {
-            System.out.println(assignments.get()); // TODO: non-blocking
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+        CompletableFuture<String> assignments = assignmentService.findAllAssignments("");
+        assignments.thenAccept(System.out::println);
+
+//        try {
+//            System.out.println(assignments.get()); // TODO: non-blocking
+//        } catch (InterruptedException | ExecutionException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private void filterStudents(){
@@ -439,15 +447,19 @@ public class ClientUi {
         try {
             System.out.print("string = ");
             String cont = bufferedReader.readLine().trim();
-            System.out.println(studentService.filterStudentsByName(cont).get());
+            studentService.filterStudentsByName(cont)
+                    .thenAccept(System.out::println);
+
+//            System.out.println(studentService.filterStudentsByName(cont).get());
 
         } catch (IOException e) {
             e.printStackTrace(); // TODO: do something else
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
         }
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private void filterProblems(){
@@ -456,15 +468,19 @@ public class ClientUi {
         try {
             System.out.print("string = ");
             String cont = bufferedReader.readLine().trim();
-            System.out.println(problemService.filterProblemsByTitle(cont).get());
+            problemService.filterProblemsByTitle(cont)
+                    .thenAccept(System.out::println);
+
+//            System.out.println(problemService.filterProblemsByTitle(cont).get());
 
         } catch (IOException e) {
             e.printStackTrace(); // TODO: do something else
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
         }
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private void filterAssignments(){
@@ -477,26 +493,34 @@ public class ClientUi {
             System.out.println("Invalid input. No valid integer given.");
             return;
         }
-        System.out.println(assignmentService.filterAssignmentsByGrade(grade.toString()));
+        assignmentService.filterAssignmentsByGrade(grade.toString())
+                .thenAccept(System.out::println);
+//        System.out.println(assignmentService.filterAssignmentsByGrade(grade.toString()));
     }
 
     private void filterLargestGroup(){
-        try {
-            System.out.println(studentService.filterLargestGroup().get());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+        studentService.filterLargestGroup()
+                .thenAccept(System.out::println);
+
+//        try {
+//            System.out.println(studentService.filterLargestGroup().get());
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private void reportStudentAverageGrade(){
-        try {
-            System.out.println(studentService.reportStudentAverage().get());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+        studentService.reportStudentAverage()
+                .thenAccept(System.out::println);
+
+//        try {
+//            System.out.println(studentService.reportStudentAverage().get());
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        }
     }
 }

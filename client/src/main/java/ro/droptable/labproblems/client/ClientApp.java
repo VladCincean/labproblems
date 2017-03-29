@@ -21,9 +21,9 @@ public class ClientApp {
                 Runtime.getRuntime().availableProcessors()
         );
         TcpClient tcpClient = new TcpClient(StudentService.SERVICE_HOST, StudentService.SERVICE_PORT);
-        StudentService studentService = new StudentServiceClient(executorService, tcpClient);
-        ProblemService problemService = new ProblemServiceClient(executorService, tcpClient);
-        AssignmentService assignmentService = new AssignmentServiceClient(executorService, tcpClient);
+        StudentServiceClient studentService = new StudentServiceClient(executorService, tcpClient);
+        ProblemServiceClient problemService = new ProblemServiceClient(executorService, tcpClient);
+        AssignmentServiceClient assignmentService = new AssignmentServiceClient(executorService, tcpClient);
         ClientUi clientUi = new ClientUi(studentService, problemService, assignmentService);
         clientUi.run();
         executorService.shutdownNow();
