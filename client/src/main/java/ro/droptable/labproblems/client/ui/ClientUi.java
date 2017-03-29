@@ -4,7 +4,6 @@ import ro.droptable.labproblems.common.AssignmentService;
 import ro.droptable.labproblems.common.ProblemService;
 import ro.droptable.labproblems.common.StudentService;
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -86,45 +85,45 @@ public class ClientUi {
             case 4:
                 updateStudent();
                 break;
-              case 5:
-                  readProblem();
-                  break;
-              case 6:
-                  printAllProblems();
-                  break;
-              case 7:
-                  deleteProblem();
-                  break;
-              case 8:
-                  updateProblem();
-                  break;
-              case 9:
-                  assignProblemToStudent();
-                  break;
-              case 10:
-                  printAllAssignments();
-                  break;
-              case 11:
-                  deleteAssignment();
-                  break;
-              case 12:
-                  updateAssignment();
-                  break;
-              case 13:
-                  filterStudents();
-                  break;
-              case 14:
-                  filterProblems();
-                  break;
-              case 15:
-                  filterAssignments();
-                  break;
-              case 16:
-                  filterLargestGroup();
-                  break;
-             case 17:
-                 reportStudentAverageGrade();
-                 break;
+            case 5:
+                readProblem();
+                break;
+            case 6:
+                printAllProblems();
+                break;
+            case 7:
+                deleteProblem();
+                break;
+            case 8:
+                updateProblem();
+                break;
+            case 9:
+                assignProblemToStudent();
+                break;
+            case 10:
+                printAllAssignments();
+                break;
+            case 11:
+                deleteAssignment();
+                break;
+            case 12:
+                updateAssignment();
+                break;
+            case 13:
+                filterStudents();
+                break;
+            case 14:
+                filterProblems();
+                break;
+            case 15:
+                filterAssignments();
+                break;
+            case 16:
+                filterLargestGroup();
+                break;
+            case 17:
+                reportStudentAverageGrade();
+                break;
             case 0:
                 System.out.println("Bye!");
                 System.exit(0);
