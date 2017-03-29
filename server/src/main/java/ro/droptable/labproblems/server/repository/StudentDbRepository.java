@@ -1,5 +1,6 @@
 package ro.droptable.labproblems.server.repository;
 
+import ro.droptable.labproblems.common.domain.Assignment;
 import ro.droptable.labproblems.common.domain.Student;
 import ro.droptable.labproblems.common.domain.validators.LabProblemsException;
 import ro.droptable.labproblems.common.domain.validators.Validator;
@@ -7,10 +8,7 @@ import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 
 import java.lang.reflect.Field;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.StreamSupport;
 
 /**
@@ -181,5 +179,48 @@ public class StudentDbRepository implements Repository<Long, Student> {
             e.printStackTrace(); // TODO: ... (log exception)
             return Optional.of(entity);
         }
+    }
+
+    private Iterable<Assignment> getAllAssignments(){
+        List<Assignment> assignments = new ArrayList<>();
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement("SELECT * FROM assignments"))
+        {
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Long assignmentId = resultSet.getLong("id");
+                    Long studentId = resultSet.getLong("student_id");
+                    Long problemId = resultSet.getLong("problem_id");
+                    Double grade = resultSet.getDouble("grade");
+
+                    Assignment assignment = new Assignment(assignmentId, studentId, problemId);
+                    assignment.setGrade(grade);
+
+                    assignments.add(assignment);
+                }
+            }
+        } catch (SQLException e) {
+            throw new LabProblemsException(e);
+        }
+
+        return assignments;
+    }
+    public Map<Student, Double> reportStudentAverage(){
+        HashMap<Student, Double> mp = new HashMap<>();
+        HashMap<Student, Double> nop = new HashMap<>();
+        Iterable<Student> students = findAll();
+        students.forEach(s -> {mp.put(s, 0.0); nop.put(s, 0.0);});
+        Iterable<Assignment> assignments = getAllAssignments();
+        System.out.println(assignments);
+        assignments.forEach(assignment -> {
+            System.out.println(assignment.toString() + " "+  mp.get(findOne(assignment.getStudentId()).get()) + " " + assignment.getGrade());
+            System.out.println(assignment.toString() + " "+  nop.get(findOne(assignment.getStudentId()).get()));
+            mp.put(findOne(assignment.getStudentId()).get(), mp.get(findOne(assignment.getStudentId()).get()) + assignment.getGrade());
+            nop.put(findOne(assignment.getStudentId()).get(), nop.get(findOne(assignment.getStudentId()).get()) + 1.0);
+        });
+
+        students.forEach(s -> mp.put(s, mp.get(s)/nop.get(s)));
+        return mp;
     }
 }

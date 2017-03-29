@@ -143,6 +143,16 @@ public class ServerApp {
             }
             return new Message(Message.ERROR, "");
         });
+
+        tcpServer.addHandler(StudentService.REPORT_STUDENT_AVERAGE, (request) -> {
+            Future<String> result = studentService.reportStudentAverage();
+            try {
+                return new Message(Message.OK, result.get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            return new Message(Message.ERROR, "");
+        });
     }
 
     private static void addProblemTcpServerHandlers(ProblemService problemService, TcpServer tcpServer) {

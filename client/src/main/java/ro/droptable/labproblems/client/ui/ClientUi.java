@@ -50,7 +50,7 @@ public class ClientUi {
             "15 - Filter Assignments by grade\n" +
             "16 - Filter largest group\n" +
             "--------- Reports --------\n" +
-//            "17 - Report Student average grade\n" +
+            "17 - Report Student average grade\n" +
             "--------------------------\n" +
             "0 - EXIT\n";
 
@@ -122,9 +122,9 @@ public class ClientUi {
               case 16:
                   filterLargestGroup();
                   break;
-//            case 17:
-//                reportStudentAverageGrade();
-//                break;
+             case 17:
+                 reportStudentAverageGrade();
+                 break;
             case 0:
                 System.out.println("Bye!");
                 System.exit(0);
@@ -491,7 +491,13 @@ public class ClientUi {
         }
     }
 
-    //private void reportStudentAverageGrade(){
-    //    System.out.println(generalService.reportStudentAverage());
-    //}
+    private void reportStudentAverageGrade(){
+        try {
+            System.out.println(studentService.reportStudentAverage().get());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
 }

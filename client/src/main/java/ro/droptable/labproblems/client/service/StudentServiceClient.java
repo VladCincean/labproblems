@@ -82,4 +82,13 @@ public class StudentServiceClient implements StudentService {
             return response.body();
         });
     }
+
+    @Override
+    public Future<String> reportStudentAverage() throws ValidatorException {
+        return executorService.submit(() -> {
+            Message request = new Message(StudentService.REPORT_STUDENT_AVERAGE, "");
+            Message response = tcpClient.sendAndREceive(request);
+            return response.body();
+        });
+    }
 }

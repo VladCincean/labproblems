@@ -4,6 +4,7 @@ import ro.droptable.labproblems.common.StudentService;
 import ro.droptable.labproblems.common.domain.Student;
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 import ro.droptable.labproblems.server.repository.Repository;
+import ro.droptable.labproblems.server.repository.StudentDbRepository;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -16,11 +17,11 @@ import java.util.stream.StreamSupport;
  */
 public class StudentServiceImpl implements StudentService {
     private ExecutorService executorService;
-    private Repository<Long, Student> studentRepository;
+    private StudentDbRepository studentRepository;
 
     public StudentServiceImpl(ExecutorService executorService, Repository<Long, Student> studentRepository) {
         this.executorService = executorService;
-        this.studentRepository = studentRepository;
+        this.studentRepository = (StudentDbRepository)studentRepository;
     }
 
     @Override
@@ -126,4 +127,14 @@ public class StudentServiceImpl implements StudentService {
             return res.toString();
         });
     }
+
+    public Future<String> reportStudentAverage() {
+        return executorService.submit(() -> {
+            Map<Student, Double> studentDoubleMap = studentRepository.reportStudentAverage();
+            return studentDoubleMap.entrySet().stream()
+                    .map(e-> e.getKey().toCsv() + "," + e.getValue().toString())
+                    .reduce("", (acc, it) -> acc + it + "\n");
+        });
+    }
+
 }

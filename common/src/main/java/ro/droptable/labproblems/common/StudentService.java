@@ -18,6 +18,7 @@ public interface StudentService {
     String FIND_ALL_STUDENTS = "findAllStudents";
     String FILTER_STUDENTS_BY_NAME = "filterStudentsByName";
     String FILTER_LARGEST_GROUP = "filterLargestGroup";
+    String REPORT_STUDENT_AVERAGE = "reportStudentAverage";
 
     /**
      * Adds the {@code Student} given in the csv string
@@ -95,4 +96,6 @@ public interface StudentService {
      * @return an {@code Future} - result
      */
     Future<String> filterLargestGroup();
+
+    public Future<String> reportStudentAverage();
 }
