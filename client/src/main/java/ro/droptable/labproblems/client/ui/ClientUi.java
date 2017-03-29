@@ -281,7 +281,7 @@ public class ClientUi {
             String description = bufferedReader.readLine().trim();
 
             try {
-                problemService.addProblem(id.toString()+ title+","+description);
+                problemService.addProblem(id.toString()+","+ title+","+description);
             } catch (ValidatorException e) {
                 System.out.println("Input Problem is invalid");
                 System.err.println(e.toString());
