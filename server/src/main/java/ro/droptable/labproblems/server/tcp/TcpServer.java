@@ -29,10 +29,21 @@ public class TcpServer {
         this.serverPort = serverPort;
     }
 
+    /**
+     * Adds a handler between a message and a function reference
+     *
+     * @param methodName
+     *            must not be null - name of the requested method
+     * @param methodHandler
+     *            must not be null - inner method handler
+     */
     public void addHandler(String methodName, UnaryOperator<Message> methodHandler) {
         methodHandlers.put(methodName, methodHandler);
     }
 
+    /**
+     * Creates a connection to the client and processes its requests
+     */
     public void startServer() {
         System.out.println("Starting server...");
         try {
@@ -58,6 +69,9 @@ public class TcpServer {
             this.socket = socket;
         }
 
+        /**
+         * Receives requests and calls the corresponding method if available
+         */
         @Override
         public void run() {
             try (InputStream inputStream = socket.getInputStream();
