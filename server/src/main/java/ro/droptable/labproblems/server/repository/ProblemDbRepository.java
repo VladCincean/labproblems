@@ -98,7 +98,7 @@ public class ProblemDbRepository implements Repository<Long, Problem> {
 
         validator.validate(entity);
 
-        String sql = "UPDATE problems SET title = ?, desciption = ? WHERE id = ?";
+        String sql = "UPDATE problems SET title = ?, description = ? WHERE id = ?";
         int rowCount = jdbcTemplate.update(
                 sql, entity.getTitle(), entity.getDescription(), entity.getId()
         );
