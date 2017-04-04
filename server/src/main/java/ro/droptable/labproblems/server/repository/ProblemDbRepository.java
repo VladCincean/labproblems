@@ -108,8 +108,8 @@ public class ProblemDbRepository implements Repository<Long, Problem> {
         String sqlProblems = "DELETE FROM problems WHERE id = ?";
         String sqlAssignments = "DELETE FROM assignments where problem_id = ?";
 
-        int rowCount = jdbcTemplate.update(sqlProblems, id);
         jdbcTemplate.update(sqlAssignments, id);
+        int rowCount = jdbcTemplate.update(sqlProblems, id);
 
         return rowCount == 0 ? Optional.empty() : problemOptional;
     }
@@ -123,7 +123,7 @@ public class ProblemDbRepository implements Repository<Long, Problem> {
 
         validator.validate(entity);
 
-        String sql = "UPDATE problems SET title = ?, desciption = ? WHERE id = ?";
+        String sql = "UPDATE problems SET title = ?, description = ? WHERE id = ?";
         int rowCount = jdbcTemplate.update(
                 sql, entity.getTitle(), entity.getDescription(), entity.getId()
         );
