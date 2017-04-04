@@ -19,6 +19,7 @@ import java.util.stream.StreamSupport;
  * Implementation of {@code Repository} for CRUD operations on a repository for {@code Assignment}
  *      while maintaining database persistence
  */
+@Deprecated
 public class AssignmentDbRepository implements Repository<Long, Assignment> {
     private Validator<Assignment> validator;
     private String url;

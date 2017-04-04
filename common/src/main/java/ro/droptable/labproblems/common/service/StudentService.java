@@ -1,25 +1,31 @@
-package ro.droptable.labproblems.common;
+package ro.droptable.labproblems.common.service;
 
+import ro.droptable.labproblems.common.domain.Student;
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.Future;
 
 /**
- * Created by stefana on 3/28/2017.
+ * Created by vlad on 28.03.2017.
  */
-public interface ProblemService {
-    String SERVICE_HOST = "localhost";
-    int SERVICE_PORT = 1234;
-
-    String ADD_PROBLEM = "addProblem";
-    String DELETE_PROBLEM = "deleteProblem";
-    String UPDATE_PROBLEM = "updateProblem";
-    String FIND_ONE_PROBLEM = "findOneProblem";
-    String FIND_ALL_PROBLEMS = "findAllProblems";
-    String FILTER_PROBLEMS_BY_TITLE = "filterProblemsByTitle";
+// TODO: update method specifications
+public interface StudentService {
+//    String SERVICE_HOST = "localhost";
+//    int SERVICE_PORT = 1234;
+//
+//    String ADD_STUDENT = "addStudent";
+//    String DELETE_STUDENT = "deleteStudent";
+//    String UPDATE_STUDENT = "updateStudent";
+//    String FIND_ONE_STUDENT = "findOneStudent";
+//    String FIND_ALL_STUDENTS = "findAllStudents";
+//    String FILTER_STUDENTS_BY_NAME = "filterStudentsByName";
+//    String FILTER_LARGEST_GROUP = "filterLargestGroup";
+//    String REPORT_STUDENT_AVERAGE = "reportStudentAverage";
 
     /**
-     * Adds the {@code Problem} given in the csv string
+     * Adds the {@code Student} given in the csv string
      *
      * @param string
      *            csv, must not be null
@@ -29,10 +35,10 @@ public interface ProblemService {
      * @throws ValidatorException
      *             if the entity is not valid.
      */
-    Future<String> addProblem(String string) throws ValidatorException;
+    void addStudent(String serialNumber, String name, int group) throws ValidatorException;
 
     /**
-     * Deletes the {@code Problem} having the {@code id} the first member in the csv string
+     * Deletes the {@code Student} having the {@code id} the first member in the csv string
      *
      * @param string
      *            csv, must not be null
@@ -40,10 +46,10 @@ public interface ProblemService {
      * @throws IllegalArgumentException
      *             if the given entity is null.
      */
-    Future<String> deleteProblem(String string);
+    void deleteStudent(Long id);
 
     /**
-     * Updates the {@code Problem} having the {@code id} the first member in the csv string
+     * Updates the {@code Student} having the {@code id} the first member in the csv string
      *
      * @param string
      *            csv, must not be null
@@ -53,10 +59,10 @@ public interface ProblemService {
      * @throws ValidatorException
      *             if the entity is not valid.
      */
-    Future<String> updateProblem(String string);
+    void updateStudent(Long id, String serialNumber, String name, int group) throws ValidatorException;
 
     /**
-     * Finds the {@code Problem} having the {@code id} the first member in the csv string
+     * Finds the {@code Student} having the {@code id} the first member in the csv string
      *
      * @param string
      *            csv, must not be null - id of the entity
@@ -64,7 +70,7 @@ public interface ProblemService {
      * @throws IllegalArgumentException
      *             if the given string is null.
      */
-    Future<String> findOneProblem(String string);
+    Optional<Student> findOneStudent(Long id);
 
     /**
      * Returns all the entities as a string of csv-s
@@ -75,16 +81,25 @@ public interface ProblemService {
      * @throws IllegalArgumentException
      *             if the given string is null.
      */
-    Future<String> findAllProblems(String string);
+    Set<Student> findAllStudents();
 
     /**
-     * Returns all the Problems having a given title
+     * Returns all the Students having a given name
      *
      * @param string
-     *            must not be null - title
+     *            must not be null - name
      * @return an {@code Future} - a csv string containing the list of the matching entities, empty string if there is no match
      * @throws IllegalArgumentException
      *             if the given string is null.
      */
-    Future<String> filterProblemsByTitle(String string);
+    Set<Student> filterStudentsByName(String name);
+
+//    /**
+//     * Returns the group containing the largest number of Students
+//     *
+//     * @return an {@code Future} - result
+//     */
+//    Future<String> filterLargestGroup();
+//
+//    Future<String> reportStudentAverage();
 }

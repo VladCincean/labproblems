@@ -2,16 +2,16 @@ package ro.droptable.labproblems.client.service;
 
 import ro.droptable.labproblems.client.tcp.TcpClient;
 import ro.droptable.labproblems.common.Message;
-import ro.droptable.labproblems.common.ProblemService;
+import ro.droptable.labproblems.common.service.ProblemService;
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 /**
  * Created by stefana on 3/28/2017.
  */
+@Deprecated
 public class ProblemServiceClient implements ProblemService {
     private ExecutorService executorService;
     private TcpClient tcpClient;

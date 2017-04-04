@@ -1,6 +1,6 @@
 package ro.droptable.labproblems.server.service;
 
-import ro.droptable.labproblems.common.ProblemService;
+import ro.droptable.labproblems.common.service.ProblemService;
 import ro.droptable.labproblems.common.domain.Problem;
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 import ro.droptable.labproblems.server.repository.Repository;
@@ -16,6 +16,7 @@ import java.util.stream.StreamSupport;
 /**
  * Created by stefana on 3/28/2017.
  */
+@Deprecated
 public class ProblemServiceImpl implements ProblemService {
     private ExecutorService executorService;
     private Repository<Long, Problem> problemRepository;

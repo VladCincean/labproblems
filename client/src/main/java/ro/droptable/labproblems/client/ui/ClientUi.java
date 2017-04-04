@@ -22,6 +22,7 @@ import java.util.concurrent.CompletableFuture;
  *      - filtering data
  *      - generating reports
  */
+@Deprecated
 public class ClientUi {
     private StudentServiceClient studentService;
     private ProblemServiceClient problemService;

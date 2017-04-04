@@ -1,27 +1,27 @@
-package ro.droptable.labproblems.common;
+package ro.droptable.labproblems.common.service;
 
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 
 import java.util.concurrent.Future;
 
 /**
- * Created by vlad on 28.03.2017.
+ * Created by stefana on 3/28/2017.
  */
-public interface StudentService {
-    String SERVICE_HOST = "localhost";
-    int SERVICE_PORT = 1234;
+@Deprecated
+public interface AssignmentService {
+//    String SERVICE_HOST = "localhost";
+//    int SERVICE_PORT = 1234;
+//
+//    String ADD_ASSIGNMENT = "addAssignment";
+//    String DELETE_ASSIGNMENT = "deleteAssignment";
+//    String UPDATE_ASSIGNMENT = "updateAssignment";
+//    String FIND_ONE_ASSIGNMENT = "findOneAssignment";
+//    String FIND_ALL_ASSIGNMENTS = "findAllAssignments";
+//    String FILTER_ASSIGNMENTS_BY_GRADE = "filterAssignmentsByGrade";
 
-    String ADD_STUDENT = "addStudent";
-    String DELETE_STUDENT = "deleteStudent";
-    String UPDATE_STUDENT = "updateStudent";
-    String FIND_ONE_STUDENT = "findOneStudent";
-    String FIND_ALL_STUDENTS = "findAllStudents";
-    String FILTER_STUDENTS_BY_NAME = "filterStudentsByName";
-    String FILTER_LARGEST_GROUP = "filterLargestGroup";
-    String REPORT_STUDENT_AVERAGE = "reportStudentAverage";
 
     /**
-     * Adds the {@code Student} given in the csv string
+     * Adds the {@code Assignment} given in the csv string
      *
      * @param string
      *            csv, must not be null
@@ -31,10 +31,10 @@ public interface StudentService {
      * @throws ValidatorException
      *             if the entity is not valid.
      */
-    Future<String> addStudent(String string) throws ValidatorException;
+    Future<String> addAssignment(String string) throws ValidatorException;
 
     /**
-     * Deletes the {@code Student} having the {@code id} the first member in the csv string
+     * Deletes the {@code Assignment} having the {@code id} the first member in the csv string
      *
      * @param string
      *            csv, must not be null
@@ -42,10 +42,10 @@ public interface StudentService {
      * @throws IllegalArgumentException
      *             if the given entity is null.
      */
-    Future<String> deleteStudent(String string);
+    Future<String> deleteAssignment(String string);
 
     /**
-     * Updates the {@code Student} having the {@code id} the first member in the csv string
+     * Updates the {@code Assignment} having the {@code id} the first member in the csv string
      *
      * @param string
      *            csv, must not be null
@@ -55,10 +55,10 @@ public interface StudentService {
      * @throws ValidatorException
      *             if the entity is not valid.
      */
-    Future<String> updateStudent(String string);
+    Future<String> updateAssignment(String string);
 
     /**
-     * Finds the {@code Student} having the {@code id} the first member in the csv string
+     * Finds the {@code Assignment} having the {@code id} the first member in the csv string
      *
      * @param string
      *            csv, must not be null - id of the entity
@@ -66,7 +66,7 @@ public interface StudentService {
      * @throws IllegalArgumentException
      *             if the given string is null.
      */
-    Future<String> findOneStudent(String string);
+    Future<String> findOneAssignment(String string);
 
     /**
      * Returns all the entities as a string of csv-s
@@ -77,25 +77,17 @@ public interface StudentService {
      * @throws IllegalArgumentException
      *             if the given string is null.
      */
-    Future<String> findAllStudents(String string);
+    Future<String> findAllAssignments(String string);
 
     /**
-     * Returns all the Students having a given name
+     * Returns all the Assignments having a given grade
      *
      * @param string
-     *            must not be null - name
+     *            must not be null - grade
      * @return an {@code Future} - a csv string containing the list of the matching entities, empty string if there is no match
      * @throws IllegalArgumentException
      *             if the given string is null.
      */
-    Future<String> filterStudentsByName(String string);
-
-    /**
-     * Returns the group containing the largest number of Students
-     *
-     * @return an {@code Future} - result
-     */
-    Future<String> filterLargestGroup();
-
-    public Future<String> reportStudentAverage();
+    Future<String> filterAssignmentsByGrade(String string);
 }
+

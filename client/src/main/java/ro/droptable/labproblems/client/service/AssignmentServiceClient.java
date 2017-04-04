@@ -1,7 +1,7 @@
 package ro.droptable.labproblems.client.service;
 
 import ro.droptable.labproblems.client.tcp.TcpClient;
-import ro.droptable.labproblems.common.AssignmentService;
+import ro.droptable.labproblems.common.service.AssignmentService;
 import ro.droptable.labproblems.common.Message;
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 
@@ -11,6 +11,7 @@ import java.util.concurrent.ExecutorService;
 /**
  * Created by stefana on 3/28/2017.
  */
+@Deprecated
 public class AssignmentServiceClient implements AssignmentService {
     private ExecutorService executorService;
     private TcpClient tcpClient;

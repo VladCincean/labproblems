@@ -1,13 +1,13 @@
 package ro.droptable.labproblems.client;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import ro.droptable.labproblems.client.service.AssignmentServiceClient;
 import ro.droptable.labproblems.client.service.ProblemServiceClient;
 import ro.droptable.labproblems.client.service.StudentServiceClient;
-import ro.droptable.labproblems.client.tcp.TcpClient;
+//import ro.droptable.labproblems.client.tcp.TcpClient;
 import ro.droptable.labproblems.client.ui.ClientUi;
-import ro.droptable.labproblems.common.AssignmentService;
-import ro.droptable.labproblems.common.ProblemService;
-import ro.droptable.labproblems.common.StudentService;
+import ro.droptable.labproblems.common.service.StudentService;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -17,15 +17,30 @@ import java.util.concurrent.Executors;
  */
 public class ClientApp {
     public static void main(String[] args) {
-        ExecutorService executorService = Executors.newFixedThreadPool(
-                Runtime.getRuntime().availableProcessors()
+        ApplicationContext context =
+                new AnnotationConfigApplicationContext("ro.droptable.labproblems.client.config");
+
+        StudentServiceClient studentServiceClient = context.getBean(StudentServiceClient.class);
+        ProblemServiceClient problemServiceClient = context.getBean(ProblemServiceClient.class);
+        AssignmentServiceClient assignmentServiceClient = context.getBean(AssignmentServiceClient.class);
+
+        ClientUi ui = new ClientUi(
+                studentServiceClient,
+                problemServiceClient,
+                assignmentServiceClient
         );
-        TcpClient tcpClient = new TcpClient(StudentService.SERVICE_HOST, StudentService.SERVICE_PORT);
-        StudentServiceClient studentService = new StudentServiceClient(executorService, tcpClient);
-        ProblemServiceClient problemService = new ProblemServiceClient(executorService, tcpClient);
-        AssignmentServiceClient assignmentService = new AssignmentServiceClient(executorService, tcpClient);
-        ClientUi clientUi = new ClientUi(studentService, problemService, assignmentService);
-        clientUi.run();
-        executorService.shutdownNow();
+
+        ui.run();
+
+//        ExecutorService executorService = Executors.newFixedThreadPool(
+//                Runtime.getRuntime().availableProcessors()
+//        );
+//        TcpClient tcpClient = new TcpClient(StudentService.SERVICE_HOST, StudentService.SERVICE_PORT);
+//        StudentServiceClient studentService = new StudentServiceClient(executorService, tcpClient);
+//        ProblemServiceClient problemService = new ProblemServiceClient(executorService, tcpClient);
+//        AssignmentServiceClient assignmentService = new AssignmentServiceClient(executorService, tcpClient);
+//        ClientUi clientUi = new ClientUi(studentService, problemService, assignmentService);
+//        clientUi.run();
+//        executorService.shutdownNow();
     }
 }

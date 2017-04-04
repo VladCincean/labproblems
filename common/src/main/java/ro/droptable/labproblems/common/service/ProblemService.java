@@ -1,4 +1,4 @@
-package ro.droptable.labproblems.common;
+package ro.droptable.labproblems.common.service;
 
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 
@@ -7,20 +7,20 @@ import java.util.concurrent.Future;
 /**
  * Created by stefana on 3/28/2017.
  */
-public interface AssignmentService {
-    String SERVICE_HOST = "localhost";
-    int SERVICE_PORT = 1234;
-
-    String ADD_ASSIGNMENT = "addAssignment";
-    String DELETE_ASSIGNMENT = "deleteAssignment";
-    String UPDATE_ASSIGNMENT = "updateAssignment";
-    String FIND_ONE_ASSIGNMENT = "findOneAssignment";
-    String FIND_ALL_ASSIGNMENTS = "findAllAssignments";
-    String FILTER_ASSIGNMENTS_BY_GRADE = "filterAssignmentsByGrade";
-
+@Deprecated
+public interface ProblemService {
+//    String SERVICE_HOST = "localhost";
+//    int SERVICE_PORT = 1234;
+//
+//    String ADD_PROBLEM = "addProblem";
+//    String DELETE_PROBLEM = "deleteProblem";
+//    String UPDATE_PROBLEM = "updateProblem";
+//    String FIND_ONE_PROBLEM = "findOneProblem";
+//    String FIND_ALL_PROBLEMS = "findAllProblems";
+//    String FILTER_PROBLEMS_BY_TITLE = "filterProblemsByTitle";
 
     /**
-     * Adds the {@code Assignment} given in the csv string
+     * Adds the {@code Problem} given in the csv string
      *
      * @param string
      *            csv, must not be null
@@ -30,10 +30,10 @@ public interface AssignmentService {
      * @throws ValidatorException
      *             if the entity is not valid.
      */
-    Future<String> addAssignment(String string) throws ValidatorException;
+    Future<String> addProblem(String string) throws ValidatorException;
 
     /**
-     * Deletes the {@code Assignment} having the {@code id} the first member in the csv string
+     * Deletes the {@code Problem} having the {@code id} the first member in the csv string
      *
      * @param string
      *            csv, must not be null
@@ -41,10 +41,10 @@ public interface AssignmentService {
      * @throws IllegalArgumentException
      *             if the given entity is null.
      */
-    Future<String> deleteAssignment(String string);
+    Future<String> deleteProblem(String string);
 
     /**
-     * Updates the {@code Assignment} having the {@code id} the first member in the csv string
+     * Updates the {@code Problem} having the {@code id} the first member in the csv string
      *
      * @param string
      *            csv, must not be null
@@ -54,10 +54,10 @@ public interface AssignmentService {
      * @throws ValidatorException
      *             if the entity is not valid.
      */
-    Future<String> updateAssignment(String string);
+    Future<String> updateProblem(String string);
 
     /**
-     * Finds the {@code Assignment} having the {@code id} the first member in the csv string
+     * Finds the {@code Problem} having the {@code id} the first member in the csv string
      *
      * @param string
      *            csv, must not be null - id of the entity
@@ -65,7 +65,7 @@ public interface AssignmentService {
      * @throws IllegalArgumentException
      *             if the given string is null.
      */
-    Future<String> findOneAssignment(String string);
+    Future<String> findOneProblem(String string);
 
     /**
      * Returns all the entities as a string of csv-s
@@ -76,17 +76,16 @@ public interface AssignmentService {
      * @throws IllegalArgumentException
      *             if the given string is null.
      */
-    Future<String> findAllAssignments(String string);
+    Future<String> findAllProblems(String string);
 
     /**
-     * Returns all the Assignments having a given grade
+     * Returns all the Problems having a given title
      *
      * @param string
-     *            must not be null - grade
+     *            must not be null - title
      * @return an {@code Future} - a csv string containing the list of the matching entities, empty string if there is no match
      * @throws IllegalArgumentException
      *             if the given string is null.
      */
-    Future<String> filterAssignmentsByGrade(String string);
+    Future<String> filterProblemsByTitle(String string);
 }
-

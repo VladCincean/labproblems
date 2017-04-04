@@ -1,6 +1,6 @@
 package ro.droptable.labproblems.server.service;
 
-import ro.droptable.labproblems.common.AssignmentService;
+import ro.droptable.labproblems.common.service.AssignmentService;
 import ro.droptable.labproblems.common.domain.Assignment;
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 import ro.droptable.labproblems.server.repository.Repository;
@@ -13,6 +13,7 @@ import java.util.stream.StreamSupport;
 /**
  * Created by stefana on 3/28/2017.
  */
+@Deprecated
 public class AssignmentServiceImpl implements AssignmentService{
     private ExecutorService executorService;
     private Repository<Long, Assignment> assignmentRepository;

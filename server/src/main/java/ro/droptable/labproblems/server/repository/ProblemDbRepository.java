@@ -19,6 +19,7 @@ import java.util.stream.StreamSupport;
  * Implementation of {@code Repository} for CRUD operations on a repository for {@code Problem}
  *      while maintaining database persistence
  */
+@Deprecated
 public class ProblemDbRepository implements Repository<Long, Problem> {
     private Validator<Problem> validator;
     private String url;

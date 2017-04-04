@@ -3,11 +3,9 @@ package ro.droptable.labproblems.server.service;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.postgresql.util.PSQLException;
-import ro.droptable.labproblems.common.AssignmentService;
-import ro.droptable.labproblems.common.ProblemService;
-import ro.droptable.labproblems.common.StudentService;
-import ro.droptable.labproblems.common.domain.Assignment;
+import ro.droptable.labproblems.common.service.AssignmentService;
+import ro.droptable.labproblems.common.service.ProblemService;
+import ro.droptable.labproblems.common.service.StudentService;
 import ro.droptable.labproblems.common.domain.Problem;
 import ro.droptable.labproblems.common.domain.Student;
 import ro.droptable.labproblems.common.domain.validators.AssignmentValidator;
@@ -18,12 +16,10 @@ import ro.droptable.labproblems.server.repository.ProblemDbRepository;
 import ro.droptable.labproblems.server.repository.Repository;
 import ro.droptable.labproblems.server.repository.StudentDbRepository;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.StreamSupport;
 
 import static org.junit.Assert.*;

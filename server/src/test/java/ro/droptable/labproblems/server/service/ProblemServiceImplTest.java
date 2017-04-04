@@ -3,17 +3,15 @@ package ro.droptable.labproblems.server.service;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import ro.droptable.labproblems.common.ProblemService;
+import ro.droptable.labproblems.common.service.ProblemService;
 import ro.droptable.labproblems.common.domain.Problem;
 import ro.droptable.labproblems.common.domain.validators.ProblemValidator;
-import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 import ro.droptable.labproblems.server.repository.ProblemDbRepository;
 import ro.droptable.labproblems.server.repository.Repository;
 
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 

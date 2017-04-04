@@ -1,8 +1,12 @@
 package ro.droptable.labproblems.server.repository;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import ro.droptable.labproblems.common.domain.Assignment;
 import ro.droptable.labproblems.common.domain.Student;
 import ro.droptable.labproblems.common.domain.validators.LabProblemsException;
+import ro.droptable.labproblems.common.domain.validators.StudentValidator;
 import ro.droptable.labproblems.common.domain.validators.Validator;
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 
@@ -18,41 +22,10 @@ import java.util.stream.StreamSupport;
  *      while maintaining database persistence
  */
 public class StudentDbRepository implements Repository<Long, Student> {
-    private Validator<Student> validator;
-    private String url;
-    private String username;
-    private String password;
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
-    public StudentDbRepository(Validator<Student> validator,
-                               String url,
-                               String username,
-                               String password) {
-        this.validator = validator;
-        this.url = url;
-        this.username = username;
-        this.password = password;
-
-        StreamSupport.stream(findAll().spliterator(), false)
-                .map(s -> s.getId())
-                .max(Comparator.naturalOrder())
-                .ifPresent(o -> {
-                    Class studentClass;
-                    try {
-                        studentClass = Class.forName("ro.droptable.labproblems.domain.Student");
-                        Student studentInstance = (Student) studentClass.newInstance();
-
-                        Field currentIdField = studentClass.getDeclaredField("currentId");
-                        currentIdField.setAccessible(true);
-                        currentIdField.set(studentInstance, o + 1);
-                        currentIdField.setAccessible(false);
-                    } catch (ClassNotFoundException
-                            | NoSuchFieldException
-                            | IllegalAccessException
-                            | InstantiationException e) {
-                        //...
-                    }
-                });
-    }
+    Validator<Student> validator = new StudentValidator();
 
     @Override
     public Optional<Student> findOne(Long id) {
@@ -60,46 +33,20 @@ public class StudentDbRepository implements Repository<Long, Student> {
             throw new IllegalArgumentException("id must not be null");
         }
 
-        try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement("SELECT * FROM students WHERE id=?"))
-        {
-            statement.setLong(1, id);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    Long studentId = resultSet.getLong("id");
-                    String serialNumber = resultSet.getString("serial_number");
-                    String name = resultSet.getString("name");
-                    int group = resultSet.getInt("group");
+        String sql = "SELECT * FROM students WHERE id = ?";
+        Student student = jdbcTemplate.queryForObject(
+                sql, BeanPropertyRowMapper.newInstance(Student.class), id
+        );
 
-                    return Optional.of(new Student(studentId, serialNumber, name, group));
-                }
-            }
-        } catch (SQLException e) {
-            throw new LabProblemsException(e);
-        }
-        return Optional.empty();
+        return Optional.ofNullable(student);
     }
 
     @Override
     public Iterable<Student> findAll() {
-        List<Student> students = new ArrayList<>();
-        try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement("SELECT * FROM students"))
-        {
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    Long studentId = resultSet.getLong("id");
-                    String serialNumber = resultSet.getString("serial_number");
-                    String name = resultSet.getString("name");
-                    int group = resultSet.getInt("group");
-
-                    students.add(new Student(studentId, serialNumber, name, group));
-                }
-            }
-        } catch (SQLException e) {
-            throw new LabProblemsException(e);
-        }
-
+        String sql = "SELECT * FROM students";
+        List<Student> students = jdbcTemplate.query(
+                sql, BeanPropertyRowMapper.newInstance(Student.class)
+        );
         return students;
     }
 
@@ -111,23 +58,12 @@ public class StudentDbRepository implements Repository<Long, Student> {
 
         validator.validate(entity);
 
-        try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement(
-                     "INSERT INTO students (id, serial_number, name, \"group\") VALUES (?,?,?,?)"
-             ))
-        {
-            statement.setLong(1, entity.getId());
-            statement.setString(2, entity.getSerialNumber());
-            statement.setString(3, entity.getName());
-            statement.setInt(4, entity.getGroup());
+        String sql = "INSERT INTO students (id, serial_number, name, \"group\") VALUES (?,?,?,?)";
+        int rowCount = jdbcTemplate.update(
+                sql, entity.getId(), entity.getSerialNumber(), entity.getName(), entity.getGroup()
+        );
 
-            statement.executeUpdate();
-
-            return Optional.empty();
-        } catch (SQLException e) {
-            e.printStackTrace(); // TODO: ... (log exception)
-            return Optional.of(entity);
-        }
+        return rowCount == 0 ? Optional.of(entity) : Optional.empty();
     }
 
     @SuppressWarnings("Duplicates")
@@ -137,29 +73,18 @@ public class StudentDbRepository implements Repository<Long, Student> {
             throw new IllegalArgumentException("id must not be null");
         }
 
-        Optional<Student> student = findOne(id); // .?
-        if (!student.isPresent()) {
+        Optional<Student> studentOptional = findOne(id); // .?
+        if (!studentOptional.isPresent()) {
             return Optional.empty();
         }
 
-        try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement deleteStudentStatement = connection.prepareStatement(
-                     "DELETE FROM students WHERE id=?"
-             );
-             PreparedStatement deleteAssignmentsStatement = connection.prepareStatement(
-                     "DELETE FROM assignments where student_id=?"
-             ))
-        {
-            deleteStudentStatement.setLong(1, id);
-            deleteAssignmentsStatement.setLong(1, id);
+        String sqlStudents = "DELETE FROM students WHERE id = ?";
+        String sqlAssignments = "DELETE FROM assignments where student_id = ?";
 
-            deleteAssignmentsStatement.executeUpdate();
-            deleteStudentStatement.executeUpdate();
+        int rowCount = jdbcTemplate.update(sqlStudents, id);
+        jdbcTemplate.update(sqlAssignments, id);
 
-            return student;
-        } catch (SQLException e) {
-            throw new LabProblemsException(e);
-        }
+        return rowCount == 0 ? Optional.empty() : studentOptional;
     }
 
     @Override
@@ -170,65 +95,55 @@ public class StudentDbRepository implements Repository<Long, Student> {
 
         validator.validate(entity);
 
-        try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement(
-                     "UPDATE students SET serial_number=?, name=?, \"group\"=? WHERE id=?"
-             ))
-        {
-            statement.setString(1, entity.getSerialNumber());
-            statement.setString(2, entity.getName());
-            statement.setInt(3, entity.getGroup());
-            statement.setLong(4, entity.getId());
+        String sql = "UPDATE students SET serial_number = ?, name = ?, \"group\" = ? WHERE id = ?";
+        int rowCount = jdbcTemplate.update(
+                sql, entity.getSerialNumber(), entity.getName(), entity.getGroup(), entity.getId()
+        );
 
-            statement.executeUpdate();
-
-            return Optional.empty();
-        } catch (SQLException e) {
-            e.printStackTrace(); // TODO: ... (log exception)
-            return Optional.of(entity);
-        }
+        return rowCount == 0 ? Optional.of(entity) : Optional.empty();
     }
 
-    private Iterable<Assignment> getAllAssignments(){
-        List<Assignment> assignments = new ArrayList<>();
-
-        try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement("SELECT * FROM assignments"))
-        {
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    Long assignmentId = resultSet.getLong("id");
-                    Long studentId = resultSet.getLong("student_id");
-                    Long problemId = resultSet.getLong("problem_id");
-                    Double grade = resultSet.getDouble("grade");
-
-                    Assignment assignment = new Assignment(assignmentId, studentId, problemId);
-                    assignment.setGrade(grade);
-
-                    assignments.add(assignment);
-                }
-            }
-        } catch (SQLException e) {
-            throw new LabProblemsException(e);
-        }
-
-        return assignments;
-    }
-    public Map<Student, Double> reportStudentAverage(){
-        HashMap<Student, Double> mp = new HashMap<>();
-        HashMap<Student, Double> nop = new HashMap<>();
-        Iterable<Student> students = findAll();
-        students.forEach(s -> {mp.put(s, 0.0); nop.put(s, 0.0);});
-        Iterable<Assignment> assignments = getAllAssignments();
-        System.out.println(assignments);
-        assignments.forEach(assignment -> {
-            System.out.println(assignment.toString() + " "+  mp.get(findOne(assignment.getStudentId()).get()) + " " + assignment.getGrade());
-            System.out.println(assignment.toString() + " "+  nop.get(findOne(assignment.getStudentId()).get()));
-            mp.put(findOne(assignment.getStudentId()).get(), mp.get(findOne(assignment.getStudentId()).get()) + assignment.getGrade());
-            nop.put(findOne(assignment.getStudentId()).get(), nop.get(findOne(assignment.getStudentId()).get()) + 1.0);
-        });
-
-        students.forEach(s -> mp.put(s, mp.get(s)/nop.get(s)));
-        return mp;
-    }
+//    private Iterable<Assignment> getAllAssignments(){
+//        List<Assignment> assignments = new ArrayList<>();
+//
+//        try (Connection connection = DriverManager.getConnection(url, username, password);
+//             PreparedStatement statement = connection.prepareStatement("SELECT * FROM assignments"))
+//        {
+//            try (ResultSet resultSet = statement.executeQuery()) {
+//                while (resultSet.next()) {
+//                    Long assignmentId = resultSet.getLong("id");
+//                    Long studentId = resultSet.getLong("student_id");
+//                    Long problemId = resultSet.getLong("problem_id");
+//                    Double grade = resultSet.getDouble("grade");
+//
+//                    Assignment assignment = new Assignment(assignmentId, studentId, problemId);
+//                    assignment.setGrade(grade);
+//
+//                    assignments.add(assignment);
+//                }
+//            }
+//        } catch (SQLException e) {
+//            throw new LabProblemsException(e);
+//        }
+//
+//        return assignments;
+//    }
+//
+//    public Map<Student, Double> reportStudentAverage(){
+//        HashMap<Student, Double> mp = new HashMap<>();
+//        HashMap<Student, Double> nop = new HashMap<>();
+//        Iterable<Student> students = findAll();
+//        students.forEach(s -> {mp.put(s, 0.0); nop.put(s, 0.0);});
+//        Iterable<Assignment> assignments = getAllAssignments();
+//        System.out.println(assignments);
+//        assignments.forEach(assignment -> {
+//            System.out.println(assignment.toString() + " "+  mp.get(findOne(assignment.getStudentId()).get()) + " " + assignment.getGrade());
+//            System.out.println(assignment.toString() + " "+  nop.get(findOne(assignment.getStudentId()).get()));
+//            mp.put(findOne(assignment.getStudentId()).get(), mp.get(findOne(assignment.getStudentId()).get()) + assignment.getGrade());
+//            nop.put(findOne(assignment.getStudentId()).get(), nop.get(findOne(assignment.getStudentId()).get()) + 1.0);
+//        });
+//
+//        students.forEach(s -> mp.put(s, mp.get(s)/nop.get(s)));
+//        return mp;
+//    }
 }

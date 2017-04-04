@@ -11,7 +11,7 @@ allprojects {
     }
 
     dependencies {
-        runtime group: 'org.postgresql', name: 'postgresql', version: '42.0.0'
+        compile group: 'org.springframework', name: 'spring-context', version: '4.3.7.RELEASE'
         testCompile group: 'junit', name: 'junit', version: '4.11'
     }
 }
