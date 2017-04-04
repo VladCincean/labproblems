@@ -1,5 +1,6 @@
 package ro.droptable.labproblems.common.domain;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -7,7 +8,7 @@ import java.util.Objects;
  *
  * Class that represents a 'real-world' {@code Student}
  */
-public class Student extends BaseEntity<Long> {
+public class Student extends BaseEntity<Long> implements Serializable {
     private String serialNumber;
     private String name;
     private int group;

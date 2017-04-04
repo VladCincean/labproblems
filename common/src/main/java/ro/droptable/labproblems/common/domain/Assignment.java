@@ -1,5 +1,6 @@
 package ro.droptable.labproblems.common.domain;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -7,7 +8,7 @@ import java.util.Objects;
  *
  * Class that represents a 'real-world' {@code Assignment}
  */
-public class Assignment extends BaseEntity<Long> {
+public class Assignment extends BaseEntity<Long> implements Serializable {
     private long studentId;
     private long problemId;
     private double grade;
