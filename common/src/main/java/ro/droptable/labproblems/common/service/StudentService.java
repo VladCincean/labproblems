@@ -3,6 +3,8 @@ package ro.droptable.labproblems.common.service;
 import ro.droptable.labproblems.common.domain.Student;
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 
+import java.util.DoubleSummaryStatistics;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Future;
@@ -94,12 +96,12 @@ public interface StudentService {
      */
     Set<Student> filterStudentsByName(String name);
 
-//    /**
-//     * Returns the group containing the largest number of Students
-//     *
-//     * @return an {@code Future} - result
-//     */
-//    Future<String> filterLargestGroup();
-//
-//    Future<String> reportStudentAverage();
+    /**
+     * Returns the group containing the largest number of Students
+     *
+     * @return an {@code Future} - result
+     */
+    int filterLargestGroup();
+
+    Map<Student, Double> reportStudentAverage();
 }

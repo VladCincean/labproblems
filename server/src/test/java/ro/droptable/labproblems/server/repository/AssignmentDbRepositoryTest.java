@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
 
 /**
  * Created by stefana on 3/28/2017.
- */
+
 public class AssignmentDbRepositoryTest {
 
     String url = "jdbc:postgresql://localhost:5432/test";
@@ -108,4 +108,4 @@ public class AssignmentDbRepositoryTest {
         assertTrue(assignmentDbRepository.findOne(nota.getId()).get().getStudentId() == a.getStudentId() + 1);
     }
 
-}
+}*/

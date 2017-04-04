@@ -12,15 +12,15 @@ import ro.droptable.labproblems.common.service.AssignmentService;
 @Configuration
 public class AssignmentServiceClientConfig {
     @Bean
-    public RmiProxyFactoryBean problemService() {
+    public RmiProxyFactoryBean assignmentService() {
         RmiProxyFactoryBean rmiProxy = new RmiProxyFactoryBean();
-        rmiProxy.setServiceUrl("rmi://localhost:1099/ProblemService");
+        rmiProxy.setServiceUrl("rmi://localhost:1099/AssignmentService");
         rmiProxy.setServiceInterface(AssignmentService.class);
         return rmiProxy;
     }
 
     @Bean
-    public AssignmentServiceClient problemServiceClient() {
+    public AssignmentServiceClient assignmentServiceClient() {
         return new AssignmentServiceClient();
     }
 }

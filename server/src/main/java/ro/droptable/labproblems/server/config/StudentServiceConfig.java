@@ -20,12 +20,12 @@ public class StudentServiceConfig {
     }
 
     @Bean
-    public Repository<Long, Student> studentRepository() {
+    public StudentDbRepository studentRepository() {
         return new StudentDbRepository();
     }
 
     @Bean
-    public RmiServiceExporter rmiService() {
+    public RmiServiceExporter rmiServiceStudent() {
         RmiServiceExporter rmiService = new RmiServiceExporter();
         rmiService.setServiceName("StudentService");
         rmiService.setServiceInterface(StudentService.class);

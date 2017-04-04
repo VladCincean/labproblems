@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 
 /**
  * Created by stefana on 3/28/2017.
- */
+
 public class ProblemDbRepositoryTest {
     String url = "jdbc:postgresql://localhost:5432/test";
     String username = "postgres";
@@ -80,4 +80,4 @@ public class ProblemDbRepositoryTest {
         }catch(ValidatorException e){}
         assertTrue(problemDbRepository.findOne(id).get().getTitle().equals("b"));
     }
-}
+}*/

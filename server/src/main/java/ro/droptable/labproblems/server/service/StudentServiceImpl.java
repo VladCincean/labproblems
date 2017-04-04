@@ -5,6 +5,7 @@ import ro.droptable.labproblems.common.service.StudentService;
 import ro.droptable.labproblems.common.domain.Student;
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 import ro.droptable.labproblems.server.repository.Repository;
+import ro.droptable.labproblems.server.repository.StudentDbRepository;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.lang.reflect.Field;
@@ -12,18 +13,19 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
  * Created by vlad on 28.03.2017.
  */
 public class StudentServiceImpl implements StudentService {
-    private ExecutorService executorService = Executors.newFixedThreadPool(
-            Runtime.getRuntime().availableProcessors()
-    );
+//    private ExecutorService executorService = Executors.newFixedThreadPool(
+ //           Runtime.getRuntime().availableProcessors()
+  //  );
 
     @Autowired
-    private Repository<Long, Student> studentRepository;
+    private StudentDbRepository studentRepository;
 
 //    @Deprecated
 //    public StudentServiceImpl(ExecutorService executorService, Repository<Long, Student> studentRepository) {
@@ -90,15 +92,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void deleteStudent(Long id) {
-        throw new NotImplementedException();
-
-//        return executorService.submit(() -> {
-//            Long id = Long.valueOf(string);
-//
-//            Optional<Student> optional = studentRepository.delete(id);
-//
-//            return optional.isPresent() ? optional.get().toCsv() : "";
-//        });
+        studentRepository.delete(id);
     }
 
     @Override
@@ -146,28 +140,13 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Optional<Student> findOneStudent(Long id) {
-        throw new NotImplementedException();
-
-//        return executorService.submit(() -> {
-//            Long id = Long.valueOf(string);
-//
-//            Optional<Student> optional = studentRepository.findOne(id);
-//
-//            return optional.isPresent() ? optional.get().toCsv() : "";
-//        });
+        return studentRepository.findOne(id);
     }
 
     @Override
     public Set<Student> findAllStudents() {
-        throw new NotImplementedException();
-
-//        return executorService.submit(() -> {
-//            Iterable<Student> allStudents = studentRepository.findAll();
-//
-//            return StreamSupport.stream(allStudents.spliterator(), false)
-//                    .map(Student::toCsv)
-//                    .reduce("", (acc, it) -> acc + it + "\n");
-//        });
+        Iterable<Student> entities = studentRepository.findAll();
+        return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toSet());
     }
 
     @Override
@@ -184,24 +163,18 @@ public class StudentServiceImpl implements StudentService {
         return (int)StreamSupport.stream(students.spliterator(), false).filter(s->s.getGroup() == group).count();
     }
 
-    public Future<String> filterLargestGroup(){
-        return executorService.submit(() -> {
-            Iterable<Student> students = studentRepository.findAll();
-            Optional<Integer> mxGroup = StreamSupport.stream(students.spliterator(), false).
-                    map(s -> getGroupSize(s.getGroup())).max(Comparator.naturalOrder());
-            Integer res = StreamSupport.stream(students.spliterator(), false).
-                    filter(s -> getGroupSize(s.getGroup()) == mxGroup.get()).findFirst().get().getGroup();
-            return res.toString();
-        });
+    @Override
+    public int filterLargestGroup(){
+        Iterable<Student> students = studentRepository.findAll();
+        Optional<Integer> mxGroup = StreamSupport.stream(students.spliterator(), false).
+                map(s -> getGroupSize(s.getGroup())).max(Comparator.naturalOrder());
+        return StreamSupport.stream(students.spliterator(), false).
+                filter(s -> getGroupSize(s.getGroup()) == mxGroup.get()).findFirst().get().getGroup();
     }
 
-//    public Future<String> reportStudentAverage() {
-//        return executorService.submit(() -> {
-//            Map<Student, Double> studentDoubleMap = studentRepository.reportStudentAverage();
-//            return studentDoubleMap.entrySet().stream()
-//                    .map(e-> e.getKey().toCsv() + "," + e.getValue().toString())
-//                    .reduce("", (acc, it) -> acc + it + "\n");
-//        });
-//    }
+    @Override
+    public Map<Student, Double> reportStudentAverage() {
+        return studentRepository.reportStudentAverage();
+    }
 
 }

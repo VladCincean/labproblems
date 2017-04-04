@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 
 /**
  * Created by stefana on 3/28/2017.
- */
+
 public class StudentDbRepositoryTest {String url = "jdbc:postgresql://localhost:5432/test";
     String username = "postgres";
     String password = "admin";
@@ -81,4 +81,4 @@ public class StudentDbRepositoryTest {String url = "jdbc:postgresql://localhost:
             assertTrue(studentRepository.findOne(sa.getId()).get().getGroup() == 222);
         }
     }
-}
+}*/

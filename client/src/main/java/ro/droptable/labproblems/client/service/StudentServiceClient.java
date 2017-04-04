@@ -5,6 +5,7 @@ import ro.droptable.labproblems.common.domain.Student;
 import ro.droptable.labproblems.common.service.StudentService;
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -53,21 +54,9 @@ public class StudentServiceClient implements StudentService {
         return studentService.filterStudentsByName(name);
     }
 
-//    @Override
-//    public CompletableFuture<String> filterLargestGroup() throws ValidatorException {
-//        return CompletableFuture.supplyAsync(() -> {
-//            Message request = new Message(StudentService.FILTER_LARGEST_GROUP, "");
-//            Message response = tcpClient.sendAndReceive(request);
-//            return response.body();
-//        }, executorService);
-//    }
-//
-//    @Override
-//    public CompletableFuture<String> reportStudentAverage() throws ValidatorException {
-//        return CompletableFuture.supplyAsync(() -> {
-//            Message request = new Message(StudentService.REPORT_STUDENT_AVERAGE, "");
-//            Message response = tcpClient.sendAndReceive(request);
-//            return response.body();
-//        }, executorService);
-//    }
+    @Override
+    public int filterLargestGroup(){ return studentService.filterLargestGroup(); }
+
+    @Override
+    public Map<Student, Double> reportStudentAverage(){ return  studentService.reportStudentAverage(); }
 }

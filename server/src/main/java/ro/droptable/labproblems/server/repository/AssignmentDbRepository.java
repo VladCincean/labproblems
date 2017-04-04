@@ -1,6 +1,10 @@
 package ro.droptable.labproblems.server.repository;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import ro.droptable.labproblems.common.domain.Assignment;
+import ro.droptable.labproblems.common.domain.validators.AssignmentValidator;
 import ro.droptable.labproblems.common.domain.validators.LabProblemsException;
 import ro.droptable.labproblems.common.domain.validators.Validator;
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
@@ -19,43 +23,13 @@ import java.util.stream.StreamSupport;
  * Implementation of {@code Repository} for CRUD operations on a repository for {@code Assignment}
  *      while maintaining database persistence
  */
-@Deprecated
+
 public class AssignmentDbRepository implements Repository<Long, Assignment> {
-    private Validator<Assignment> validator;
-    private String url;
-    private String username;
-    private String password;
 
-    public AssignmentDbRepository(Validator<Assignment> validator,
-                                  String url,
-                                  String username,
-                                  String password) {
-        this.validator = validator;
-        this.url = url;
-        this.username = username;
-        this.password = password;
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
-        StreamSupport.stream(findAll().spliterator(), false)
-                .map(s -> s.getId())
-                .max(Comparator.naturalOrder())
-                .ifPresent(o -> {
-                    Class assignmentClass;
-                    try {
-                        assignmentClass = Class.forName("ro.droptable.labproblems.domain.Assignment");
-                        Assignment assignmentInstance = (Assignment) assignmentClass.newInstance();
-
-                        Field currentIdField = assignmentClass.getDeclaredField("currentId");
-                        currentIdField.setAccessible(true);
-                        currentIdField.set(assignmentInstance, o + 1);
-                        currentIdField.setAccessible(false);
-                    } catch (ClassNotFoundException
-                            | NoSuchFieldException
-                            | IllegalAccessException
-                            | InstantiationException e) {
-                        //...
-                    }
-                });
-    }
+    AssignmentValidator validator = new AssignmentValidator();
 
     @Override
     public Optional<Assignment> findOne(Long id) {
@@ -63,53 +37,20 @@ public class AssignmentDbRepository implements Repository<Long, Assignment> {
             throw new IllegalArgumentException("id must not be null");
         }
 
-        try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement("SELECT * FROM assignments WHERE id=?"))
-        {
-            statement.setLong(1, id);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    Long assignmentId = resultSet.getLong("id");
-                    Long studentId = resultSet.getLong("student_id");
-                    Long problemId = resultSet.getLong("problem_id");
-                    Double grade = resultSet.getDouble("grade");
+        String sql = "SELECT * FROM assignments WHERE id = ?";
+        Assignment assignment = jdbcTemplate.queryForObject(
+                sql, BeanPropertyRowMapper.newInstance(Assignment.class), id
+        );
 
-                    Assignment assignment = new Assignment(assignmentId, studentId, problemId);
-                    assignment.setGrade(grade);
-
-                    return Optional.of(assignment);
-                }
-            }
-        } catch (SQLException e) {
-            throw new LabProblemsException(e);
-        }
-        return Optional.empty();
+        return Optional.ofNullable(assignment);
     }
 
     @Override
     public Iterable<Assignment> findAll() {
-        List<Assignment> assignments = new ArrayList<>();
-
-        try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement("SELECT * FROM assignments"))
-        {
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    Long assignmentId = resultSet.getLong("id");
-                    Long studentId = resultSet.getLong("student_id");
-                    Long problemId = resultSet.getLong("problem_id");
-                    Double grade = resultSet.getDouble("grade");
-
-                    Assignment assignment = new Assignment(assignmentId, studentId, problemId);
-                    assignment.setGrade(grade);
-
-                    assignments.add(assignment);
-                }
-            }
-        } catch (SQLException e) {
-            throw new LabProblemsException(e);
-        }
-
+        String sql = "SELECT * FROM assignments";
+        List<Assignment> assignments = jdbcTemplate.query(
+                sql, BeanPropertyRowMapper.newInstance(Assignment.class)
+        );
         return assignments;
     }
 
@@ -121,23 +62,12 @@ public class AssignmentDbRepository implements Repository<Long, Assignment> {
 
         validator.validate(entity);
 
-        try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement(
-                     "INSERT INTO assignments (id, student_id, problem_id, grade) VALUES (?,?,?,?)"
-             ))
-        {
-            statement.setLong(1, entity.getId());
-            statement.setLong(2, entity.getStudentId());
-            statement.setLong(3, entity.getProblemId());
-            statement.setDouble(4, entity.getGrade());
+        String sql = "INSERT INTO assignments (id, student_id, problem_id, grade) VALUES (?,?,?,?)";
+        int rowCount = jdbcTemplate.update(
+                sql, entity.getId(), entity.getStudentId(), entity.getProblemId(), entity.getGrade()
+        );
 
-            statement.executeUpdate();
-
-            return Optional.empty();
-        } catch (SQLException e) {
-            e.printStackTrace(); // TODO: ... (log exception)
-            return Optional.of(entity);
-        }
+        return rowCount == 0 ? Optional.of(entity) : Optional.empty();
     }
 
     @Override
@@ -146,22 +76,16 @@ public class AssignmentDbRepository implements Repository<Long, Assignment> {
             throw new IllegalArgumentException("id must not be null");
         }
 
-        Optional<Assignment> assignment = findOne(id); // .?
-        if (!assignment.isPresent()) {
+        Optional<Assignment> assignmentOptional = findOne(id); // .?
+        if (!assignmentOptional.isPresent()) {
             return Optional.empty();
         }
 
-        try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement("DELETE FROM assignments WHERE id=?"))
-        {
-            statement.setLong(1, id);
+        String sqlAssignments = "DELETE FROM assignments where id = ?";
 
-            statement.executeUpdate();
+        int rowCount = jdbcTemplate.update(sqlAssignments, id);
 
-            return assignment;
-        } catch (SQLException e) {
-            throw new LabProblemsException(e);
-        }
+        return rowCount == 0 ? Optional.empty() : assignmentOptional;
     }
 
     @Override
@@ -172,22 +96,11 @@ public class AssignmentDbRepository implements Repository<Long, Assignment> {
 
         validator.validate(entity);
 
-        try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement(
-                     "UPDATE assignments SET student_id=?, problem_id=?, grade=? WHERE id=?"
-             ))
-        {
-            statement.setLong(1, entity.getStudentId());
-            statement.setLong(2, entity.getProblemId());
-            statement.setDouble(3, entity.getGrade());
-            statement.setLong(4, entity.getId());
+        String sql = "UPDATE assignments SET student_id = ?, problem_id = ?, grade = ? WHERE id = ?";
+        int rowCount = jdbcTemplate.update(
+                sql, entity.getStudentId(), entity.getProblemId(), entity.getGrade(), entity.getId()
+        );
 
-            statement.executeUpdate();
-
-            return Optional.empty();
-        } catch (SQLException e) {
-            e.printStackTrace(); // TODO: ... (log exception)
-            return Optional.of(entity);
-        }
+        return rowCount == 0 ? Optional.of(entity) : Optional.empty();
     }
 }

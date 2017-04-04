@@ -1,7 +1,11 @@
 package ro.droptable.labproblems.server.repository;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import ro.droptable.labproblems.common.domain.Problem;
 import ro.droptable.labproblems.common.domain.validators.LabProblemsException;
+import ro.droptable.labproblems.common.domain.validators.ProblemValidator;
 import ro.droptable.labproblems.common.domain.validators.Validator;
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 
@@ -19,43 +23,12 @@ import java.util.stream.StreamSupport;
  * Implementation of {@code Repository} for CRUD operations on a repository for {@code Problem}
  *      while maintaining database persistence
  */
-@Deprecated
+
 public class ProblemDbRepository implements Repository<Long, Problem> {
-    private Validator<Problem> validator;
-    private String url;
-    private String username;
-    private String password;
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
-    public ProblemDbRepository(Validator<Problem> validator,
-                               String url,
-                               String username,
-                               String password) {
-        this.validator = validator;
-        this.url = url;
-        this.username = username;
-        this.password = password;
-
-        StreamSupport.stream(findAll().spliterator(), false)
-                .map(s -> s.getId())
-                .max(Comparator.naturalOrder())
-                .ifPresent(o -> {
-                    Class problemClass;
-                    try {
-                        problemClass = Class.forName("ro.droptable.labproblems.domain.Problem");
-                        Problem problemInstance = (Problem) problemClass.newInstance();
-
-                        Field currentIdField = problemClass.getDeclaredField("currentId");
-                        currentIdField.setAccessible(true);
-                        currentIdField.set(problemInstance, o + 1);
-                        currentIdField.setAccessible(false);
-                    } catch (ClassNotFoundException
-                            | NoSuchFieldException
-                            | IllegalAccessException
-                            | InstantiationException e) {
-                        //...
-                    }
-                });
-    }
+    Validator<Problem> validator = new ProblemValidator();
 
     @Override
     public Optional<Problem> findOne(Long id) {
@@ -63,44 +36,20 @@ public class ProblemDbRepository implements Repository<Long, Problem> {
             throw new IllegalArgumentException("id must not be null");
         }
 
-        try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement("SELECT * FROM problems WHERE id=?"))
-        {
-            statement.setLong(1, id);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    Long problemId = resultSet.getLong("id");
-                    String title = resultSet.getString("title");
-                    String description = resultSet.getString("description");
+        String sql = "SELECT * FROM problems WHERE id = ?";
+        Problem problem = jdbcTemplate.queryForObject(
+                sql, BeanPropertyRowMapper.newInstance(Problem.class), id
+        );
 
-                    return Optional.of(new Problem(problemId, title, description));
-                }
-            }
-        } catch (SQLException e) {
-            throw new LabProblemsException(e);
-        }
-        return Optional.empty();
+        return Optional.ofNullable(problem);
     }
 
     @Override
     public Iterable<Problem> findAll() {
-        List<Problem> problems = new ArrayList<>();
-        try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement("SELECT * FROM problems"))
-        {
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    Long problemId = resultSet.getLong("id");
-                    String title = resultSet.getString("title");
-                    String description = resultSet.getString("description");
-
-                    problems.add(new Problem(problemId, title, description));
-                }
-            }
-        } catch (SQLException e) {
-            throw new LabProblemsException(e);
-        }
-
+        String sql = "SELECT * FROM problems";
+        List<Problem> problems = jdbcTemplate.query(
+                sql, BeanPropertyRowMapper.newInstance(Problem.class)
+        );
         return problems;
     }
 
@@ -112,22 +61,12 @@ public class ProblemDbRepository implements Repository<Long, Problem> {
 
         validator.validate(entity);
 
-        try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement(
-                     "INSERT INTO problems (id, title, description) VALUES (?,?,?)"
-             ))
-        {
-            statement.setLong(1, entity.getId());
-            statement.setString(2, entity.getTitle());
-            statement.setString(3, entity.getDescription());
+        String sql = "INSERT INTO problems (id, title, description) VALUES (?,?,?)";
+        int rowCount = jdbcTemplate.update(
+                sql, entity.getId(), entity.getTitle(), entity.getDescription()
+        );
 
-            statement.executeUpdate();
-
-            return Optional.empty();
-        } catch (SQLException e) {
-            e.printStackTrace(); // TODO: ...
-            return Optional.of(entity);
-        }
+        return rowCount == 0 ? Optional.of(entity) : Optional.empty();
     }
 
     @Override
@@ -136,29 +75,18 @@ public class ProblemDbRepository implements Repository<Long, Problem> {
             throw new IllegalArgumentException("id must not be null");
         }
 
-        Optional<Problem> problem = findOne(id); // .?
-        if (!problem.isPresent()) {
+        Optional<Problem> problemOptional = findOne(id); // .?
+        if (!problemOptional.isPresent()) {
             return Optional.empty();
         }
 
-        try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement deleteProblemStatement = connection.prepareStatement(
-                     "DELETE FROM problems WHERE id=?"
-             );
-             PreparedStatement deleteAssignmentsStatement = connection.prepareStatement(
-                     "DELETE FROM assignments WHERE problem_id=?"
-             ))
-        {
-            deleteProblemStatement.setLong(1, id);
-            deleteAssignmentsStatement.setLong(1, id);
+        String sqlProblems = "DELETE FROM problems WHERE id = ?";
+        String sqlAssignments = "DELETE FROM assignments where problem_id = ?";
 
-            deleteAssignmentsStatement.executeUpdate();
-            deleteProblemStatement.executeUpdate();
+        int rowCount = jdbcTemplate.update(sqlProblems, id);
+        jdbcTemplate.update(sqlAssignments, id);
 
-            return problem;
-        } catch (SQLException e) {
-            throw new LabProblemsException(e);
-        }
+        return rowCount == 0 ? Optional.empty() : problemOptional;
     }
 
     @SuppressWarnings("Duplicates")
@@ -170,21 +98,11 @@ public class ProblemDbRepository implements Repository<Long, Problem> {
 
         validator.validate(entity);
 
-        try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement(
-                     "UPDATE problems SET title=?, description=? WHERE id=?"
-             ))
-        {
-            statement.setString(1, entity.getTitle());
-            statement.setString(2, entity.getDescription());
-            statement.setLong(3, entity.getId());
+        String sql = "UPDATE problems SET title = ?, desciption = ? WHERE id = ?";
+        int rowCount = jdbcTemplate.update(
+                sql, entity.getTitle(), entity.getDescription(), entity.getId()
+        );
 
-            statement.executeUpdate();
-
-            return Optional.empty();
-        } catch (SQLException e) {
-            e.printStackTrace(); // TODO: ...
-            return Optional.of(entity);
-        }
+        return rowCount == 0 ? Optional.of(entity) : Optional.empty();
     }
 }

@@ -1,113 +1,125 @@
 package ro.droptable.labproblems.server.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import ro.droptable.labproblems.common.service.ProblemService;
 import ro.droptable.labproblems.common.domain.Problem;
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
+import ro.droptable.labproblems.server.repository.ProblemDbRepository;
 import ro.droptable.labproblems.server.repository.Repository;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.lang.reflect.Field;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
  * Created by stefana on 3/28/2017.
  */
-@Deprecated
+
 public class ProblemServiceImpl implements ProblemService {
-    private ExecutorService executorService;
-    private Repository<Long, Problem> problemRepository;
 
-    public ProblemServiceImpl(ExecutorService executorService, Repository<Long, Problem> problemRepository) {
-        this.executorService = executorService;
-        this.problemRepository = problemRepository;
+    @Autowired
+    private ProblemDbRepository repository;
+
+    public void addProblem(String title, String description) throws ValidatorException {
+        Class problemClass;
+
+        try {
+            problemClass = Class.forName("ro.droptable.labproblems.domain.Problem");
+            Problem problemInstance = (Problem)problemClass.newInstance();
+
+            Field idField = problemClass.getSuperclass().getDeclaredField("id");
+            Field currentIdField = problemClass.getDeclaredField("currentId");
+            idField.setAccessible(true);
+            currentIdField.setAccessible(true);
+            idField.set(problemInstance, currentIdField.getLong(problemInstance));
+            currentIdField.set(problemInstance, currentIdField.getLong(problemInstance) + 1);
+            idField.setAccessible(false);
+            currentIdField.setAccessible(false);
+
+            Field titleField = problemClass.getDeclaredField("title");
+            titleField.setAccessible(true);
+            titleField.set(problemInstance, title);
+            titleField.setAccessible(false);
+
+            Field descriptionField = problemClass.getDeclaredField("description");
+            descriptionField.setAccessible(true);
+            descriptionField.set(problemInstance, description);
+            descriptionField.setAccessible(false);
+
+            repository.save(problemInstance);
+
+        } catch (ClassNotFoundException |
+                IllegalAccessException  |
+                InstantiationException  |
+                NoSuchFieldException e)
+        {
+            e.printStackTrace(); // TODO: do something else
+        }
+    }
+
+    public void updateProblem(long id, String title, String description) throws NoSuchElementException, ValidatorException
+    {
+        Problem oldProblem = findOneProblem(id).get(); //throws NoSuchElementException if the old problem does not exist
+        Class problemClass;
+
+        try {
+            problemClass = Class.forName("ro.droptable.labproblems.domain.Problem");
+            Problem problemInstance = (Problem) problemClass.newInstance();
+
+            //create a new instance with the same id - do not modify current id
+            Field idField = problemClass.getSuperclass().getDeclaredField("id");
+            idField.setAccessible(true);
+            idField.set(problemInstance, id);
+            idField.setAccessible(false);
+
+
+            Field titleField = problemClass.getDeclaredField("title");
+            titleField.setAccessible(true);
+            titleField.set(problemInstance, title);
+            titleField.setAccessible(false);
+
+            Field descriptionField = problemClass.getDeclaredField("description");
+            descriptionField.setAccessible(true);
+            descriptionField.set(problemInstance, description);
+            descriptionField.setAccessible(false);
+
+            this.repository.update(problemInstance);
+
+        } catch (ClassNotFoundException |
+                IllegalAccessException  |
+                InstantiationException  |
+                NoSuchFieldException e)
+        {
+            e.printStackTrace(); // TODO: do something else
+        }
+
+    }
+
+    public Set<Problem> filterProblemsByTitle(String s) {
+        Iterable<Problem> problems = repository.findAll();
+        Set<Problem> filteredProblems = new HashSet<>();
+        problems.forEach(filteredProblems::add);
+        filteredProblems.removeIf(pr -> !pr.getTitle().contains(s));
+        return filteredProblems;
     }
 
     @Override
-    public Future<String> addProblem(String string) throws ValidatorException {
-        return executorService.submit(() -> {
-            List<String> fields = Arrays.asList(string.split(","));
-
-            Long id = Long.valueOf(fields.get(0));
-            String title = fields.get(1);
-            String description = fields.get(2);
-
-            Problem problem = new Problem(id, title, description);
-
-            Optional<Problem> optional = problemRepository.save(problem);
-
-            return optional.isPresent() ? optional.get().toCsv() : "";
-        });
+    public Optional<Problem> findOneProblem(Long id) {
+        return repository.findOne(id);
     }
 
     @Override
-    public Future<String> deleteProblem(String string) {
-        return executorService.submit(() -> {
-            Long id = Long.valueOf(string);
-
-            Optional<Problem> optional = problemRepository.delete(id);
-
-            return optional.isPresent() ? optional.get().toCsv() : "";
-        });
+    public Set<Problem> findAllProblems() {
+        Iterable<Problem> entities = repository.findAll();
+        return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toSet());
     }
 
     @Override
-    public Future<String> updateProblem(String string) throws NoSuchElementException, ValidatorException {
-        return executorService.submit(() -> {
-            List<String> fields = Arrays.asList(string.split(","));
-
-            Long id = Long.valueOf(fields.get(0));
-            String title = fields.get(1);
-            String description = fields.get(2);
-
-            // throws NoSuchElementException if the old Problem does not exist
-            Problem oldProblem = problemRepository.findOne(Long.valueOf(id)).get();
-            Problem newProblem = new Problem(
-                    id,
-                    title.equals("") ? oldProblem.getTitle() : title,
-                    description.equals("") ? oldProblem.getDescription() : description
-            );
-
-            Optional<Problem> optional = problemRepository.update(newProblem);
-
-            return optional.isPresent() ? optional.get().toCsv() : "";
-        });
+    public void deleteProblem(Long id) throws ValidatorException{
+        repository.delete(id);
     }
 
-    @Override
-    public Future<String> findOneProblem(String string) {
-        return executorService.submit(() -> {
-            Long id = Long.valueOf(string);
-
-            Optional<Problem> optional = problemRepository.findOne(id);
-
-            return optional.isPresent() ? optional.get().toCsv() : "";
-        });
-    }
-
-    @Override
-    public Future<String> findAllProblems(String string) {
-        return executorService.submit(() -> {
-            Iterable<Problem> allProblems = problemRepository.findAll();
-
-            return StreamSupport.stream(allProblems.spliterator(), false)
-                    .map(Problem::toCsv)
-                    .reduce("", (acc, it) -> acc + it + "\n");
-        });
-    }
-
-    @Override
-    public Future<String> filterProblemsByTitle(String string) {
-        return executorService.submit(() -> {
-            Iterable<Problem> allProblems = problemRepository.findAll();
-
-            return StreamSupport.stream(allProblems.spliterator(), false)
-                    .filter(p -> p.getTitle().contains(string))
-                    .map(Problem::toCsv)
-                    .reduce("", (acc, it) -> acc + it + "\n");
-        });
-    }
 }

@@ -1,77 +1,49 @@
 package ro.droptable.labproblems.client.service;
 
-import ro.droptable.labproblems.client.tcp.TcpClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import ro.droptable.labproblems.common.domain.Assignment;
 import ro.droptable.labproblems.common.service.AssignmentService;
-import ro.droptable.labproblems.common.Message;
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Created by stefana on 3/28/2017.
  */
-@Deprecated
 public class AssignmentServiceClient implements AssignmentService {
-    private ExecutorService executorService;
-    private TcpClient tcpClient;
 
-    public AssignmentServiceClient(ExecutorService executorService, TcpClient tcpClient) {
-        this.executorService = executorService;
-        this.tcpClient = tcpClient;
+    @Autowired
+    private AssignmentService assignmentService;
+
+    @Override
+    public void addAssignment(long studentId, long problemId) {
+        assignmentService.addAssignment(studentId, problemId);
     }
 
     @Override
-    public CompletableFuture<String> addAssignment(String string) throws ValidatorException {
-        return CompletableFuture.supplyAsync(() -> {
-            Message request = new Message(AssignmentService.ADD_ASSIGNMENT, string);
-            Message response = tcpClient.sendAndReceive(request);
-            return response.body();
-        }, executorService);
+    public void deleteAssignment(Long id) {
+        assignmentService.deleteAssignment(id);
     }
 
     @Override
-    public CompletableFuture<String> deleteAssignment(String string) throws ValidatorException {
-        return CompletableFuture.supplyAsync(() -> {
-            Message request = new Message(AssignmentService.DELETE_ASSIGNMENT, string);
-            Message response = tcpClient.sendAndReceive(request);
-            return response.body();
-        }, executorService);
+    public void updateAssignment(long id, long studentId, long problemId, int grade) throws NoSuchElementException, ValidatorException {
+        assignmentService.updateAssignment(id, studentId, problemId, grade);
     }
 
     @Override
-    public CompletableFuture<String> updateAssignment(String string) throws ValidatorException {
-        return CompletableFuture.supplyAsync(() -> {
-            Message request = new Message(AssignmentService.UPDATE_ASSIGNMENT, string);
-            Message response = tcpClient.sendAndReceive(request);
-            return response.body();
-        }, executorService);
+    public Optional<Assignment> findOneAssignment(Long id) {
+        return assignmentService.findOneAssignment(id);
     }
 
     @Override
-    public CompletableFuture<String> findOneAssignment(String string) throws ValidatorException {
-        return CompletableFuture.supplyAsync(() -> {
-            Message request = new Message(AssignmentService.FIND_ONE_ASSIGNMENT, string);
-            Message response = tcpClient.sendAndReceive(request);
-            return response.body();
-        }, executorService);
+    public Set<Assignment> findAllAssignments() {
+        return assignmentService.findAllAssignments();
     }
 
     @Override
-    public CompletableFuture<String> findAllAssignments(String string) throws ValidatorException {
-        return CompletableFuture.supplyAsync(() -> {
-            Message request = new Message(AssignmentService.FIND_ALL_ASSIGNMENTS, string);
-            Message response = tcpClient.sendAndReceive(request);
-            return response.body();
-        }, executorService);
-    }
-
-    @Override
-    public CompletableFuture<String> filterAssignmentsByGrade(String string) throws ValidatorException {
-        return CompletableFuture.supplyAsync(() -> {
-            Message request = new Message(AssignmentService.FILTER_ASSIGNMENTS_BY_GRADE, string);
-            Message response = tcpClient.sendAndReceive(request);
-            return response.body();
-        }, executorService);
+    public Set<Assignment> filterAssignmentsByGrade(int g) {
+        return assignmentService.filterAssignmentsByGrade(g);
     }
 }

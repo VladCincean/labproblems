@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 
 /**
  * Created by stefana on 3/28/2017.
- */
+
 public class AssignmentServiceImplTest {
     AssignmentDbRepository r;
     StudentService ss;
@@ -147,4 +147,4 @@ public class AssignmentServiceImplTest {
     }
 
 
-}
+}*/

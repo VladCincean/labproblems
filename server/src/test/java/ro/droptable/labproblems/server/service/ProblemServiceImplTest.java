@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
 
 /**
  * Created by stefana on 3/29/2017.
- */
+
 public class ProblemServiceImplTest {
     ProblemService ps;
 
@@ -88,4 +88,4 @@ public class ProblemServiceImplTest {
         ps.updateProblem("1,,b");
         assertTrue(ps.findOneProblem("1").get().equals("1,b,b"));
     }
-}
+}*/
