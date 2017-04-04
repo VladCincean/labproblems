@@ -81,8 +81,8 @@ public class StudentDbRepository implements Repository<Long, Student> {
         String sqlStudents = "DELETE FROM students WHERE id = ?";
         String sqlAssignments = "DELETE FROM assignments where student_id = ?";
 
-        int rowCount = jdbcTemplate.update(sqlStudents, id);
         jdbcTemplate.update(sqlAssignments, id);
+        int rowCount = jdbcTemplate.update(sqlStudents, id);
 
         return rowCount == 0 ? Optional.empty() : studentOptional;
     }

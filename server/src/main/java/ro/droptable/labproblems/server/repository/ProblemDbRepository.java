@@ -83,8 +83,8 @@ public class ProblemDbRepository implements Repository<Long, Problem> {
         String sqlProblems = "DELETE FROM problems WHERE id = ?";
         String sqlAssignments = "DELETE FROM assignments where problem_id = ?";
 
-        int rowCount = jdbcTemplate.update(sqlProblems, id);
         jdbcTemplate.update(sqlAssignments, id);
+        int rowCount = jdbcTemplate.update(sqlProblems, id);
 
         return rowCount == 0 ? Optional.empty() : problemOptional;
     }
