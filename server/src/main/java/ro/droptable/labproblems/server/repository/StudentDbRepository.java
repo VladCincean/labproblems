@@ -10,6 +10,7 @@ import ro.droptable.labproblems.common.domain.validators.StudentValidator;
 import ro.droptable.labproblems.common.domain.validators.Validator;
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 
+import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
 import java.sql.*;
 import java.util.*;
@@ -26,6 +27,30 @@ public class StudentDbRepository implements Repository<Long, Student> {
     JdbcTemplate jdbcTemplate;
 
     Validator<Student> validator = new StudentValidator();
+
+    @PostConstruct
+    public void init() {
+        StreamSupport.stream(findAll().spliterator(), false)
+                .map(Student::getId)
+                .max(Comparator.naturalOrder())
+                .ifPresent(o -> {
+                    Class studentClass;
+                    try {
+                        studentClass = Class.forName("ro.droptable.labproblems.common.domain.Student");
+                        Student studentInstance = (Student) studentClass.newInstance();
+
+                        Field currentIdField = studentClass.getDeclaredField("currentId");
+                        currentIdField.setAccessible(true);
+                        currentIdField.set(studentInstance, o + 1);
+                        currentIdField.setAccessible(false);
+                    } catch (ClassNotFoundException
+                            | NoSuchFieldException
+                            | IllegalAccessException
+                            | InstantiationException e) {
+                        e.printStackTrace();
+                    }
+                });
+    }
 
     @Override
     public Optional<Student> findOne(Long id) {

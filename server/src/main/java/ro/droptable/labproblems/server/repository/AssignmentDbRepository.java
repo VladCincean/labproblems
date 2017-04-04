@@ -1,6 +1,7 @@
 package ro.droptable.labproblems.server.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.expression.spel.ast.Assign;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import ro.droptable.labproblems.common.domain.Assignment;
@@ -9,6 +10,7 @@ import ro.droptable.labproblems.common.domain.validators.LabProblemsException;
 import ro.droptable.labproblems.common.domain.validators.Validator;
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 
+import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
 import java.sql.*;
 import java.util.ArrayList;
@@ -30,6 +32,30 @@ public class AssignmentDbRepository implements Repository<Long, Assignment> {
     JdbcTemplate jdbcTemplate;
 
     AssignmentValidator validator = new AssignmentValidator();
+
+    @PostConstruct
+    public void init() {
+        StreamSupport.stream(findAll().spliterator(), false)
+                .map(Assignment::getId)
+                .max(Comparator.naturalOrder())
+                .ifPresent(o -> {
+                    Class assignmentClass;
+                    try {
+                        assignmentClass = Class.forName("ro.droptable.labproblems.common.domain.Assignment");
+                        Assignment assignmentInstance = (Assignment) assignmentClass.newInstance();
+
+                        Field currentIdField = assignmentClass.getDeclaredField("currentId");
+                        currentIdField.setAccessible(true);
+                        currentIdField.set(assignmentInstance, o + 1);
+                        currentIdField.setAccessible(false);
+                    } catch (ClassNotFoundException
+                            | NoSuchFieldException
+                            | IllegalAccessException
+                            | InstantiationException e) {
+                        e.printStackTrace();
+                    }
+                });
+    }
 
     @Override
     public Optional<Assignment> findOne(Long id) {

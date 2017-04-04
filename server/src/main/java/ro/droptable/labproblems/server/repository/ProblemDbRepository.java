@@ -9,6 +9,7 @@ import ro.droptable.labproblems.common.domain.validators.ProblemValidator;
 import ro.droptable.labproblems.common.domain.validators.Validator;
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 
+import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
 import java.sql.*;
 import java.util.ArrayList;
@@ -29,6 +30,30 @@ public class ProblemDbRepository implements Repository<Long, Problem> {
     JdbcTemplate jdbcTemplate;
 
     Validator<Problem> validator = new ProblemValidator();
+
+    @PostConstruct
+    public void init() {
+        StreamSupport.stream(findAll().spliterator(), false)
+                .map(Problem::getId)
+                .max(Comparator.naturalOrder())
+                .ifPresent(o -> {
+                    Class problemClass;
+                    try {
+                        problemClass = Class.forName("ro.droptable.labproblems.common.domain.Problem");
+                        Problem problemInstance = (Problem) problemClass.newInstance();
+
+                        Field currentIdField = problemClass.getDeclaredField("currentId");
+                        currentIdField.setAccessible(true);
+                        currentIdField.set(problemInstance, o + 1);
+                        currentIdField.setAccessible(false);
+                    } catch (ClassNotFoundException
+                            | NoSuchFieldException
+                            | IllegalAccessException
+                            | InstantiationException e) {
+                        e.printStackTrace();
+                    }
+                });
+    }
 
     @Override
     public Optional<Problem> findOne(Long id) {
