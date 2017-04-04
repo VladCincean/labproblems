@@ -27,7 +27,7 @@ public class ProblemServiceImpl implements ProblemService {
         Class problemClass;
 
         try {
-            problemClass = Class.forName("ro.droptable.labproblems.domain.Problem");
+            problemClass = Class.forName("ro.droptable.labproblems.common.domain.Problem");
             Problem problemInstance = (Problem)problemClass.newInstance();
 
             Field idField = problemClass.getSuperclass().getDeclaredField("id");
@@ -66,7 +66,7 @@ public class ProblemServiceImpl implements ProblemService {
         Class problemClass;
 
         try {
-            problemClass = Class.forName("ro.droptable.labproblems.domain.Problem");
+            problemClass = Class.forName("ro.droptable.labproblems.common.domain.Problem");
             Problem problemInstance = (Problem) problemClass.newInstance();
 
             //create a new instance with the same id - do not modify current id

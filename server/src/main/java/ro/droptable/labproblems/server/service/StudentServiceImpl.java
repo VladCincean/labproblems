@@ -52,7 +52,7 @@ public class StudentServiceImpl implements StudentService {
         Class studentClass;
 
         try {
-            studentClass = Class.forName("ro.droptable.labproblems.domain.Student");
+            studentClass = Class.forName("ro.droptable.labproblems.common.domain.Student");
             Student studentInstance = (Student)studentClass.newInstance();
 
             Field idField = studentClass.getSuperclass().getDeclaredField("id");

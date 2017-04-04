@@ -28,7 +28,7 @@ public class AssignmentServiceImpl implements AssignmentService{
         Class assignmentClass;
 
         try {
-            assignmentClass = Class.forName("ro.droptable.labproblems.domain.Assignment");
+            assignmentClass = Class.forName("ro.droptable.labproblems.common.domain.Assignment");
             Assignment assignmentInstance = (Assignment) assignmentClass.newInstance();
 
             Field idField = assignmentClass.getSuperclass().getDeclaredField("id");
@@ -76,7 +76,7 @@ public class AssignmentServiceImpl implements AssignmentService{
         Class assignmentClass;
 
         try {
-            assignmentClass = Class.forName("ro.droptable.labproblems.domain.Assignment");
+            assignmentClass = Class.forName("ro.droptable.labproblems.common.domain.Assignment");
             Assignment assignmentInstance = (Assignment) assignmentClass.newInstance();
 
             Field idField = assignmentClass.getSuperclass().getDeclaredField("id");
