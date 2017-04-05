@@ -174,7 +174,7 @@ public class ClientUi {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 
         try {
-            System.out.println("id = ");
+            System.out.print("id = ");
             long id = Long.parseLong(bufferedReader.readLine().trim());
             System.out.print("serial number = ");
             String serialNumber = bufferedReader.readLine().trim();
@@ -206,7 +206,7 @@ public class ClientUi {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 
         try {
-            System.out.println("id = ");
+            System.out.print("id = ");
             long id = Long.parseLong(bufferedReader.readLine().trim());
             try {
                 studentService.deleteStudent(id);
@@ -245,14 +245,14 @@ public class ClientUi {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 
         try {
+            System.out.print("id = ");
+            long id = Long.parseLong(bufferedReader.readLine().trim());
+
             System.out.print("title = ");
             String title = bufferedReader.readLine().trim();
 
             System.out.print("description = ");
             String description = bufferedReader.readLine().trim();
-
-            System.out.println("id = ");
-            long id = Long.parseLong(bufferedReader.readLine().trim());
 
             try {
                 problemService.updateProblem(id, title, description);
@@ -270,7 +270,7 @@ public class ClientUi {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 
         try {
-            System.out.println("id = ");
+            System.out.print("id = ");
             long id = Long.parseLong(bufferedReader.readLine().trim());
 
             try {
