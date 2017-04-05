@@ -63,12 +63,8 @@ public class AssignmentDbRepository implements Repository<Long, Assignment> {
             throw new IllegalArgumentException("id must not be null");
         }
 
-        String sql = "SELECT * FROM assignments WHERE id = ?";
-        Assignment assignment = jdbcTemplate.queryForObject(
-                sql, BeanPropertyRowMapper.newInstance(Assignment.class), id
-        );
-
-        return Optional.ofNullable(assignment);
+        Iterable<Assignment> assignments = findAll();
+        return StreamSupport.stream(assignments.spliterator(), false).filter(s->s.getId().equals(id)).findAny();
     }
 
     @Override
@@ -121,6 +117,10 @@ public class AssignmentDbRepository implements Repository<Long, Assignment> {
         }
 
         validator.validate(entity);
+        Optional<Assignment> assignmentOptional = findOne(entity.getId()); // .?
+        if (!assignmentOptional.isPresent()) {
+            return Optional.empty();
+        }
 
         String sql = "UPDATE assignments SET student_id = ?, problem_id = ?, grade = ? WHERE id = ?";
         int rowCount = jdbcTemplate.update(

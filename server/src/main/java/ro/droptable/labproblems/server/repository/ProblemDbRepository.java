@@ -61,12 +61,8 @@ public class ProblemDbRepository implements Repository<Long, Problem> {
             throw new IllegalArgumentException("id must not be null");
         }
 
-        String sql = "SELECT * FROM problems WHERE id = ?";
-        Problem problem = jdbcTemplate.queryForObject(
-                sql, BeanPropertyRowMapper.newInstance(Problem.class), id
-        );
-
-        return Optional.ofNullable(problem);
+        Iterable<Problem> problems = findAll();
+        return StreamSupport.stream(problems.spliterator(), false).filter(s->s.getId().equals(id)).findAny();
     }
 
     @Override
@@ -122,7 +118,10 @@ public class ProblemDbRepository implements Repository<Long, Problem> {
         }
 
         validator.validate(entity);
-
+        Optional<Problem> assignmentOptional = findOne(entity.getId()); // .?
+        if (!assignmentOptional.isPresent()) {
+            return Optional.empty();
+        }
         String sql = "UPDATE problems SET title = ?, description = ? WHERE id = ?";
         int rowCount = jdbcTemplate.update(
                 sql, entity.getTitle(), entity.getDescription(), entity.getId()

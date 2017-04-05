@@ -58,12 +58,8 @@ public class StudentDbRepository implements Repository<Long, Student> {
             throw new IllegalArgumentException("id must not be null");
         }
 
-        String sql = "SELECT * FROM students WHERE id = ?";
-        Student student = jdbcTemplate.queryForObject(
-                sql, BeanPropertyRowMapper.newInstance(Student.class), id
-        );
-
-        return Optional.ofNullable(student);
+        Iterable<Student> students = findAll();
+        return StreamSupport.stream(students.spliterator(), false).filter(s->s.getId().equals(id)).findAny();
     }
 
     @Override
@@ -99,6 +95,7 @@ public class StudentDbRepository implements Repository<Long, Student> {
         }
 
         Optional<Student> studentOptional = findOne(id); // .?
+        System.out.println(studentOptional);
         if (!studentOptional.isPresent()) {
             return Optional.empty();
         }
@@ -119,7 +116,10 @@ public class StudentDbRepository implements Repository<Long, Student> {
         }
 
         validator.validate(entity);
-
+        Optional<Student> assignmentOptional = findOne(entity.getId()); // .?
+        if (!assignmentOptional.isPresent()) {
+            return Optional.empty();
+        }
         String sql = "UPDATE students SET serial_number = ?, name = ?, \"group\" = ? WHERE id = ?";
         int rowCount = jdbcTemplate.update(
                 sql, entity.getSerialNumber(), entity.getName(), entity.getGroup(), entity.getId()

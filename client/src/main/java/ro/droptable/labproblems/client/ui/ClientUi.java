@@ -197,7 +197,7 @@ public class ClientUi {
                 System.out.println("Input Student is invalid");
                 System.err.println(e.toString());
             }
-        } catch (IOException e) {
+        } catch (IOException | NoSuchElementException e) {
             e.printStackTrace();
         }
     }
@@ -261,7 +261,7 @@ public class ClientUi {
                 System.err.println(e.toString());
             }
 
-        } catch (IOException e) {
+        } catch (IOException | NoSuchElementException e) {
             e.printStackTrace();
         }
     }
@@ -343,7 +343,7 @@ public class ClientUi {
                 System.err.println(e.toString());
             }
 
-        } catch (IOException e) {
+        } catch (IOException | NoSuchElementException e) {
             e.printStackTrace();
         }
     }
