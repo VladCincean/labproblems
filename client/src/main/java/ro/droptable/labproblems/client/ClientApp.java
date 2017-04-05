@@ -17,8 +17,9 @@ import java.util.concurrent.Executors;
  */
 public class ClientApp {
     public static void main(String[] args) {
-        ApplicationContext context =
-                new AnnotationConfigApplicationContext("ro.droptable.labproblems.client.config");
+        ApplicationContext context = new AnnotationConfigApplicationContext(
+                "ro.droptable.labproblems.client.config"
+        );
 
         StudentServiceClient studentServiceClient = context.getBean(StudentServiceClient.class);
         ProblemServiceClient problemServiceClient = context.getBean(ProblemServiceClient.class);
@@ -31,16 +32,5 @@ public class ClientApp {
         );
 
         ui.run();
-
-//        ExecutorService executorService = Executors.newFixedThreadPool(
-//                Runtime.getRuntime().availableProcessors()
-//        );
-//        TcpClient tcpClient = new TcpClient(StudentService.SERVICE_HOST, StudentService.SERVICE_PORT);
-//        StudentServiceClient studentService = new StudentServiceClient(executorService, tcpClient);
-//        ProblemServiceClient problemService = new ProblemServiceClient(executorService, tcpClient);
-//        AssignmentServiceClient assignmentService = new AssignmentServiceClient(executorService, tcpClient);
-//        ClientUi clientUi = new ClientUi(studentService, problemService, assignmentService);
-//        clientUi.run();
-//        executorService.shutdownNow();
     }
 }

@@ -5,12 +5,9 @@ import ro.droptable.labproblems.common.service.ProblemService;
 import ro.droptable.labproblems.common.domain.Problem;
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 import ro.droptable.labproblems.server.repository.ProblemDbRepository;
-import ro.droptable.labproblems.server.repository.Repository;
 
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -23,6 +20,9 @@ public class ProblemServiceImpl implements ProblemService {
     @Autowired
     private ProblemDbRepository repository;
 
+    /**
+     * {@inheritDoc}
+     */
     public void addProblem(String title, String description) throws ValidatorException {
         Class problemClass;
 
@@ -60,7 +60,10 @@ public class ProblemServiceImpl implements ProblemService {
         }
     }
 
-    public void updateProblem(long id, String title, String description) throws NoSuchElementException, ValidatorException
+    /**
+     * {@inheritDoc}
+     */
+    public void updateProblem(Long id, String title, String description) throws NoSuchElementException, ValidatorException
     {
         Problem oldProblem = findOneProblem(id).get(); //throws NoSuchElementException if the old problem does not exist
         Class problemClass;
@@ -98,28 +101,39 @@ public class ProblemServiceImpl implements ProblemService {
 
     }
 
-    public Set<Problem> filterProblemsByTitle(String s) {
+    /**
+     * {@inheritDoc}
+     */
+    public Set<Problem> filterProblemsByTitle(String title) {
         Iterable<Problem> problems = repository.findAll();
         Set<Problem> filteredProblems = new HashSet<>();
         problems.forEach(filteredProblems::add);
-        filteredProblems.removeIf(pr -> !pr.getTitle().contains(s));
+        filteredProblems.removeIf(pr -> !pr.getTitle().contains(title));
         return filteredProblems;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<Problem> findOneProblem(Long id) {
         return repository.findOne(id);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<Problem> findAllProblems() {
         Iterable<Problem> entities = repository.findAll();
         return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toSet());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void deleteProblem(Long id) throws ValidatorException{
+    public void deleteProblem(Long id) {
         repository.delete(id);
     }
-
 }

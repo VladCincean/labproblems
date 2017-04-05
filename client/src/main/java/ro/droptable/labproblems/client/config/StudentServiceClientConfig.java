@@ -21,7 +21,6 @@ public class StudentServiceClientConfig {
 
     @Bean
     public StudentServiceClient studentServiceClient() {
-        StudentServiceClient studentServiceClient = new StudentServiceClient();
-        return studentServiceClient;
+        return new StudentServiceClient();
     }
 }

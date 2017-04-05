@@ -17,33 +17,51 @@ public class AssignmentServiceClient implements AssignmentService {
     @Autowired
     private AssignmentService assignmentService;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addAssignment(long studentId, long problemId) {
         assignmentService.addAssignment(studentId, problemId);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void deleteAssignment(Long id) {
         assignmentService.deleteAssignment(id);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void updateAssignment(long id, long studentId, long problemId, int grade) throws NoSuchElementException, ValidatorException {
+    public void updateAssignment(Long id, long studentId, long problemId, int grade) throws NoSuchElementException, ValidatorException {
         assignmentService.updateAssignment(id, studentId, problemId, grade);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<Assignment> findOneAssignment(Long id) {
         return assignmentService.findOneAssignment(id);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<Assignment> findAllAssignments() {
         return assignmentService.findAllAssignments();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Set<Assignment> filterAssignmentsByGrade(int g) {
-        return assignmentService.filterAssignmentsByGrade(g);
+    public Set<Assignment> filterAssignmentsByGrade(int grade) {
+        return assignmentService.filterAssignmentsByGrade(grade);
     }
 }

@@ -13,32 +13,20 @@ import java.util.concurrent.Future;
  */
 
 public interface ProblemService {
-//    String SERVICE_HOST = "localhost";
-//    int SERVICE_PORT = 1234;
-//
-//    String ADD_PROBLEM = "addProblem";
-//    String DELETE_PROBLEM = "deleteProblem";
-//    String UPDATE_PROBLEM = "updateProblem";
-//    String FIND_ONE_PROBLEM = "findOneProblem";
-//    String FIND_ALL_PROBLEMS = "findAllProblems";
-//    String FILTER_PROBLEMS_BY_TITLE = "filterProblemsByTitle";
 
     /**
-     * Saves the given entity.
-     *
+     * Saves the given {@code Problem}.
      * @param title
      *            must not be null.
      * @param description
      *            must not be null.
-     * @throws IllegalArgumentException
-     *             if the given entity is null.
      * @throws ValidatorException
-     *             if the entity is not valid.
+     *            if the {@code Problem} being created is invalid.
      */
-    public void addProblem(String title, String description) throws ValidatorException;
+    void addProblem(String title, String description) throws ValidatorException;
 
     /**
-     * Removes the entity with the given id.
+     * Removes the {@code Problem} with the given id.
      *
      * @param id
      *            must not be null.
@@ -46,23 +34,49 @@ public interface ProblemService {
      * @throws IllegalArgumentException
      *             if the given id is null.
      */
-    public void deleteProblem(Long id) throws ValidatorException;
-
-
-    public void updateProblem(long id, String title, String description) throws NoSuchElementException, ValidatorException;
-
-    public Optional<Problem> findOneProblem(Long id);
-
-    public Set<Problem> findAllProblems();
+    void deleteProblem(Long id) throws ValidatorException;
 
     /**
-     * Returns all the Problems having a given title
+     * Updates a {@code Problem}.
+     * @param id
+     *          must not be null.
+     * @param title
+     *          must not be null.
+     * @param description
+     *          must not be null.
+     * @throws NoSuchElementException
+     *          if the given {@code id} does not refer to an existing {@code Problem}.
+     * @throws ValidatorException
+     *          if the {@code Problem} being updates becomes invalid.
+     */
+    void updateProblem(Long id, String title, String description) throws NoSuchElementException, ValidatorException;
+
+    /**
+     * Finds if there is a {@code Problem} with the given {@code id} in {@code Repository}.
+     * @param id
+     *          must not be null.
+     * @return
+     *          an {@code Optional} with the found problem, if it exists;
+     *          an empty {@code Optional}, otherwise.
+     */
+    Optional<Problem> findOneProblem(Long id);
+
+    /**
+     * Finds all {@code Problem}s from {@code Repository}.
+     * @return
+     *          a {@code Set} with all the {@code Problem}s;
+     *          an empty {@code Set}, if there is no {@code Problem}.
+     */
+    Set<Problem> findAllProblems();
+
+    /**
+     * Returns all the Problems having a given title.
      *
-     * @param string
-     *            must not be null - title
+     * @param title
+     *            must not be null.
      * @return an {@code Iterable} - containing the list of the matching entities, empty string if there is no match
      * @throws IllegalArgumentException
-     *             if the given string is null.
+     *             if the given {@code title} is null.
      */
-    public Set<Problem> filterProblemsByTitle(String string);
+    Set<Problem> filterProblemsByTitle(String title);
 }

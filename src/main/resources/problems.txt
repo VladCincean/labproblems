@@ -1,2 +1,0 @@
-1,Pharmacy,Create a software application to help John manage his pharmacy medication's stocks.
-2,Lab Problems,Create a software application to help teachers manage students and lab problems.

@@ -23,6 +23,9 @@ public class AssignmentServiceImpl implements AssignmentService{
     @Autowired
     AssignmentDbRepository repository;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addAssignment(long studentId, long problemId) {
         Class assignmentClass;
@@ -65,13 +68,19 @@ public class AssignmentServiceImpl implements AssignmentService{
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void deleteAssignment(Long id) {
         repository.delete(id);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void updateAssignment(long id, long studentId, long problemId, int grade) throws NoSuchElementException, ValidatorException{
+    public void updateAssignment(Long id, long studentId, long problemId, int grade) throws NoSuchElementException, ValidatorException{
         Assignment oldAssignment = this.repository.findOne(id).get();
         Class assignmentClass;
 
@@ -109,22 +118,31 @@ public class AssignmentServiceImpl implements AssignmentService{
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<Assignment> findOneAssignment(Long id) {
         return repository.findOne(id);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<Assignment> findAllAssignments() {
         Iterable<Assignment> entities = repository.findAll();
         return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toSet());
     }
 
-    public Set<Assignment> filterAssignmentsByGrade(int g) {
+    /**
+     * {@inheritDoc}
+     */
+    public Set<Assignment> filterAssignmentsByGrade(int grade) {
         Iterable<Assignment> assignments = repository.findAll();
         Set<Assignment> filteredAssignments= new HashSet<>();
         assignments.forEach(filteredAssignments::add);
-        filteredAssignments.removeIf(assignment -> assignment.getGrade() != g);
+        filteredAssignments.removeIf(assignment -> assignment.getGrade() != grade);
         return filteredAssignments;
     }
 }

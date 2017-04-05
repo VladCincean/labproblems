@@ -3,35 +3,25 @@ package ro.droptable.labproblems.common.service;
 import ro.droptable.labproblems.common.domain.Student;
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
 
-import java.util.DoubleSummaryStatistics;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.Future;
 
 /**
  * Created by vlad on 28.03.2017.
  */
-// TODO: update method specifications
 public interface StudentService {
-//    String SERVICE_HOST = "localhost";
-//    int SERVICE_PORT = 1234;
-//
-//    String ADD_STUDENT = "addStudent";
-//    String DELETE_STUDENT = "deleteStudent";
-//    String UPDATE_STUDENT = "updateStudent";
-//    String FIND_ONE_STUDENT = "findOneStudent";
-//    String FIND_ALL_STUDENTS = "findAllStudents";
-//    String FILTER_STUDENTS_BY_NAME = "filterStudentsByName";
-//    String FILTER_LARGEST_GROUP = "filterLargestGroup";
-//    String REPORT_STUDENT_AVERAGE = "reportStudentAverage";
 
     /**
-     * Adds the {@code Student} given in the csv string
+     * Saves the given {@code Student}.
      *
-     * @param string
-     *            csv, must not be null
-     * @return an {@code Future} - result of the computation
+     * @param serialNumber
+     *            must not be null.
+     * @param name
+     *            must not be null.
+     * @param group
+     *            must not be null.
      * @throws IllegalArgumentException
      *             if the given entity is null.
      * @throws ValidatorException
@@ -40,66 +30,61 @@ public interface StudentService {
     void addStudent(String serialNumber, String name, int group) throws ValidatorException;
 
     /**
-     * Deletes the {@code Student} having the {@code id} the first member in the csv string
-     *
-     * @param string
-     *            csv, must not be null
-     * @return an {@code Future} - result of the computation
-     * @throws IllegalArgumentException
-     *             if the given entity is null.
+     * Deletes the {@code Student} with the given {@code id}.
+     * @param id
+     *          must not be null.
      */
     void deleteStudent(Long id);
 
     /**
-     * Updates the {@code Student} having the {@code id} the first member in the csv string
-     *
-     * @param string
-     *            csv, must not be null
-     * @return an {@code Future} - result of the computation
-     * @throws IllegalArgumentException
-     *             if the given entity is null.
+     * Updates a {@code Student}'s state.
+     * @param id
+     *          must not be null.
+     * @param serialNumber
+     *          must not be null.
+     * @param name
+     *          must not be null.
+     * @param group
+     *          must not be null.
+     * @throws NoSuchElementException
+     *          if the given {@code id} does not refer to an existing {@code Student} in {@code Repository}.
      * @throws ValidatorException
-     *             if the entity is not valid.
+     *          if the {@code Student} being updates becomes invalid.
      */
     void updateStudent(Long id, String serialNumber, String name, int group) throws ValidatorException;
 
     /**
-     * Finds the {@code Student} having the {@code id} the first member in the csv string
-     *
-     * @param string
-     *            csv, must not be null - id of the entity
-     * @return an {@code Future} - a csv string containing the fields of the found entity, empty string if it does not exist
-     * @throws IllegalArgumentException
-     *             if the given string is null.
+     * Finds if there is a {@code Student} with the given {@code id} in {@code Repository}.
+     * @param id
+     *          must not be null.
+     * @return
+     *          an {@code Optional} with the found student, if it exists;
+     *          an empty {@code Optional}, otherwise.
      */
     Optional<Student> findOneStudent(Long id);
 
     /**
-     * Returns all the entities as a string of csv-s
-     *
-     * @param string
-     *            must not be null - empty string is ignored
-     * @return an {@code Future} - a csv string containing the list of the found entities, empty string if the repo is empty
-     * @throws IllegalArgumentException
-     *             if the given string is null.
+     * Finds all {@code Student}s from {@code Repository}.
+     * @return
+     *          a {@code Set} with all the {@code Student}s;
+     *          an empty {@code Set}, if there is no {@code Student}.
      */
     Set<Student> findAllStudents();
 
     /**
-     * Returns all the Students having a given name
-     *
-     * @param string
-     *            must not be null - name
-     * @return an {@code Future} - a csv string containing the list of the matching entities, empty string if there is no match
-     * @throws IllegalArgumentException
-     *             if the given string is null.
+     * Finds all {@code Student}s from {@code Repository} having the given {@code name}.
+     * @param name
+     *          must not be null.
+     * @return
+     *          a {@code Set} with all the {@code Student}s having the given {@code name};
+     *          an empty {@code Set}, if there is no {@code Student}.
      */
     Set<Student> filterStudentsByName(String name);
 
     /**
-     * Returns the group containing the largest number of Students
+     * Returns the group containing the largest number of {@code Students}.
      *
-     * @return an {@code Future} - result
+     * @return the largest group of {@code Student}s.
      */
     int filterLargestGroup();
 

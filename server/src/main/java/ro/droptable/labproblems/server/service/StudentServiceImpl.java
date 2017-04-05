@@ -4,15 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ro.droptable.labproblems.common.service.StudentService;
 import ro.droptable.labproblems.common.domain.Student;
 import ro.droptable.labproblems.common.domain.validators.ValidatorException;
-import ro.droptable.labproblems.server.repository.Repository;
 import ro.droptable.labproblems.server.repository.StudentDbRepository;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -20,32 +15,13 @@ import java.util.stream.StreamSupport;
  * Created by vlad on 28.03.2017.
  */
 public class StudentServiceImpl implements StudentService {
-//    private ExecutorService executorService = Executors.newFixedThreadPool(
- //           Runtime.getRuntime().availableProcessors()
-  //  );
 
     @Autowired
     private StudentDbRepository studentRepository;
 
-//    @Deprecated
-//    public StudentServiceImpl(ExecutorService executorService, Repository<Long, Student> studentRepository) {
-//        this.executorService = executorService;
-//        this.studentRepository = (StudentDbRepository)studentRepository;
-//    }
 
     /**
-     * Saves the given entity.
-     *
-     * @param serialNumber
-     *            must not be null.
-     * @param name
-     *            must not be null.
-     * @param group
-     *            must not be null.
-     * @throws IllegalArgumentException
-     *             if the given entity is null.
-     * @throws ValidatorException
-     *             if the entity is not valid.
+     * {@inheritDoc}
      */
     @Override
     public void addStudent(String serialNumber, String name, int group) throws ValidatorException {
@@ -90,11 +66,17 @@ public class StudentServiceImpl implements StudentService {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void deleteStudent(Long id) {
         studentRepository.delete(id);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateStudent(Long id, String serialNumber, String name, int group) throws NoSuchElementException, ValidatorException
     {
@@ -138,23 +120,32 @@ public class StudentServiceImpl implements StudentService {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<Student> findOneStudent(Long id) {
         return studentRepository.findOne(id);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<Student> findAllStudents() {
         Iterable<Student> entities = studentRepository.findAll();
         return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toSet());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Set<Student> filterStudentsByName(String s) {
+    public Set<Student> filterStudentsByName(String name) {
         Iterable<Student> students = studentRepository.findAll();
         Set<Student> filteredStudents= new HashSet<>();
         students.forEach(filteredStudents::add);
-        filteredStudents.removeIf(student -> !student.getName().contains(s));
+        filteredStudents.removeIf(student -> !student.getName().contains(name));
         return filteredStudents;
     }
 
@@ -163,6 +154,9 @@ public class StudentServiceImpl implements StudentService {
         return (int)StreamSupport.stream(students.spliterator(), false).filter(s->s.getGroup() == group).count();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int filterLargestGroup(){
         Iterable<Student> students = studentRepository.findAll();
@@ -172,6 +166,9 @@ public class StudentServiceImpl implements StudentService {
                 filter(s -> getGroupSize(s.getGroup()) == mxGroup.get()).findFirst().get().getGroup();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Map<Student, Double> reportStudentAverage() {
         return studentRepository.reportStudentAverage();

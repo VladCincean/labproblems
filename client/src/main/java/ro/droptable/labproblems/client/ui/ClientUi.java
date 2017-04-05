@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Created by vlad on 27.03.2017.
@@ -167,7 +166,7 @@ public class ClientUi {
                 System.err.println(e.toString());
             }
         } catch (IOException e) {
-            e.printStackTrace(); // TODO: do something else
+            e.printStackTrace();
         }
     }
 
@@ -199,7 +198,7 @@ public class ClientUi {
                 System.err.println(e.toString());
             }
         } catch (IOException e) {
-            e.printStackTrace(); // TODO: do something else
+            e.printStackTrace();
         }
     }
 
@@ -216,7 +215,7 @@ public class ClientUi {
                 System.err.println(e.toString());
             }
         } catch (IOException e) {
-            e.printStackTrace(); // TODO: do something else
+            e.printStackTrace();
         }
     }
 
@@ -238,7 +237,7 @@ public class ClientUi {
             }
 
         } catch (IOException e) {
-            e.printStackTrace(); // TODO: do something else
+            e.printStackTrace();
         }
     }
 
@@ -263,7 +262,7 @@ public class ClientUi {
             }
 
         } catch (IOException e) {
-            e.printStackTrace(); // TODO: do something else
+            e.printStackTrace();
         }
     }
 
@@ -282,7 +281,7 @@ public class ClientUi {
             }
 
         } catch (IOException e) {
-            e.printStackTrace(); // TODO: do something else
+            e.printStackTrace();
         }
     }
 
@@ -309,7 +308,7 @@ public class ClientUi {
             }
 
         } catch (IOException e) {
-            e.printStackTrace(); // TODO: do something else
+            e.printStackTrace();
         }
     }
 
@@ -345,7 +344,7 @@ public class ClientUi {
             }
 
         } catch (IOException e) {
-            e.printStackTrace(); // TODO: do something else
+            e.printStackTrace();
         }
     }
 
@@ -363,7 +362,7 @@ public class ClientUi {
             }
 
         } catch (IOException e) {
-            e.printStackTrace(); // TODO: do something else
+            e.printStackTrace();
         }
     }
 
@@ -371,12 +370,12 @@ public class ClientUi {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 
         try {
-            System.out.print("string = ");
+            System.out.print("name = ");
             String cont = bufferedReader.readLine().trim();
             System.out.println(studentService.filterStudentsByName(cont));
 
         } catch (IOException e) {
-            e.printStackTrace(); // TODO: do something else
+            e.printStackTrace();
         }
     }
 
@@ -384,12 +383,12 @@ public class ClientUi {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 
         try {
-            System.out.print("string = ");
+            System.out.print("title = ");
             String cont = bufferedReader.readLine().trim();
             System.out.println(problemService.filterProblemsByTitle(cont));
 
         } catch (IOException e) {
-            e.printStackTrace(); // TODO: do something else
+            e.printStackTrace();
         }
     }
 
